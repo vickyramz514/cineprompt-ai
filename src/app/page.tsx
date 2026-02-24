@@ -21,7 +21,10 @@ export default function LandingPage() {
           <Link href="/templates" className="text-sm font-medium text-white/70 hover:text-white">
             Templates
           </Link>
-          <Link href="/auth/login" className="text-sm font-medium text-white/70 hover:text-white">
+          <Link
+            href="/auth/login"
+            className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
+          >
             Login
           </Link>
           <Link
@@ -163,9 +166,9 @@ export default function LandingPage() {
             CinePrompt <span className="text-indigo-400">AI</span>
           </span>
           <div className="flex gap-6 text-sm text-white/60">
-            <Link href="/auth/login" className="hover:text-white">
-              Login
-            </Link>
+<Link href="/auth/login" className="rounded-lg border border-white/20 px-3 py-1.5 text-sm hover:bg-white/10">
+            Login
+          </Link>
             <Link href="/auth/signup" className="hover:text-white">
               Sign Up
             </Link>

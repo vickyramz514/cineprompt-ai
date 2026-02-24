@@ -52,7 +52,10 @@ function TemplateMarketplaceContent() {
             CinePrompt <span className="text-indigo-400">AI</span>
           </Link>
           <div className="flex gap-4">
-            <Link href="/auth/login" className="text-sm text-white/70 hover:text-white">
+            <Link
+              href="/auth/login"
+              className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium transition-colors hover:bg-white/10"
+            >
               Login
             </Link>
             <Link
