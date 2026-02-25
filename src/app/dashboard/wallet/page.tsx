@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useWallet } from "@/hooks/useWallet";
 import { useCreditsStore } from "@/store/useStore";
 import { PRICING_PLANS } from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Modal from "@/components/Modal";
+import Loader from "@/components/Loader";
 
 export default function WalletPage() {
-  const credits = useCreditsStore((s) => s.credits);
+  const { credits, fetchBalance, addCredits } = useWallet();
+  const { isLoading, error } = useCreditsStore();
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [addingCredits, setAddingCredits] = useState(false);
+
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
 
   const handleSelectPlan = (planId: string) => {
     if (planId === "free") return;
@@ -17,10 +25,41 @@ export default function WalletPage() {
     setPaymentModalOpen(true);
   };
 
+  const handleAddCredits = async () => {
+    if (!selectedPlan) return;
+    const plan = PRICING_PLANS.find((p) => p.id === selectedPlan);
+    if (!plan || plan.credits <= 0) return;
+
+    setAddingCredits(true);
+    try {
+      await addCredits(plan.credits, `mock-${Date.now()}`);
+      setPaymentModalOpen(false);
+      setSelectedPlan(null);
+    } catch {
+      // Error shown in store
+    } finally {
+      setAddingCredits(false);
+    }
+  };
+
+  if (isLoading && credits === 0) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader size="lg" />
+      </div>
+    );
+  }
+
   return (
     <div>
       <h1 className="text-2xl font-semibold">Wallet</h1>
       <p className="mt-1 text-white/60">Manage your credits and subscription</p>
+
+      {error && (
+        <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
 
       <div className="mt-8 rounded-2xl border border-white/5 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 p-8">
         <div className="flex items-center justify-between">
@@ -34,7 +73,7 @@ export default function WalletPage() {
         </div>
       </div>
 
-      <h2 className="mt-12 text-xl font-semibold">Plans</h2>
+      <h2 className="mt-12 text-xl font-semibold">Add Credits</h2>
       <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {PRICING_PLANS.map((plan) => (
           <PricingCard
@@ -67,10 +106,11 @@ export default function WalletPage() {
             </div>
           </div>
           <button
-            onClick={() => setPaymentModalOpen(false)}
-            className="w-full rounded-xl bg-indigo-500 py-3 font-semibold text-white hover:bg-indigo-600"
+            onClick={handleAddCredits}
+            disabled={addingCredits}
+            className="w-full rounded-xl bg-indigo-500 py-3 font-semibold text-white hover:bg-indigo-600 disabled:opacity-50"
           >
-            Pay (Mock)
+            {addingCredits ? "Processing..." : "Add Credits (Mock)"}
           </button>
         </div>
       </Modal>

@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { useCreditsStore } from "@/store/useStore";
 import { useUIStore } from "@/store/useStore";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Navbar() {
   const credits = useCreditsStore((s) => s.credits);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
+  const { logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 h-16 border-b border-white/5 bg-black/40 backdrop-blur-xl">
@@ -21,7 +23,7 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-<Link href="/dashboard" className="text-xl font-semibold tracking-tight">
+          <Link href="/dashboard" className="text-xl font-semibold tracking-tight">
             CinePrompt <span className="text-indigo-400">AI</span>
           </Link>
         </div>
@@ -32,6 +34,12 @@ export default function Navbar() {
             <span className="text-sm font-medium">{credits}</span>
             <span className="text-xs text-white/50">credits</span>
           </div>
+          <button
+            onClick={logout}
+            className="rounded-lg px-3 py-1.5 text-sm text-white/70 hover:bg-white/10 hover:text-white"
+          >
+            Logout
+          </button>
         </div>
       </div>
     </header>

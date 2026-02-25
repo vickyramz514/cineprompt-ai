@@ -5,7 +5,8 @@ export type User = {
   name: string;
   email: string;
   avatar?: string;
-  plan: "free" | "starter" | "creator" | "pro";
+  plan?: "free" | "starter" | "creator" | "pro" | string;
+  credits?: number;
 };
 
 export type VideoJob = {
@@ -13,9 +14,11 @@ export type VideoJob = {
   prompt: string;
   status: "pending" | "processing" | "completed" | "failed";
   thumbnail?: string;
+  videoUrl?: string;
   createdAt: string;
   style?: string;
   duration?: number;
+  progress?: number;
 };
 
 export type UIState = {
@@ -32,26 +35,49 @@ export const useUIStore = create<UIState>((set) => ({
   setModalOpen: (modal) => set({ modalOpen: modal }),
 }));
 
+export const useAuthStore = create<{
+  user: User | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+  error: string | null;
+  setUser: (user: User | null) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  logout: () => void;
+}>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  isLoading: false,
+  error: null,
+  setUser: (user) => set({ user, isAuthenticated: !!user }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
+  logout: () => set({ user: null, isAuthenticated: false, error: null }),
+}));
+
 export const useUserStore = create<{
   user: User | null;
   setUser: (user: User | null) => void;
 }>((set) => ({
-  user: {
-    id: "1",
-    name: "Alex Johnson",
-    email: "alex@example.com",
-    plan: "creator",
-  },
+  user: null,
   setUser: (user) => set({ user }),
 }));
 
 export const useCreditsStore = create<{
   credits: number;
+  isLoading: boolean;
+  error: string | null;
   setCredits: (credits: number) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   deductCredits: (amount: number) => void;
 }>((set) => ({
-  credits: 450,
+  credits: 0,
+  isLoading: false,
+  error: null,
   setCredits: (credits) => set({ credits }),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
   deductCredits: (amount) => set((s) => ({ credits: Math.max(0, s.credits - amount) })),
 }));
 
@@ -87,34 +113,25 @@ export const useTemplateStore = create<{
 
 export const useVideoJobsStore = create<{
   jobs: VideoJob[];
+  isLoading: boolean;
+  error: string | null;
+  setJobs: (jobs: VideoJob[]) => void;
   addJob: (job: VideoJob) => void;
   updateJob: (id: string, updates: Partial<VideoJob>) => void;
+  setLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
   getJobs: () => VideoJob[];
 }>((set, get) => ({
-  jobs: [
-    {
-      id: "1",
-      prompt: "A drone flying over misty mountains at sunrise",
-      status: "completed",
-      createdAt: "2025-02-20T10:30:00Z",
-    },
-    {
-      id: "2",
-      prompt: "Cinematic city night time-lapse",
-      status: "processing",
-      createdAt: "2025-02-24T09:15:00Z",
-    },
-    {
-      id: "3",
-      prompt: "Underwater coral reef exploration",
-      status: "pending",
-      createdAt: "2025-02-24T11:00:00Z",
-    },
-  ],
+  jobs: [],
+  isLoading: false,
+  error: null,
+  setJobs: (jobs) => set({ jobs }),
   addJob: (job) => set((s) => ({ jobs: [job, ...s.jobs] })),
   updateJob: (id, updates) =>
     set((s) => ({
       jobs: s.jobs.map((j) => (j.id === id ? { ...j, ...updates } : j)),
     })),
+  setLoading: (isLoading) => set({ isLoading }),
+  setError: (error) => set({ error }),
   getJobs: () => get().jobs,
 }));

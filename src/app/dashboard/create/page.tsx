@@ -10,10 +10,9 @@ import {
   VIDEO_STYLES,
   DURATIONS,
   ASPECT_RATIOS,
-  RESOLUTIONS,
 } from "@/lib/mock-data";
 import { useCreditsStore } from "@/store/useStore";
-import { useVideoJobsStore } from "@/store/useStore";
+import { useVideoJobs } from "@/hooks/useVideoJobs";
 
 const CREDIT_COST = 10;
 const ADVANCED_OPTIONS = [
@@ -25,9 +24,8 @@ const ADVANCED_OPTIONS = [
 function CreateVideoContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const deductCredits = useCreditsStore((s) => s.deductCredits);
-  const addJob = useVideoJobsStore((s) => s.addJob);
-  const updateJob = useVideoJobsStore((s) => s.updateJob);
+  const credits = useCreditsStore((s) => s.credits);
+  const { generateVideo, pollJob } = useVideoJobs();
 
   const [prompt, setPrompt] = useState("");
 
@@ -35,48 +33,52 @@ function CreateVideoContent() {
     const templatePrompt = searchParams.get("prompt");
     if (templatePrompt) setPrompt(decodeURIComponent(templatePrompt));
   }, [searchParams]);
+
   const [style, setStyle] = useState("cinematic");
   const [duration, setDuration] = useState(10);
   const [aspectRatio, setAspectRatio] = useState("16:9");
-  const [resolution, setResolution] = useState("1080p");
   const [advanced, setAdvanced] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) return;
+    if (credits < CREDIT_COST) {
+      setError("Insufficient credits. Please add more credits.");
+      return;
+    }
+    if (isGenerating) return;
+
     setIsGenerating(true);
-    setProgress(0);
-
-    const jobId = `job-${Date.now()}`;
-    addJob({
-      id: jobId,
-      prompt,
-      status: "processing",
-      createdAt: new Date().toISOString(),
-      style,
-      duration,
-    });
-    deductCredits(CREDIT_COST);
-
-    const interval = setInterval(() => {
-      setProgress((p) => {
-        if (p >= 100) {
-          clearInterval(interval);
-          updateJob(jobId, { status: "completed" });
-          setIsGenerating(false);
-          router.push("/dashboard/history");
-          return 100;
-        }
-        return p + 2;
+    setError(null);
+    try {
+      const jobId = await generateVideo({
+        prompt: prompt.trim(),
+        duration,
+        aspectRatio,
+        style,
       });
-    }, 100);
+      pollJob(jobId);
+      router.push("/dashboard/history");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to generate video");
+    } finally {
+      setIsGenerating(false);
+    }
   };
+
+  const hasInsufficientCredits = credits < CREDIT_COST;
 
   return (
     <div className="mx-auto max-w-5xl">
       <h1 className="text-2xl font-semibold">Create Video</h1>
       <p className="mt-1 text-white/60">Generate cinematic videos from your prompts</p>
+
+      {error && (
+        <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+          {error}
+        </div>
+      )}
 
       <div className="mt-8 grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-6">
@@ -139,23 +141,6 @@ function CreateVideoContent() {
             </div>
           </div>
 
-          <div>
-            <label className="mb-2 block text-sm font-medium">Resolution</label>
-            <div className="flex gap-2">
-              {RESOLUTIONS.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setResolution(r)}
-                  className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-                    resolution === r ? "bg-indigo-500 text-white" : "bg-white/5 text-white/80 hover:bg-white/10"
-                  }`}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-
           <details className="group rounded-xl border border-white/5 bg-white/[0.02]">
             <summary className="cursor-pointer px-4 py-3 font-medium">Advanced settings</summary>
             <div className="space-y-4 border-t border-white/5 px-4 py-4">
@@ -183,7 +168,7 @@ function CreateVideoContent() {
               {isGenerating ? (
                 <div className="flex h-full flex-col items-center justify-center gap-4">
                   <Loader size="lg" />
-                  <ProgressBar progress={progress} label="Generating..." />
+                  <ProgressBar progress={50} label="Generating..." />
                 </div>
               ) : (
                 <div className="flex h-full items-center justify-center text-white/30">
@@ -196,12 +181,15 @@ function CreateVideoContent() {
               <span className="text-sm text-white/60">Cost: {CREDIT_COST} credits</span>
               <button
                 onClick={handleGenerate}
-                disabled={!prompt.trim() || isGenerating}
+                disabled={!prompt.trim() || isGenerating || hasInsufficientCredits}
                 className="rounded-xl bg-indigo-500 px-6 py-2.5 font-semibold text-white transition-colors hover:bg-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isGenerating ? "Generating..." : "Generate"}
               </button>
             </div>
+            {hasInsufficientCredits && (
+              <p className="mt-2 text-sm text-amber-400">Insufficient credits. Add more in Wallet.</p>
+            )}
           </div>
         </div>
       </div>
