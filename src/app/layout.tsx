@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import GoogleOAuthProviderWrapper from "@/components/GoogleOAuthProvider";
 
 export const metadata: Metadata = {
   title: "CinePrompt AI - Create cinematic videos from text",
@@ -14,7 +15,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
-        {children}
+        <GoogleOAuthProviderWrapper>
+          {children}
+        </GoogleOAuthProviderWrapper>
       </body>
     </html>
   );

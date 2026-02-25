@@ -4,9 +4,10 @@ export type User = {
   id: string;
   name: string;
   email: string;
-  avatar?: string;
+  avatar?: string | null;
   plan?: "free" | "starter" | "creator" | "pro" | string;
   credits?: number;
+  provider?: string | null;
 };
 
 export type VideoJob = {

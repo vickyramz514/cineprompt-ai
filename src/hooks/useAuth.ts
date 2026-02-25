@@ -4,6 +4,7 @@ import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useAuthStore, useCreditsStore } from "@/store/useStore";
 import * as authService from "@/services/auth.service";
+import type { User } from "@/services/auth.service";
 import { clearTokens, setLogoutCallback } from "@/lib/api";
 
 export function useAuth() {
@@ -86,13 +87,24 @@ export function useAuth() {
     [setUser, setLoading, setError, setCredits, router]
   );
 
+  const loginWithGoogle = useCallback(
+    (googleUser: User) => {
+      setUser(googleUser);
+      if (googleUser?.credits != null) setCredits(googleUser.credits);
+      router.push("/dashboard");
+    },
+    [setUser, setCredits, router]
+  );
+
   return {
     user,
     isAuthenticated,
     isLoading,
     error,
+    setError,
     login,
     signup,
+    loginWithGoogle,
     logout,
     fetchUser,
   };

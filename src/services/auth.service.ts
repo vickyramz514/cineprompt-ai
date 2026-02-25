@@ -11,6 +11,8 @@ export type User = {
   credits?: number;
   plan?: string;
   planExpiresAt?: string | null;
+  avatar?: string | null;
+  provider?: string | null;
 };
 
 export type SignupData = {
@@ -56,6 +58,14 @@ export async function getCurrentUser(): Promise<User> {
   const res = await api.get<ApiResponse<{ user: User }>>("/auth/me");
   if (!res.data.success) throw new Error("Failed to fetch user");
   return res.data.data.user;
+}
+
+export async function loginWithGoogle(credential: string): Promise<AuthResponse> {
+  const res = await api.post<ApiResponse<AuthResponse>>("/auth/google", { credential });
+  if (!res.data.success) throw new Error("Google sign-in failed");
+  const auth = res.data.data;
+  setTokens(auth.accessToken, auth.refreshToken);
+  return auth;
 }
 
 export { getErrorMessage };
