@@ -2,17 +2,36 @@
 
 import { useState, useEffect } from "react";
 import { useWallet } from "@/hooks/useWallet";
+import { useSubscriptionPlans } from "@/hooks/useSubscriptionPlans";
 import { useCreditsStore } from "@/store/useStore";
-import { PRICING_PLANS } from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
+import type { Plan } from "@/components/PricingCard";
+
+function mapPlanToPricing(plan: {
+  id: string;
+  name: string;
+  slug: string;
+  priceCents: number;
+  credits: number;
+  features?: unknown;
+}): Plan {
+  return {
+    id: plan.id,
+    name: plan.name,
+    price: Math.round(plan.priceCents / 100),
+    credits: plan.credits,
+    features: Array.isArray(plan.features) ? (plan.features as string[]) : [],
+  };
+}
 
 export default function WalletPage() {
   const { credits, fetchBalance, addCredits } = useWallet();
+  const { plans, isLoading: plansLoading, error: plansError } = useSubscriptionPlans();
   const { isLoading, error } = useCreditsStore();
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [addingCredits, setAddingCredits] = useState(false);
 
   useEffect(() => {
@@ -20,19 +39,18 @@ export default function WalletPage() {
   }, [fetchBalance]);
 
   const handleSelectPlan = (planId: string) => {
-    if (planId === "free") return;
-    setSelectedPlan(planId);
+    const plan = plans.find((p) => p.id === planId || p.slug === planId);
+    if (!plan || plan.slug === "free") return;
+    setSelectedPlan(mapPlanToPricing(plan));
     setPaymentModalOpen(true);
   };
 
   const handleAddCredits = async () => {
     if (!selectedPlan) return;
-    const plan = PRICING_PLANS.find((p) => p.id === selectedPlan);
-    if (!plan || plan.credits <= 0) return;
 
     setAddingCredits(true);
     try {
-      await addCredits(plan.credits, `mock-${Date.now()}`);
+      await addCredits(selectedPlan.credits, `mock-${Date.now()}`);
       setPaymentModalOpen(false);
       setSelectedPlan(null);
     } catch {
@@ -41,6 +59,8 @@ export default function WalletPage() {
       setAddingCredits(false);
     }
   };
+
+  const pricingPlans = plans.map(mapPlanToPricing).filter((p) => p.price > 0);
 
   if (isLoading && credits === 0) {
     return (
@@ -55,9 +75,9 @@ export default function WalletPage() {
       <h1 className="text-2xl font-semibold">Wallet</h1>
       <p className="mt-1 text-white/60">Manage your credits and subscription</p>
 
-      {error && (
+      {(error || plansError) && (
         <div className="mt-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
-          {error}
+          {error || plansError}
         </div>
       )}
 
@@ -74,16 +94,22 @@ export default function WalletPage() {
       </div>
 
       <h2 className="mt-12 text-xl font-semibold">Add Credits</h2>
-      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {PRICING_PLANS.map((plan) => (
-          <PricingCard
-            key={plan.id}
-            plan={plan}
-            popular={plan.id === "creator"}
-            onSelect={handleSelectPlan}
-          />
-        ))}
-      </div>
+      {plansLoading && pricingPlans.length === 0 ? (
+        <div className="mt-6 flex justify-center py-12">
+          <Loader size="lg" />
+        </div>
+      ) : (
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {pricingPlans.map((plan) => (
+            <PricingCard
+              key={plan.id}
+              plan={plan}
+              popular={plan.name.toLowerCase() === "creator"}
+              onSelect={handleSelectPlan}
+            />
+          ))}
+        </div>
+      )}
 
       <Modal
         isOpen={paymentModalOpen}
@@ -92,7 +118,7 @@ export default function WalletPage() {
       >
         <div className="space-y-4">
           <p className="text-sm text-white/60">
-            Selected plan: {PRICING_PLANS.find((p) => p.id === selectedPlan)?.name}
+            Selected plan: {selectedPlan?.name} — {selectedPlan?.credits} credits
           </p>
           <div className="rounded-lg border border-white/10 bg-white/5 p-4">
             <p className="text-sm text-white/60">Payment method</p>
