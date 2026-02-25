@@ -224,7 +224,7 @@ export default function WalletPage() {
                 <PricingCard
                   key={plan.id}
                   plan={plan}
-                  popular={plan.name.toLowerCase() === "pro"}
+                  popular={plan.name.toLowerCase() === "creator"}
                   onSelect={handleSelectPlan}
                 />
               ))}

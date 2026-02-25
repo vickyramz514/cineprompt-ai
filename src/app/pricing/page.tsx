@@ -104,7 +104,7 @@ export default function PricingPage() {
                 <PricingCard
                   key={plan.id}
                   plan={plan}
-                  popular={plan.name.toLowerCase() === "pro"}
+                  popular={plan.name.toLowerCase() === "creator"}
                   onSelect={(id) => handleSelectPlan(id)}
                 />
               ))}

@@ -155,7 +155,7 @@ export default function LandingPage() {
               <PricingCard
                 key={plan.id}
                 plan={{ ...plan, slug: plan.id }}
-                popular={plan.id === "pro"}
+                popular={plan.id === "creator"}
                 onSelect={() => (window.location.href = "/pricing")}
               />
             ))}
