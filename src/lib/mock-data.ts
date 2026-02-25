@@ -23,10 +23,10 @@ export const ASPECT_RATIOS = [
 export const RESOLUTIONS = ["720p", "1080p"];
 
 export const PRICING_PLANS = [
-  { id: "free", name: "Free", price: 0, credits: 50, features: ["50 credits/month", "720p output", "Basic templates"] },
-  { id: "starter", name: "Starter", price: 499, credits: 200, features: ["200 credits/month", "1080p output", "All templates"] },
-  { id: "creator", name: "Creator", price: 999, credits: 500, features: ["500 credits/month", "1080p output", "Priority rendering"] },
-  { id: "pro", name: "Pro", price: 1999, credits: 1500, features: ["1500 credits/month", "4K output", "API access"] },
+  { id: "free", name: "Free", price: 0, credits: 30, features: ["30 credits (one-time)", "720p output", "Basic templates"] },
+  { id: "starter", name: "Starter", price: 499, credits: 500, features: ["500 credits/month", "1080p output", "All templates"] },
+  { id: "pro", name: "Pro", price: 999, credits: 1500, features: ["1500 credits/month", "1080p output", "Priority rendering"] },
+  { id: "ultra", name: "Ultra", price: 1999, credits: 4000, features: ["4000 credits/month", "4K output", "API access"] },
 ];
 
 export const SIDEBAR_NAV = [

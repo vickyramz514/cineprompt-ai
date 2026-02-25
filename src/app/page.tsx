@@ -21,6 +21,9 @@ export default function LandingPage() {
           <Link href="/templates" className="text-sm font-medium text-white/70 hover:text-white">
             Templates
           </Link>
+          <Link href="/pricing" className="text-sm font-medium text-white/70 hover:text-white">
+            Pricing
+          </Link>
           <Link
             href="/auth/login"
             className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
@@ -151,9 +154,9 @@ export default function LandingPage() {
             {PRICING_PLANS.map((plan) => (
               <PricingCard
                 key={plan.id}
-                plan={plan}
-                popular={plan.id === "creator"}
-                onSelect={() => {}}
+                plan={{ ...plan, slug: plan.id }}
+                popular={plan.id === "pro"}
+                onSelect={() => (window.location.href = "/pricing")}
               />
             ))}
           </div>

@@ -6,12 +6,13 @@ export interface Plan {
   price: number;
   credits: number;
   features: string[];
+  slug?: string;
 }
 
 interface PricingCardProps {
   plan: Plan;
   popular?: boolean;
-  onSelect: (id: string) => void;
+  onSelect: (idOrSlug: string) => void;
 }
 
 export default function PricingCard({ plan, popular, onSelect }: PricingCardProps) {
@@ -45,7 +46,7 @@ export default function PricingCard({ plan, popular, onSelect }: PricingCardProp
         ))}
       </ul>
       <button
-        onClick={() => onSelect(plan.id)}
+        onClick={() => onSelect(plan.slug || plan.id)}
         className={`mt-6 w-full rounded-lg py-2.5 font-medium transition-colors ${
           popular
             ? "bg-indigo-500 text-white hover:bg-indigo-600"

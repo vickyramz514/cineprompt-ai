@@ -29,11 +29,14 @@ export default function Navbar() {
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5">
+          <Link
+            href="/dashboard/wallet"
+            className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 hover:bg-white/10"
+          >
             <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
             <span className="text-sm font-medium">{credits}</span>
             <span className="text-xs text-white/50">credits</span>
-          </div>
+          </Link>
           <button
             onClick={logout}
             className="rounded-lg px-3 py-1.5 text-sm text-white/70 hover:bg-white/10 hover:text-white"

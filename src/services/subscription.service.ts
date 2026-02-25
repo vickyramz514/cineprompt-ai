@@ -50,4 +50,44 @@ export async function getMySubscription(): Promise<UserSubscription | null> {
   return res.data.data.subscription;
 }
 
+export type CreateSubscriptionResponse = {
+  subscriptionId: string;
+  checkoutUrl: string;
+  planId: string;
+  planSlug: string;
+};
+
+export async function createSubscription(planSlug: string): Promise<CreateSubscriptionResponse> {
+  const res = await api.post<ApiResponse<CreateSubscriptionResponse>>("/subscriptions/create", {
+    planSlug,
+  });
+  if (!res.data.success) throw new Error("Failed to create subscription");
+  return res.data.data;
+}
+
+export async function cancelSubscription(subscriptionId: string): Promise<void> {
+  const res = await api.post<ApiResponse<{ message: string }>>("/subscriptions/cancel", {
+    subscriptionId,
+  });
+  if (!res.data.success) throw new Error("Failed to cancel subscription");
+}
+
+export type SubscriptionStatusResponse = {
+  subscription: {
+    id: string;
+    status: string;
+    currentPeriodStart: string;
+    currentPeriodEnd: string;
+    cancelAtPeriodEnd: boolean;
+    externalId: string | null;
+    plan: SubscriptionPlan;
+  } | null;
+};
+
+export async function getSubscriptionStatus(): Promise<SubscriptionStatusResponse["subscription"]> {
+  const res = await api.get<ApiResponse<SubscriptionStatusResponse>>("/subscriptions/status");
+  if (!res.data.success) throw new Error("Failed to fetch subscription status");
+  return res.data.data.subscription;
+}
+
 export { getErrorMessage };
