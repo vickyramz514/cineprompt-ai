@@ -13,8 +13,9 @@ import {
 } from "@/lib/mock-data";
 import { useCreditsStore } from "@/store/useStore";
 import { useVideoJobs } from "@/hooks/useVideoJobs";
+import * as videoService from "@/services/video.service";
 
-const CREDIT_COST = 10;
+const CREDIT_COST = 5; // Matches backend max video seconds
 const ADVANCED_OPTIONS = [
   { id: "camera", label: "Camera movement", options: ["Static", "Pan", "Zoom", "Orbit"] },
   { id: "lighting", label: "Lighting", options: ["Natural", "Dramatic", "Soft", "Neon"] },
@@ -35,7 +36,7 @@ function CreateVideoContent() {
   }, [searchParams]);
 
   const [style, setStyle] = useState("cinematic");
-  const [duration, setDuration] = useState(10);
+  const [duration, setDuration] = useState(5);
   const [aspectRatio, setAspectRatio] = useState("16:9");
   const [advanced, setAdvanced] = useState<Record<string, string>>({});
   const [isGenerating, setIsGenerating] = useState(false);
@@ -61,7 +62,7 @@ function CreateVideoContent() {
       pollJob(jobId);
       router.push("/dashboard/history");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to generate video");
+      setError(videoService.getErrorMessage(err));
     } finally {
       setIsGenerating(false);
     }

@@ -64,6 +64,13 @@ export const setLogoutCallback = (cb: (() => void) | null) => {
 api.interceptors.response.use(
   (res) => res,
   async (err: AxiosError) => {
+    // Attach API error message to the error so it propagates correctly
+    const data = err.response?.data as { error?: { message?: string }; message?: string } | undefined;
+    const apiMessage = data?.error?.message ?? data?.message;
+    if (apiMessage && typeof apiMessage === "string") {
+      err.message = apiMessage;
+    }
+
     const originalRequest = err.config as typeof err.config & { _retry?: boolean };
 
     if (err.response?.status === 401 && !originalRequest._retry) {
@@ -106,8 +113,15 @@ export type ApiError = {
 
 export const getErrorMessage = (err: unknown): string => {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data as { error?: { message?: string }; message?: string } | undefined;
-    return data?.error?.message || data?.message || err.message || "Something went wrong";
+    const data = err.response?.data as
+      | { error?: { message?: string; code?: string }; message?: string }
+      | undefined;
+    // Prefer API error message over Axios generic "Request failed with status code X"
+    const apiMessage = data?.error?.message ?? data?.message;
+    if (apiMessage && typeof apiMessage === "string") {
+      return apiMessage;
+    }
+    return err.message || "Something went wrong";
   }
   return err instanceof Error ? err.message : "Something went wrong";
 };

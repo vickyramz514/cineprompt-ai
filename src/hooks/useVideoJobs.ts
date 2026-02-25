@@ -52,7 +52,7 @@ export function useVideoJobs() {
       setError(null);
       const data = await videoService.generateVideo({
         prompt: payload.prompt,
-        duration: payload.duration ?? 10,
+        duration: payload.duration ?? 5,
         aspectRatio: (payload.aspectRatio as "16:9" | "9:16" | "1:1") ?? "16:9",
         style: (payload.style as "cinematic" | "anime" | "realistic" | "fantasy") ?? "cinematic",
       });
