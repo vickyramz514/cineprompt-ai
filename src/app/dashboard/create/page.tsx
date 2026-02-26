@@ -6,16 +6,21 @@ import { useRouter } from "next/navigation";
 import PromptEditor from "@/components/PromptEditor";
 import ProgressBar from "@/components/ProgressBar";
 import Loader from "@/components/Loader";
-import {
-  VIDEO_STYLES,
-  DURATIONS,
-  ASPECT_RATIOS,
-} from "@/lib/mock-data";
+import { VIDEO_STYLES, ASPECT_RATIOS } from "@/lib/mock-data";
 import { useCreditsStore } from "@/store/useStore";
 import { useVideoJobs } from "@/hooks/useVideoJobs";
 import * as videoService from "@/services/video.service";
+import * as walletService from "@/services/wallet.service";
 
-const CREDIT_COST = 5; // Matches backend max video seconds
+// Duration options: 5, 10, 15, 20... up to maxDuration
+const getDurationOptions = (maxDuration: number) => {
+  const options: number[] = [];
+  for (let d = 5; d <= Math.min(maxDuration, 60); d += 5) {
+    options.push(d);
+  }
+  if (options.length === 0) options.push(5);
+  return options;
+};
 const ADVANCED_OPTIONS = [
   { id: "camera", label: "Camera movement", options: ["Static", "Pan", "Zoom", "Orbit"] },
   { id: "lighting", label: "Lighting", options: ["Natural", "Dramatic", "Soft", "Neon"] },
@@ -29,12 +34,18 @@ function CreateVideoContent() {
   const { generateVideo, pollJob } = useVideoJobs();
 
   const [prompt, setPrompt] = useState("");
+  const [maxDuration, setMaxDuration] = useState(5);
+
+  useEffect(() => {
+    walletService.getLimits().then((data) => setMaxDuration(data.maxDuration)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const templatePrompt = searchParams.get("prompt");
     if (templatePrompt) setPrompt(decodeURIComponent(templatePrompt));
   }, [searchParams]);
 
+  const durationOptions = getDurationOptions(maxDuration);
   const [style, setStyle] = useState("cinematic");
   const [duration, setDuration] = useState(5);
   const [aspectRatio, setAspectRatio] = useState("16:9");
@@ -42,9 +53,15 @@ function CreateVideoContent() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (durationOptions.length > 0 && !durationOptions.includes(duration)) {
+      setDuration(durationOptions[0]);
+    }
+  }, [durationOptions, duration]);
+
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
-    if (credits < CREDIT_COST) {
+    if (credits < duration) {
       setError("Insufficient credits. Please add more credits.");
       return;
     }
@@ -55,6 +72,7 @@ function CreateVideoContent() {
     try {
       const jobId = await generateVideo({
         prompt: prompt.trim(),
+        durationSeconds: duration,
         duration,
         aspectRatio,
         style,
@@ -68,7 +86,7 @@ function CreateVideoContent() {
     }
   };
 
-  const hasInsufficientCredits = credits < CREDIT_COST;
+  const hasInsufficientCredits = credits < duration;
 
   return (
     <div className="mx-auto max-w-5xl">
@@ -109,13 +127,14 @@ function CreateVideoContent() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm font-medium">Duration</label>
-              <div className="flex gap-2">
-                {DURATIONS.map((d) => (
+              <label className="mb-2 block text-sm font-medium">Duration (max {maxDuration}s for your plan)</label>
+              <div className="flex flex-wrap gap-2">
+                {durationOptions.map((d) => (
                   <button
                     key={d}
                     onClick={() => setDuration(d)}
-                    className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
+                    disabled={credits < d}
+                    className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
                       duration === d ? "bg-indigo-500 text-white" : "bg-white/5 text-white/80 hover:bg-white/10"
                     }`}
                   >
@@ -179,7 +198,7 @@ function CreateVideoContent() {
             </div>
 
             <div className="mt-4 flex items-center justify-between">
-              <span className="text-sm text-white/60">Cost: {CREDIT_COST} credits</span>
+              <span className="text-sm text-white/60">Cost: {duration} credits ({duration}s)</span>
               <button
                 onClick={handleGenerate}
                 disabled={!prompt.trim() || isGenerating || hasInsufficientCredits}

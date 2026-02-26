@@ -14,7 +14,7 @@ export const VIDEO_STYLES = [
   { id: "fantasy", name: "Fantasy", description: "Magical and surreal" },
 ];
 
-export const DURATIONS = [5]; // Max 5s per backend limit
+// Duration options are now plan-based; use getDurationOptions(maxDuration) from API
 export const ASPECT_RATIOS = [
   { id: "16:9", name: "16:9", width: 16, height: 9 },
   { id: "9:16", name: "9:16", width: 9, height: 16 },

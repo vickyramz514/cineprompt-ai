@@ -20,6 +20,7 @@ export type VideoJob = {
 export type GenerateVideoPayload = {
   prompt: string;
   duration?: number;
+  durationSeconds?: number;
   aspectRatio?: "16:9" | "9:16" | "1:1";
   style?: "cinematic" | "anime" | "realistic" | "fantasy";
 };

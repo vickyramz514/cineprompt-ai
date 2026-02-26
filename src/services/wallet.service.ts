@@ -7,6 +7,12 @@ import { api, getErrorMessage } from "@/lib/api";
 export type BalanceResponse = {
   credits: number;
   plan?: string;
+  maxDuration?: number;
+};
+
+export type LimitsResponse = {
+  credits: number;
+  maxDuration: number;
 };
 
 export type AddCreditsPayload = {
@@ -27,6 +33,12 @@ export type ApiResponse<T> = {
 export async function getBalance(): Promise<BalanceResponse> {
   const res = await api.get<ApiResponse<BalanceResponse>>("/wallet/balance");
   if (!res.data.success) throw new Error("Failed to fetch balance");
+  return res.data.data;
+}
+
+export async function getLimits(): Promise<LimitsResponse> {
+  const res = await api.get<ApiResponse<LimitsResponse>>("/wallet/limits");
+  if (!res.data.success) throw new Error("Failed to fetch limits");
   return res.data.data;
 }
 
