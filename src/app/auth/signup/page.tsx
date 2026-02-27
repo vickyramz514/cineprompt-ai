@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { getAccessToken } from "@/lib/api";
 import GoogleLoginButton from "@/components/GoogleLoginButton";
 
 export default function SignupPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { signup, loginWithGoogle, isLoading, error, setError, user } = useAuth();
+
+  const refCode = searchParams.get("ref") || "";
 
   useEffect(() => {
     if (getAccessToken() && user) {
@@ -23,7 +26,7 @@ export default function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signup(name, email, password);
+      await signup(name, email, password, refCode || undefined);
     } catch {
       // Error handled in useAuth
     }

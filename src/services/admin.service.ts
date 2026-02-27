@@ -219,4 +219,122 @@ export type AdminAbuseLog = {
   user: { id: string; name: string; email: string } | null;
 };
 
+export async function getSupportTickets(params?: {
+  status?: string;
+  priority?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const res = await api.get<ApiResponse<{ tickets: SupportTicket[]; total: number }>>(
+    "/admin/support/tickets",
+    { params }
+  );
+  if (!res.data.success) throw new Error("Failed to fetch tickets");
+  return res.data.data;
+}
+
+export type SupportTicket = {
+  id: string;
+  subject: string;
+  status: string;
+  priority: string;
+  createdAt: string;
+  user: { id: string; name: string; email: string };
+  messages?: { id: string; sender: string; message: string; createdAt: string }[];
+};
+
+export async function getSupportTicketById(id: string) {
+  const res = await api.get<ApiResponse<SupportTicket>>(`/admin/support/tickets/${id}`);
+  if (!res.data.success) throw new Error("Failed to fetch ticket");
+  return res.data.data;
+}
+
+export async function addSupportMessage(ticketId: string, message: string) {
+  const res = await api.post<ApiResponse<{ id: string }>>(
+    `/admin/support/tickets/${ticketId}/message`,
+    { message }
+  );
+  if (!res.data.success) throw new Error("Failed to send message");
+  return res.data.data;
+}
+
+export async function closeSupportTicket(ticketId: string) {
+  const res = await api.post<ApiResponse<SupportTicket>>(
+    `/admin/support/tickets/${ticketId}/close`
+  );
+  if (!res.data.success) throw new Error("Failed to close ticket");
+  return res.data.data;
+}
+
+export async function getGrowthOverview(days = 30) {
+  const res = await api.get<ApiResponse<GrowthOverview>>("/admin/growth/overview", {
+    params: { days },
+  });
+  if (!res.data.success) throw new Error("Failed to fetch growth");
+  return res.data.data;
+}
+
+export type GrowthOverview = {
+  dailySignups: { date: string; count: number }[];
+  dailyActives: { date: string; count: number }[];
+  totalUsers: number;
+  totalPaidUsers: number;
+  retention: unknown;
+  churn: { cancelled: number; total: number; churnRate: number };
+  funnel: {
+    signups: number;
+    firstVideo: number;
+    subscriptions: number;
+    signupToVideo: number;
+    videoToSub: number;
+  };
+  days: number;
+};
+
+export async function getInvestorMetrics() {
+  const res = await api.get<ApiResponse<InvestorMetrics>>("/admin/investor/metrics");
+  if (!res.data.success) throw new Error("Failed to fetch metrics");
+  return res.data.data;
+}
+
+export type InvestorMetrics = {
+  mrr: number;
+  arr: number;
+  arpu: number;
+  churnRate: number;
+  growthRate: number;
+  ltv: number;
+  profitMargin: number;
+  burnRate: number;
+  runwayMonths: number;
+  activeSubscriptions: number;
+  totalUsers: number;
+  totalRevenue: number;
+  revenueThisMonth: number;
+  apiCostThisMonth: number;
+};
+
+export async function getAffiliates() {
+  const res = await api.get<ApiResponse<AdminAffiliate[]>>("/admin/affiliate");
+  if (!res.data.success) throw new Error("Failed to fetch affiliates");
+  return res.data.data;
+}
+
+export type AdminAffiliate = {
+  id: string;
+  userId: string;
+  referralCode: string;
+  commissionRate: number;
+  totalEarnings: number;
+  payoutBalance: number;
+  user: { id: string; name: string; email: string };
+  payouts?: { id: string; amount: number; status: string; createdAt: string }[];
+};
+
+export async function approveAffiliatePayout(payoutId: string) {
+  const res = await api.post<ApiResponse<unknown>>(`/admin/affiliate/payout/${payoutId}`);
+  if (!res.data.success) throw new Error("Failed to approve payout");
+  return res.data.data;
+}
+
 export { getErrorMessage };

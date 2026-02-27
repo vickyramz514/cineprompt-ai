@@ -36,6 +36,8 @@ export const SIDEBAR_NAV = [
   { href: "/dashboard/templates?tab=favorites", label: "Favorites", icon: "favorites" },
   { href: "/dashboard/history", label: "History", icon: "history" },
   { href: "/dashboard/wallet", label: "Wallet", icon: "wallet" },
+  { href: "/dashboard/referral", label: "Referrals", icon: "wallet" },
+  { href: "/dashboard/support", label: "Support", icon: "notifications" },
   { href: "/dashboard/notifications", label: "Notifications", icon: "notifications" },
   { href: "/dashboard/profile", label: "Profile", icon: "profile" },
 ];

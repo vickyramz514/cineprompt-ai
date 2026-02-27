@@ -68,11 +68,11 @@ export function useAuth() {
   );
 
   const signup = useCallback(
-    async (name: string, email: string, password: string) => {
+    async (name: string, email: string, password: string, referralCode?: string) => {
       setLoading(true);
       setError(null);
       try {
-        const auth = await authService.signup({ name, email, password });
+        const auth = await authService.signup({ name, email, password, referralCode });
         setUser(auth.user);
         if (auth.user?.credits != null) setCredits(auth.user.credits);
         router.push("/dashboard");

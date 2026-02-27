@@ -10,6 +10,10 @@ const SIDEBAR_NAV = [
   { href: "/admin/users", label: "Users", icon: "👥" },
   { href: "/admin/jobs", label: "Jobs", icon: "🎬" },
   { href: "/admin/payments", label: "Payments", icon: "💳" },
+  { href: "/admin/support", label: "Support", icon: "💬" },
+  { href: "/admin/affiliate", label: "Affiliates", icon: "🤝" },
+  { href: "/admin/growth", label: "Growth", icon: "📈" },
+  { href: "/admin/investor", label: "Investor", icon: "💰" },
   { href: "/admin/abuse", label: "Abuse Logs", icon: "🛡️" },
   { href: "/admin/settings", label: "Settings", icon: "⚙️" },
 ];
