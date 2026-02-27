@@ -13,6 +13,7 @@ export type User = {
   planExpiresAt?: string | null;
   avatar?: string | null;
   provider?: string | null;
+  role?: "USER" | "CREATOR" | "ADMIN" | "SUPER_ADMIN";
 };
 
 export type SignupData = {

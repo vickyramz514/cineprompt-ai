@@ -8,6 +8,7 @@ export type User = {
   plan?: "free" | "starter" | "creator" | "pro" | string;
   credits?: number;
   provider?: string | null;
+  role?: "USER" | "CREATOR" | "ADMIN" | "SUPER_ADMIN";
 };
 
 export type VideoJob = {
