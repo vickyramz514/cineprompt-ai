@@ -1,128 +1,99 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { useVideoJobsStore } from "@/store/useStore";
-import { useTemplateStore } from "@/store/useStore";
-import {
-  getTrendingTemplates,
-  getRecommendedTemplates,
-  getTemplateById,
-} from "@/lib/templates-data";
-import VideoCard from "@/components/VideoCard";
+import { useApiKey } from "@/hooks/useApiKey";
+import { useApiUsage } from "@/hooks/useApiUsage";
+import Loader from "@/components/Loader";
 
-function TemplateThumb({ id, name }: { id: string; name: string }) {
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = useCallback(() => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }, [text]);
   return (
-    <Link href={`/templates/${id}`}>
-      <motion.div
-        whileHover={{ scale: 1.02 }}
-        className="overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] transition-colors hover:border-white/10"
-      >
-        <div className="aspect-video w-full bg-gradient-to-br from-indigo-900/30 to-purple-900/20" />
-        <p className="p-3 text-sm font-medium">{name}</p>
-      </motion.div>
-    </Link>
+    <button
+      onClick={handleCopy}
+      className="rounded-lg border border-white/20 px-3 py-1.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+    >
+      {copied ? "Copied!" : "Copy"}
+    </button>
   );
 }
 
 export default function DashboardPage() {
-  const jobs = useVideoJobsStore((s) => s.jobs).slice(0, 6);
-  const favorites = useTemplateStore((s) => s.favorites);
-  const usedTemplates = useTemplateStore((s) => s.usedTemplates);
+  const { apiKey, isLoading: keyLoading } = useApiKey();
+  const { stats, isLoading: usageLoading } = useApiUsage();
 
-  const trending = getTrendingTemplates();
-  const recommended = getRecommendedTemplates();
-  const myTemplates = usedTemplates
-    .slice(0, 6)
-    .map((u) => getTemplateById(u.templateId))
-    .filter(Boolean);
-  const favTemplates = favorites
-    .slice(0, 6)
-    .map((f) => getTemplateById(f.templateId))
-    .filter(Boolean);
+  const isLoading = keyLoading || usageLoading;
+
+  if (isLoading && !apiKey && !stats) {
+    return (
+      <div className="flex min-h-[400px] items-center justify-center">
+        <Loader size="lg" />
+      </div>
+    );
+  }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="mt-1 text-white/60">Your creative hub</p>
+        <p className="mt-1 text-white/60">Your Stock Market Data API overview</p>
+      </div>
+
+      {/* Quick stats */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+          <p className="text-sm text-white/60">Requests today</p>
+          <p className="mt-1 text-2xl font-bold">{stats?.requestsToday ?? 0}</p>
+        </div>
+        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+          <p className="text-sm text-white/60">Requests this month</p>
+          <p className="mt-1 text-2xl font-bold">{stats?.requestsThisMonth ?? 0}</p>
+        </div>
+        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+          <p className="text-sm text-white/60">Remaining today</p>
+          <p className="mt-1 text-2xl font-bold text-emerald-400">{stats?.remainingToday ?? 0}</p>
+        </div>
+        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+          <p className="text-sm text-white/60">Subscription plan</p>
+          <p className="mt-1 text-lg font-semibold">Free</p>
+          <Link href="/pricing" className="mt-2 inline-block text-sm text-indigo-400 hover:underline">
+            Upgrade →
+          </Link>
+        </div>
+      </div>
+
+      {/* API Key */}
+      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+        <h2 className="text-lg font-semibold">API Key</h2>
+        <p className="mt-1 text-sm text-white/60">Use this key in the x-api-key header for all API requests</p>
+        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+          <code className="font-mono text-sm text-white/90 break-all">
+            {apiKey?.key ?? "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+          </code>
+          <CopyButton text={apiKey?.key ?? "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"} />
+        </div>
       </div>
 
       {/* Quick actions */}
       <div className="flex flex-wrap gap-4">
         <Link
-          href="/templates"
+          href="/dashboard/api-docs"
           className="rounded-xl bg-indigo-500 px-6 py-2.5 font-medium text-white hover:bg-indigo-600"
         >
-          Explore Templates
+          View API Docs
         </Link>
         <Link
-          href="/dashboard/create"
+          href="/pricing"
           className="rounded-xl border border-white/20 px-6 py-2.5 font-medium text-white hover:bg-white/5"
         >
-          Create from Scratch
+          Upgrade Plan
         </Link>
       </div>
-
-      {/* Recent videos */}
-      <section>
-        <h2 className="text-lg font-semibold">Recent Videos</h2>
-        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {jobs.map((job) => (
-            <VideoCard key={job.id} job={job} onDownload={() => {}} />
-          ))}
-        </div>
-        <Link href="/dashboard/history" className="mt-4 inline-block text-indigo-400 hover:underline">
-          View all history →
-        </Link>
-      </section>
-
-      {/* Trending */}
-      <section>
-        <h2 className="text-lg font-semibold">Trending Templates</h2>
-        <p className="mt-1 text-sm text-white/60">Popular this week</p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {trending.map((t) => (
-            <TemplateThumb key={t.id} id={t.id} name={t.name} />
-          ))}
-        </div>
-      </section>
-
-      {/* Recommended */}
-      <section>
-        <h2 className="text-lg font-semibold">Recommended for You</h2>
-        <p className="mt-1 text-sm text-white/60">Based on your activity</p>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {recommended.map((t) => (
-            <TemplateThumb key={t.id} id={t.id} name={t.name} />
-          ))}
-        </div>
-      </section>
-
-      {/* My Templates */}
-      {myTemplates.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold">My Templates</h2>
-          <p className="mt-1 text-sm text-white/60">Templates you&apos;ve used</p>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {myTemplates.map((t) => (
-              <TemplateThumb key={t!.id} id={t!.id} name={t!.name} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Favorites */}
-      {favTemplates.length > 0 && (
-        <section>
-          <h2 className="text-lg font-semibold">Favorite Templates</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {favTemplates.map((t) => (
-              <TemplateThumb key={t!.id} id={t!.id} name={t!.name} />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   );
 }

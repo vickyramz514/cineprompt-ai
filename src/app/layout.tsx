@@ -3,8 +3,8 @@ import "./globals.css";
 import GoogleOAuthProviderWrapper from "@/components/GoogleOAuthProvider";
 
 export const metadata: Metadata = {
-  title: "CinePrompt AI - Create cinematic videos from text",
-  description: "Turn imagination into reality using AI powered video generation.",
+  title: "Stock Data API - US Stock Market & ETF Historical Data",
+  description: "US Stock Market and ETF Historical Data API (2000–Present). REST API for historical stock prices.",
 };
 
 export default function RootLayout({

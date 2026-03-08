@@ -1,13 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { getAccessToken } from "@/lib/api";
 import GoogleLoginButton from "@/components/GoogleLoginButton";
 
-export default function SignupPage() {
+function SignupContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { signup, loginWithGoogle, isLoading, error, setError, user } = useAuth();
@@ -38,7 +38,7 @@ export default function SignupPage() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 shadow-2xl">
           <div className="text-center">
             <h1 className="text-2xl font-bold">Create account</h1>
-            <p className="mt-2 text-white/60">Start creating cinematic videos</p>
+            <p className="mt-2 text-white/60">Get your API key and start building</p>
           </div>
 
           {error && (
@@ -108,5 +108,13 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function SignupPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+      <SignupContent />
+    </Suspense>
   );
 }

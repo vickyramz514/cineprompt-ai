@@ -24,7 +24,7 @@ export default function AdminUsersPage() {
     adminService
       .getUsers({ page, limit, search: search || undefined })
       .then((data) => {
-        setUsers(data.users as adminService.AdminUser[]);
+        setUsers((data.users ?? []) as unknown as adminService.AdminUser[]);
         setTotal(data.total);
       })
       .catch((err) => setError(adminService.getErrorMessage(err)))

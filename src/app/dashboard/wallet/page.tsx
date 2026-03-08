@@ -32,7 +32,8 @@ function mapPlanToPricing(plan: {
 
 function formatType(type: string) {
   const map: Record<string, string> = {
-    VIDEO_GENERATION: "Video generation",
+    API_REQUEST: "API request",
+    VIDEO_GENERATION: "API usage",
     VIDEO_REFUND: "Refund",
     PURCHASE: "Purchase",
     SUBSCRIPTION: "Subscription",
@@ -150,8 +151,8 @@ export default function WalletPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Wallet</h1>
-      <p className="mt-1 text-white/60">Manage your credits and subscription</p>
+      <h1 className="text-2xl font-semibold">Billing</h1>
+      <p className="mt-1 text-white/60">Manage your subscription and billing</p>
 
       {(error || plansError) && (
         <div className="mt-4 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
@@ -162,7 +163,7 @@ export default function WalletPage() {
       <div className="mt-8 rounded-2xl border border-white/5 bg-gradient-to-br from-indigo-500/10 to-purple-500/5 p-8">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm text-white/60">Available credits</p>
+            <p className="text-sm text-white/60">API requests (balance)</p>
             <p className="text-4xl font-bold">{credits}</p>
           </div>
           <div className="h-16 w-16 rounded-full bg-indigo-500/20 flex items-center justify-center">
@@ -283,7 +284,7 @@ export default function WalletPage() {
       >
         <div className="space-y-4">
           <p className="text-sm text-white/60">
-            Selected plan: {selectedPlan?.name} — {selectedPlan?.credits} credits/month
+            Selected plan: {selectedPlan?.name} — {selectedPlan?.credits?.toLocaleString()} requests/day
           </p>
           <p className="text-sm text-white/60">
             You will be redirected to Razorpay to complete the payment securely.

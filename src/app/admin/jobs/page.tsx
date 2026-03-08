@@ -20,7 +20,7 @@ export default function AdminJobsPage() {
     adminService
       .getJobs({ page, limit, status: status || undefined })
       .then((data) => {
-        setJobs(data.jobs as adminService.AdminJob[]);
+        setJobs((data.jobs ?? []) as unknown as adminService.AdminJob[]);
         setTotal(data.total);
       })
       .catch((err) => setError(adminService.getErrorMessage(err)))

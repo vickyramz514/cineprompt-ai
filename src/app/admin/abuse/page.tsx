@@ -19,7 +19,7 @@ export default function AdminAbusePage() {
     adminService
       .getAbuseLogs({ page, limit, type: type || undefined })
       .then((data) => {
-        setLogs(data.logs as adminService.AdminAbuseLog[]);
+        setLogs((data.logs ?? []) as unknown as adminService.AdminAbuseLog[]);
         setTotal(data.total);
       })
       .catch((err) => setError(adminService.getErrorMessage(err)))

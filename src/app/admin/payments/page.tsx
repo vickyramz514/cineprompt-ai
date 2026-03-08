@@ -23,7 +23,7 @@ export default function AdminPaymentsPage() {
       adminService
         .getPayments({ page, limit })
         .then((data) => {
-          setPayments(data.payments as adminService.AdminPayment[]);
+          setPayments((data.payments ?? []) as unknown as adminService.AdminPayment[]);
           setTotal(data.total);
         })
         .catch((err) => setError(adminService.getErrorMessage(err)))
@@ -32,7 +32,7 @@ export default function AdminPaymentsPage() {
       adminService
         .getSubscriptions({ page, limit })
         .then((data) => {
-          setSubscriptions(data.subscriptions as adminService.AdminSubscription[]);
+          setSubscriptions((data.subscriptions ?? []) as unknown as adminService.AdminSubscription[]);
           setTotal(data.total);
         })
         .catch((err) => setError(adminService.getErrorMessage(err)))

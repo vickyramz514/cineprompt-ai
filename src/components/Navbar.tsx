@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useCreditsStore } from "@/store/useStore";
 import { useUIStore } from "@/store/useStore";
 import { useAuth } from "@/hooks/useAuth";
+import { useApiUsage } from "@/hooks/useApiUsage";
 
 export default function Navbar() {
-  const credits = useCreditsStore((s) => s.credits);
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
   const { logout } = useAuth();
+  const { stats } = useApiUsage();
 
   return (
     <header className="sticky top-0 z-40 h-16 border-b border-white/5 bg-black/40 backdrop-blur-xl">
@@ -24,18 +24,18 @@ export default function Navbar() {
             </svg>
           </button>
           <Link href="/dashboard" className="text-xl font-semibold tracking-tight">
-            CinePrompt <span className="text-indigo-400">AI</span>
+            Stock Data <span className="text-indigo-400">API</span>
           </Link>
         </div>
 
         <div className="flex items-center gap-4">
           <Link
-            href="/dashboard/wallet"
+            href="/dashboard/usage"
             className="flex items-center gap-2 rounded-lg bg-white/5 px-3 py-1.5 hover:bg-white/10"
           >
-            <div className="h-2 w-2 rounded-full bg-amber-400 animate-pulse" />
-            <span className="text-sm font-medium">{credits}</span>
-            <span className="text-xs text-white/50">credits</span>
+            <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="text-sm font-medium">{stats?.requestsToday ?? 0}</span>
+            <span className="text-xs text-white/50">today</span>
           </Link>
           <button
             onClick={logout}

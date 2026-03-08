@@ -1,59 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
-import Loader from "@/components/Loader";
-import * as subscriptionService from "@/services/subscription.service";
-import type { SubscriptionPlan } from "@/services/subscription.service";
-
-function mapPlanToPricing(plan: SubscriptionPlan) {
-  return {
-    id: plan.id,
-    name: plan.name,
-    price: Math.round(plan.priceCents / 100),
-    credits: plan.credits,
-    features: Array.isArray(plan.features) ? (plan.features as string[]) : [],
-    slug: plan.slug,
-  };
-}
-
-type PlanWithSlug = ReturnType<typeof mapPlanToPricing>;
+import { PRICING_PLANS } from "@/lib/mock-data";
 
 export default function PricingPage() {
   const { isAuthenticated } = useAuth();
-  const [plans, setPlans] = useState<PlanWithSlug[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    subscriptionService
-      .getPlans()
-      .then((data) => setPlans(data.map(mapPlanToPricing)))
-      .catch((err) => setError(subscriptionService.getErrorMessage(err)))
-      .finally(() => setIsLoading(false));
-  }, []);
 
   const handleSelectPlan = (idOrSlug: string) => {
     if (!isAuthenticated) {
       window.location.href = `/auth/login?redirect=/pricing`;
       return;
     }
-    const plan = plans.find((p) => p.id === idOrSlug || p.slug === idOrSlug);
-    if (!plan || plan.price === 0) return;
-    window.location.href = `/dashboard/wallet?subscribe=${plan.slug || plan.id}`;
+    if (idOrSlug === "free") return;
+    window.location.href = `/dashboard/wallet?subscribe=${idOrSlug}`;
   };
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 lg:px-8">
         <Link href="/" className="text-xl font-semibold">
-          CinePrompt <span className="text-indigo-400">AI</span>
+          Stock Data <span className="text-indigo-400">API</span>
         </Link>
         <div className="flex items-center gap-4">
-          <Link href="/templates" className="text-sm font-medium text-white/70 hover:text-white">
-            Templates
+          <Link href="/docs" className="text-sm font-medium text-white/70 hover:text-white">
+            API Docs
           </Link>
           {isAuthenticated ? (
             <Link
@@ -85,31 +57,25 @@ export default function PricingPage() {
         <div className="mx-auto max-w-6xl">
           <h1 className="text-center text-3xl font-bold sm:text-4xl">Simple pricing</h1>
           <p className="mx-auto mt-2 max-w-xl text-center text-white/60">
-            Choose the plan that fits your creative needs. All plans include 1080p output.
+            Choose the plan that fits your API usage. All plans include historical stock and ETF data.
           </p>
 
-          {error && (
-            <div className="mx-auto mt-8 max-w-md rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-center text-red-400">
-              {error}
-            </div>
-          )}
-
-          {isLoading ? (
-            <div className="mt-16 flex justify-center py-20">
-              <Loader size="lg" />
-            </div>
-          ) : (
-            <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {plans.map((plan) => (
-                <PricingCard
-                  key={plan.id}
-                  plan={plan}
-                  popular={plan.name.toLowerCase() === "creator"}
-                  onSelect={(id) => handleSelectPlan(id)}
-                />
-              ))}
-            </div>
-          )}
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {PRICING_PLANS.map((plan) => (
+              <PricingCard
+                key={plan.id}
+                plan={{
+                  id: plan.id,
+                  name: plan.name,
+                  price: plan.price,
+                  credits: plan.requestsPerDay,
+                  features: plan.features,
+                }}
+                popular={plan.id === "starter"}
+                onSelect={(id) => handleSelectPlan(id)}
+              />
+            ))}
+          </div>
         </div>
       </section>
 

@@ -32,11 +32,13 @@ export default function PricingCard({ plan, popular, onSelect }: PricingCardProp
       <h3 className="text-lg font-semibold">{plan.name}</h3>
       <div className="mt-2">
         <span className="text-3xl font-bold">
-          {plan.price === 0 ? "Free" : `₹${plan.price}`}
+          {plan.price === 0 ? "Free" : `$${plan.price}`}
         </span>
         {plan.price > 0 && <span className="text-white/50">/month</span>}
       </div>
-      <p className="mt-1 text-sm text-white/60">{plan.credits} credits</p>
+      <p className="mt-1 text-sm text-white/60">
+        {plan.credits.toLocaleString()} requests/day
+      </p>
       <ul className="mt-4 space-y-2">
         {plan.features.map((f) => (
           <li key={f} className="flex items-center gap-2 text-sm text-white/80">
