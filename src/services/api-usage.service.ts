@@ -14,12 +14,12 @@ export interface UsageStats {
 }
 
 const DEFAULT_USAGE: UsageStats = {
-  requestsToday: 42,
-  requestsThisMonth: 1247,
-  dailyLimit: 100,
-  monthlyLimit: 3000,
-  remainingToday: 58,
-  remainingThisMonth: 1753,
+  requestsToday: 124,
+  requestsThisMonth: 2345,
+  dailyLimit: 10000,
+  monthlyLimit: 100000,
+  remainingToday: 9876,
+  remainingThisMonth: 97655,
 };
 
 export async function getUsageStats(): Promise<UsageStats> {

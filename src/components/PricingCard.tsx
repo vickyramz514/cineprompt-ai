@@ -16,6 +16,9 @@ interface PricingCardProps {
 }
 
 export default function PricingCard({ plan, popular, onSelect }: PricingCardProps) {
+  const isEnterprise = plan.price === -1;
+  const isFree = plan.price === 0;
+
   return (
     <div
       className={`relative rounded-2xl border p-6 transition-all duration-300 ${
@@ -31,13 +34,19 @@ export default function PricingCard({ plan, popular, onSelect }: PricingCardProp
       )}
       <h3 className="text-lg font-semibold">{plan.name}</h3>
       <div className="mt-2">
-        <span className="text-3xl font-bold">
-          {plan.price === 0 ? "Free" : `$${plan.price}`}
-        </span>
-        {plan.price > 0 && <span className="text-white/50">/month</span>}
+        {isEnterprise ? (
+          <span className="text-2xl font-bold">Custom</span>
+        ) : (
+          <>
+            <span className="text-3xl font-bold">
+              {isFree ? "Free" : `$${plan.price}`}
+            </span>
+            {!isFree && <span className="text-white/50">/month</span>}
+          </>
+        )}
       </div>
       <p className="mt-1 text-sm text-white/60">
-        {plan.credits.toLocaleString()} requests/day
+        {isEnterprise ? "High volume access" : `${plan.credits.toLocaleString()} requests/day`}
       </p>
       <ul className="mt-4 space-y-2">
         {plan.features.map((f) => (
@@ -55,7 +64,7 @@ export default function PricingCard({ plan, popular, onSelect }: PricingCardProp
             : "bg-white/10 text-white hover:bg-white/5"
         }`}
       >
-        {plan.price === 0 ? "Get Started" : "Subscribe"}
+        {isEnterprise ? "Contact Sales" : isFree ? "Get Started" : "Subscribe"}
       </button>
     </div>
   );

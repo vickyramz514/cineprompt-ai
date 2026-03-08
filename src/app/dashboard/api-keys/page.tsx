@@ -40,7 +40,7 @@ export default function ApiKeysPage() {
         <h2 className="text-sm font-medium text-white/60 uppercase tracking-wider">API Key</h2>
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <code className="rounded-xl border border-white/10 bg-black/30 px-4 py-3 font-mono text-sm text-white/90 break-all">
-            {apiKey?.key ?? "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
+            {apiKey?.key ?? "sdata_92hs8dh29shd9s"}
           </code>
           <button
             onClick={handleCopy}

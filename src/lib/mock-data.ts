@@ -24,6 +24,13 @@ export const PRICING_PLANS = [
     requestsPerDay: 100000,
     features: ["100,000 requests/day", "Historical stock data", "ETF data", "Priority support"],
   },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: -1,
+    requestsPerDay: -1,
+    features: ["Custom volume", "Dedicated support", "SLA guarantee", "Custom integrations"],
+  },
 ];
 
 export const SIDEBAR_NAV = [

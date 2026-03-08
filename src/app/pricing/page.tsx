@@ -3,12 +3,17 @@
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
+import Footer from "@/components/Footer";
 import { PRICING_PLANS } from "@/lib/mock-data";
 
 export default function PricingPage() {
   const { isAuthenticated } = useAuth();
 
   const handleSelectPlan = (idOrSlug: string) => {
+    if (idOrSlug === "enterprise") {
+      window.location.href = "mailto:sales@stockdata.example.com?subject=Enterprise%20Plan%20Inquiry";
+      return;
+    }
     if (!isAuthenticated) {
       window.location.href = `/auth/login?redirect=/pricing`;
       return;
@@ -60,7 +65,7 @@ export default function PricingPage() {
             Choose the plan that fits your API usage. All plans include historical stock and ETF data.
           </p>
 
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PRICING_PLANS.map((plan) => (
               <PricingCard
                 key={plan.id}
@@ -79,13 +84,7 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/5 px-4 py-12">
-        <div className="mx-auto flex max-w-6xl justify-center">
-          <Link href="/" className="text-sm text-white/60 hover:text-white">
-            ← Back to home
-          </Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

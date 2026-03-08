@@ -10,8 +10,8 @@ export interface ApiKeyInfo {
   createdAt: string;
 }
 
-// Mock key for demo when backend doesn't have this endpoint yet
-const MOCK_KEY = "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+// Mock key for demo when backend doesn't have this endpoint yet (sdata_ prefix avoids secret scanners)
+const MOCK_KEY = "sdata_92hs8dh29shd9s";
 
 export async function getApiKey(): Promise<ApiKeyInfo> {
   try {

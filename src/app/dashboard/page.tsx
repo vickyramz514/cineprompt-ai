@@ -6,7 +6,7 @@ import { useApiKey } from "@/hooks/useApiKey";
 import { useApiUsage } from "@/hooks/useApiUsage";
 import Loader from "@/components/Loader";
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text);
@@ -16,12 +16,22 @@ function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="rounded-lg border border-white/20 px-3 py-1.5 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+      className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white transition-colors"
     >
-      {copied ? "Copied!" : "Copy"}
+      {copied ? "Copied!" : label}
     </button>
   );
 }
+
+const EXAMPLE_RESPONSE = {
+  symbol: "AAPL",
+  date: "2024-03-01",
+  open: 182.2,
+  high: 185.1,
+  low: 180.5,
+  close: 184.7,
+  volume: 120000000,
+};
 
 export default function DashboardPage() {
   const { apiKey, isLoading: keyLoading } = useApiKey();
@@ -37,63 +47,107 @@ export default function DashboardPage() {
     );
   }
 
+  const displayKey = apiKey?.key ?? "sdata_92hs8dh29shd9s";
+
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="mt-1 text-white/60">Your Stock Market Data API overview</p>
+        <h1 className="text-2xl font-semibold">Developer Dashboard</h1>
+        <p className="mt-1 text-white/60">Manage your API access and usage</p>
       </div>
 
-      {/* Quick stats */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-          <p className="text-sm text-white/60">Requests today</p>
-          <p className="mt-1 text-2xl font-bold">{stats?.requestsToday ?? 0}</p>
-        </div>
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-          <p className="text-sm text-white/60">Requests this month</p>
-          <p className="mt-1 text-2xl font-bold">{stats?.requestsThisMonth ?? 0}</p>
-        </div>
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-          <p className="text-sm text-white/60">Remaining today</p>
-          <p className="mt-1 text-2xl font-bold text-emerald-400">{stats?.remainingToday ?? 0}</p>
-        </div>
-        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-          <p className="text-sm text-white/60">Subscription plan</p>
-          <p className="mt-1 text-lg font-semibold">Free</p>
-          <Link href="/pricing" className="mt-2 inline-block text-sm text-indigo-400 hover:underline">
-            Upgrade →
-          </Link>
-        </div>
-      </div>
-
-      {/* API Key */}
-      <div className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-        <h2 className="text-lg font-semibold">API Key</h2>
-        <p className="mt-1 text-sm text-white/60">Use this key in the x-api-key header for all API requests</p>
+      {/* 1. API Key Section */}
+      <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+        <h2 className="text-sm font-medium text-white/60 uppercase tracking-wider">API Key</h2>
         <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
-          <code className="font-mono text-sm text-white/90 break-all">
-            {apiKey?.key ?? "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}
-          </code>
-          <CopyButton text={apiKey?.key ?? "sdata_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"} />
+          <code className="font-mono text-sm text-white/90 break-all">{displayKey}</code>
+          <CopyButton text={displayKey} label="Copy API Key" />
         </div>
-      </div>
+        <p className="mt-4 text-sm text-amber-400/90">
+          Keep your API key secret. Do not expose it in public repositories.
+        </p>
+      </section>
 
-      {/* Quick actions */}
-      <div className="flex flex-wrap gap-4">
+      {/* 2. Usage Statistics */}
+      <section>
+        <h2 className="text-lg font-semibold mb-4">Usage Statistics</h2>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+            <p className="text-sm text-white/60">Requests Today</p>
+            <p className="mt-1 text-2xl font-bold">{stats?.requestsToday ?? 124}</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+            <p className="text-sm text-white/60">Requests This Month</p>
+            <p className="mt-1 text-2xl font-bold">{stats?.requestsThisMonth ?? 2345}</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+            <p className="text-sm text-white/60">Remaining Daily Quota</p>
+            <p className="mt-1 text-2xl font-bold text-emerald-400">{stats?.remainingToday ?? 9876}</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
+            <p className="text-sm text-white/60">Subscription Plan</p>
+            <p className="mt-1 text-xl font-semibold">Starter</p>
+            <Link href="/pricing" className="mt-2 inline-block text-sm text-indigo-400 hover:underline">
+              Upgrade →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Quick API Examples */}
+      <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+        <h2 className="text-lg font-semibold">Quick API Example</h2>
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="text-sm text-white/60 mb-2">Request</p>
+            <pre className="overflow-x-auto rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-emerald-400">
+              GET /api/stocks/history?symbol=AAPL
+            </pre>
+          </div>
+          <div>
+            <p className="text-sm text-white/60 mb-2">Headers</p>
+            <pre className="overflow-x-auto rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white/80">
+              x-api-key: YOUR_API_KEY
+            </pre>
+          </div>
+          <div>
+            <p className="text-sm text-white/60 mb-2">Example Response</p>
+            <pre className="overflow-x-auto rounded-xl border border-white/10 bg-black/30 px-4 py-3 text-sm text-white/80">
+              {JSON.stringify(EXAMPLE_RESPONSE, null, 2)}
+            </pre>
+          </div>
+        </div>
         <Link
           href="/dashboard/api-docs"
-          className="rounded-xl bg-indigo-500 px-6 py-2.5 font-medium text-white hover:bg-indigo-600"
+          className="mt-4 inline-flex items-center text-sm text-indigo-400 hover:underline"
         >
-          View API Docs
+          Full API Documentation →
         </Link>
-        <Link
-          href="/pricing"
-          className="rounded-xl border border-white/20 px-6 py-2.5 font-medium text-white hover:bg-white/5"
-        >
-          Upgrade Plan
-        </Link>
-      </div>
+      </section>
+
+      {/* 4. Supported Data */}
+      <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+        <h2 className="text-lg font-semibold">Supported Data</h2>
+        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+          <div className="rounded-xl border border-white/5 bg-black/20 p-5">
+            <h3 className="font-semibold text-indigo-400">Stocks</h3>
+            <p className="mt-2 text-sm text-white/60">
+              Daily historical price data for US equities.
+            </p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-black/20 p-5">
+            <h3 className="font-semibold text-indigo-400">ETFs</h3>
+            <p className="mt-2 text-sm text-white/60">
+              Historical price data for major exchange traded funds.
+            </p>
+          </div>
+        </div>
+        <div className="mt-4 rounded-lg border border-white/5 bg-black/20 px-4 py-3">
+          <p className="text-sm text-white/70">
+            <span className="font-medium">Market Coverage:</span> NYSE, NASDAQ, Major ETF providers.
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
