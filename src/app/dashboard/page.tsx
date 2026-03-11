@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
-import { useApiKey } from "@/hooks/useApiKey";
-import { useApiUsage } from "@/hooks/useApiUsage";
-import Loader from "@/components/Loader";
+import { useDataCaptainKey } from "@/hooks/useDataCaptain";
+import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
+import type { DeveloperUsage, MarketStatus } from "@/services/datacaptain/endpoints";
+import DashboardCards from "@/components/DashboardCards";
+import MarketStatusWidget from "@/components/MarketStatusWidget";
 
 function CopyButton({ text, label = "Copy" }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false);
@@ -34,20 +36,51 @@ const EXAMPLE_RESPONSE = {
 };
 
 export default function DashboardPage() {
-  const { apiKey, isLoading: keyLoading } = useApiKey();
-  const { stats, isLoading: usageLoading } = useApiUsage();
+  const { apiKey, saveKey } = useDataCaptainKey();
+  const [usage, setUsage] = useState<DeveloperUsage | null>(null);
+  const [marketStatus, setMarketStatus] = useState<MarketStatus | null>(null);
+  const [apiKeyInput, setApiKeyInput] = useState("");
+  const [usageLoading, setUsageLoading] = useState(true);
+  const [marketLoading, setMarketLoading] = useState(true);
+  const [usageError, setUsageError] = useState<string | null>(null);
 
-  const isLoading = keyLoading || usageLoading;
+  const fetchData = useCallback(async () => {
+    if (!apiKey) {
+      setUsageLoading(false);
+      setMarketLoading(false);
+      return;
+    }
+    setUsageLoading(true);
+    setMarketLoading(true);
+    setUsageError(null);
+    try {
+      const [usageRes, marketRes] = await Promise.all([
+        datacaptainEndpoints.developerUsage(apiKey),
+        datacaptainEndpoints.marketStatus(apiKey),
+      ]);
+      setUsage(usageRes);
+      setMarketStatus(marketRes);
+    } catch (err) {
+      setUsageError(getDataCaptainErrorMessage(err));
+    } finally {
+      setUsageLoading(false);
+      setMarketLoading(false);
+    }
+  }, [apiKey]);
 
-  if (isLoading && !apiKey && !stats) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <Loader size="lg" />
-      </div>
-    );
-  }
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const displayKey = apiKey?.key ?? "sdata_92hs8dh29shd9s";
+  const handleSaveKey = () => {
+    if (apiKeyInput.trim()) {
+      saveKey(apiKeyInput.trim());
+      setApiKeyInput("");
+      fetchData();
+    }
+  };
+
+  const displayKey = apiKey ? `${apiKey.slice(0, 12)}...` : "";
 
   return (
     <div className="space-y-10">
@@ -56,45 +89,94 @@ export default function DashboardPage() {
         <p className="mt-1 text-white/60">Manage your API access and usage</p>
       </div>
 
-      {/* 1. API Key Section */}
+      {/* API Key Section */}
       <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
         <h2 className="text-sm font-medium text-white/60 uppercase tracking-wider">API Key</h2>
-        <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
-          <code className="font-mono text-sm text-white/90 break-all">{displayKey}</code>
-          <CopyButton text={displayKey} label="Copy API Key" />
-        </div>
+        {apiKey ? (
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+            <code className="font-mono text-sm text-white/90 break-all">{displayKey}</code>
+            <CopyButton text={apiKey} label="Copy API Key" />
+          </div>
+        ) : (
+          <div className="mt-4 flex flex-wrap gap-3">
+            <input
+              type="password"
+              placeholder="Enter your DataCaptain API key (sdata_...)"
+              value={apiKeyInput}
+              onChange={(e) => setApiKeyInput(e.target.value)}
+              className="rounded-lg border border-white/20 bg-black/30 px-4 py-2 font-mono text-sm text-white placeholder:text-white/40 focus:border-indigo-500 focus:outline-none"
+            />
+            <button
+              onClick={handleSaveKey}
+              className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+            >
+              Save Key
+            </button>
+          </div>
+        )}
         <p className="mt-4 text-sm text-amber-400/90">
           Keep your API key secret. Do not expose it in public repositories.
         </p>
       </section>
 
-      {/* 2. Usage Statistics */}
+      {/* Usage Cards + Market Status */}
       <section>
-        <h2 className="text-lg font-semibold mb-4">Usage Statistics</h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <p className="text-sm text-white/60">Requests Today</p>
-            <p className="mt-1 text-2xl font-bold">{stats?.requestsToday ?? 124}</p>
+        <h2 className="text-lg font-semibold mb-4">Usage & Market</h2>
+        {usageError && (
+          <p className="mb-4 text-sm text-red-400">{usageError}</p>
+        )}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="lg:col-span-2">
+            <DashboardCards
+              requestsToday={usage?.requestsToday ?? 0}
+              requestsRemaining={usage?.requestsRemaining ?? 0}
+              dailyLimit={usage?.dailyLimit ?? 1000}
+              plan={usage?.plan ?? "—"}
+              isLoading={usageLoading}
+            />
           </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <p className="text-sm text-white/60">Requests This Month</p>
-            <p className="mt-1 text-2xl font-bold">{stats?.requestsThisMonth ?? 2345}</p>
-          </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <p className="text-sm text-white/60">Remaining Daily Quota</p>
-            <p className="mt-1 text-2xl font-bold text-emerald-400">{stats?.remainingToday ?? 9876}</p>
-          </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <p className="text-sm text-white/60">Subscription Plan</p>
-            <p className="mt-1 text-xl font-semibold">Starter</p>
-            <Link href="/pricing" className="mt-2 inline-block text-sm text-indigo-400 hover:underline">
-              Upgrade →
-            </Link>
+          <div>
+            <MarketStatusWidget
+              data={marketStatus}
+              isLoading={marketLoading}
+              error={usageError}
+            />
           </div>
         </div>
       </section>
 
-      {/* 3. Quick API Examples */}
+      {/* Quick Links */}
+      <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+        <h2 className="text-lg font-semibold">Quick Links</h2>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Link
+            href="/dashboard/tools/prices"
+            className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10"
+          >
+            Batch Prices
+          </Link>
+          <Link
+            href="/dashboard/etf"
+            className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10"
+          >
+            ETF Explorer
+          </Link>
+          <Link
+            href="/dashboard/economy"
+            className="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm hover:bg-white/10"
+          >
+            Economic Indicators
+          </Link>
+          <Link
+            href="/dashboard/api-explorer"
+            className="rounded-lg border border-indigo-500/50 bg-indigo-500/20 px-4 py-2 text-sm text-indigo-300 hover:bg-indigo-500/30"
+          >
+            API Explorer
+          </Link>
+        </div>
+      </section>
+
+      {/* Quick API Example */}
       <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
         <h2 className="text-lg font-semibold">Quick API Example</h2>
         <div className="mt-4 space-y-4">
@@ -125,27 +207,26 @@ export default function DashboardPage() {
         </Link>
       </section>
 
-      {/* 4. Supported Data */}
+      {/* Supported Data */}
       <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
         <h2 className="text-lg font-semibold">Supported Data</h2>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2">
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-xl border border-white/5 bg-black/20 p-5">
             <h3 className="font-semibold text-indigo-400">Stocks</h3>
-            <p className="mt-2 text-sm text-white/60">
-              Daily historical price data for US equities.
-            </p>
+            <p className="mt-2 text-sm text-white/60">Daily historical price data for US equities.</p>
           </div>
           <div className="rounded-xl border border-white/5 bg-black/20 p-5">
             <h3 className="font-semibold text-indigo-400">ETFs</h3>
-            <p className="mt-2 text-sm text-white/60">
-              Historical price data for major exchange traded funds.
-            </p>
+            <p className="mt-2 text-sm text-white/60">Historical price data for major exchange traded funds.</p>
           </div>
-        </div>
-        <div className="mt-4 rounded-lg border border-white/5 bg-black/20 px-4 py-3">
-          <p className="text-sm text-white/70">
-            <span className="font-medium">Market Coverage:</span> NYSE, NASDAQ, Major ETF providers.
-          </p>
+          <div className="rounded-xl border border-white/5 bg-black/20 p-5">
+            <h3 className="font-semibold text-indigo-400">Options</h3>
+            <p className="mt-2 text-sm text-white/60">Options chain data (calls & puts).</p>
+          </div>
+          <div className="rounded-xl border border-white/5 bg-black/20 p-5">
+            <h3 className="font-semibold text-indigo-400">Insiders</h3>
+            <p className="mt-2 text-sm text-white/60">Insider trading activity.</p>
+          </div>
         </div>
       </section>
     </div>

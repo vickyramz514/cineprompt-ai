@@ -36,6 +36,13 @@ export const PRICING_PLANS = [
 export const SIDEBAR_NAV = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
   { href: "/dashboard/api-docs", label: "API Docs", icon: "docs" },
+  { href: "/dashboard/api-explorer", label: "API Explorer", icon: "docs" },
+  { href: "/dashboard/tools/prices", label: "Batch Prices", icon: "history" },
+  { href: "/dashboard/etf", label: "ETF Explorer", icon: "wallet" },
+  { href: "/dashboard/options", label: "Options", icon: "history" },
+  { href: "/dashboard/insiders", label: "Insiders", icon: "history" },
+  { href: "/dashboard/darkpool", label: "Dark Pool", icon: "history" },
+  { href: "/dashboard/economy", label: "Economy", icon: "history" },
   { href: "/dashboard/api-keys", label: "API Keys", icon: "wallet" },
   { href: "/dashboard/usage", label: "Usage", icon: "history" },
   { href: "/dashboard/wallet", label: "Billing", icon: "wallet" },
