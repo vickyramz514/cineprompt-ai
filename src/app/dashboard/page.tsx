@@ -123,7 +123,16 @@ export default function DashboardPage() {
       <section>
         <h2 className="text-lg font-semibold mb-4">Usage & Market</h2>
         {usageError && (
-          <p className="mb-4 text-sm text-red-400">{usageError}</p>
+          <div className="mb-4 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3">
+            <p className="text-sm text-red-400">{usageError}</p>
+            <p className="mt-2 text-sm text-white/70">
+              Regenerate your API key on the{" "}
+              <Link href="/dashboard/api-keys" className="text-indigo-400 hover:underline">
+                API Keys
+              </Link>{" "}
+              page to fix this.
+            </p>
+          </div>
         )}
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-2">
