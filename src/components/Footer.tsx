@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 
 export default function Footer() {
   return (
@@ -8,8 +9,9 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Link href="/" className="font-semibold">
-              Stock Data <span className="text-indigo-400">API</span>
+            <Link href="/" className="flex items-center gap-2 font-semibold">
+              <DataCaptainLogo size="sm" />
+              <span>Data Captain</span>
             </Link>
           </div>
           <div>
@@ -50,7 +52,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-white/5 pt-8 text-center text-sm text-white/50">
-          © {new Date().getFullYear()} Stock Data API. US Stock & ETF Historical Data.
+          © {new Date().getFullYear()} Data Captain. US Stock & ETF Historical Data API.
         </div>
       </div>
     </footer>

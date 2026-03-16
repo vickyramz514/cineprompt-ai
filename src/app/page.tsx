@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { PRICING_PLANS } from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 
 const FEATURES = [
   {
@@ -41,8 +42,9 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 lg:px-8">
-        <Link href="/" className="text-xl font-semibold">
-          Stock Data <span className="text-indigo-400">API</span>
+        <Link href="/" className="flex items-center gap-2.5">
+          <DataCaptainLogo size="md" />
+          <span className="text-xl font-semibold tracking-tight">Data Captain</span>
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/docs" className="text-sm font-medium text-white/70 hover:text-white">

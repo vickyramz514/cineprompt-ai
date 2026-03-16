@@ -36,7 +36,7 @@ export default function LoginPage() {
         <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 shadow-2xl">
           <div className="text-center">
             <h1 className="text-2xl font-bold">Welcome back</h1>
-            <p className="mt-2 text-white/60">Sign in to Stock Data API</p>
+            <p className="mt-2 text-white/60">Sign in to Data Captain</p>
           </div>
 
           <div className="mt-6 flex gap-2 rounded-lg bg-white/5 p-1">

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Footer from "@/components/Footer";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { API_BASE_URL, API_DOC_SECTIONS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
 
 const SECTION_TITLES: Record<string, string> = {
@@ -54,8 +55,11 @@ export default function PublicDocsPage() {
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="sticky top-0 z-40 border-b border-white/5 bg-black/60 backdrop-blur-xl">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 lg:px-8">
-          <Link href="/" className="text-xl font-semibold">
-            Stock Data <span className="text-indigo-400">API</span>
+          <Link href="/" className="flex items-center gap-3">
+            <DataCaptainLogo size="md" />
+            <span className="text-xl font-semibold">
+              Data <span className="text-indigo-400">Captain</span>
+            </span>
           </Link>
           <div className="flex gap-4">
             <Link href="/pricing" className="text-sm font-medium text-white/70 hover:text-white">

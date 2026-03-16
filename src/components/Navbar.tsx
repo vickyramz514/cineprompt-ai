@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useUIStore } from "@/store/useStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useApiUsage } from "@/hooks/useApiUsage";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 
 export default function Navbar() {
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen);
@@ -23,8 +24,11 @@ export default function Navbar() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <Link href="/dashboard" className="text-xl font-semibold tracking-tight">
-            Stock Data <span className="text-indigo-400">API</span>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <DataCaptainLogo size="sm" />
+            <span className="text-xl font-semibold tracking-tight">
+              Data <span className="text-indigo-400">Captain</span>
+            </span>
           </Link>
         </div>
 

@@ -20,11 +20,13 @@ function mapPlanToPricing(plan: {
   credits: number;
   features?: unknown;
 }): Plan {
+  const price = plan.priceCents < 0 ? -1 : Math.round(plan.priceCents / 100);
+  const credits = plan.credits < 0 ? 0 : plan.credits;
   return {
     id: plan.id,
     name: plan.name,
-    price: Math.round(plan.priceCents / 100),
-    credits: plan.credits,
+    price,
+    credits,
     features: Array.isArray(plan.features) ? (plan.features as string[]) : [],
     slug: plan.slug,
   };
@@ -102,6 +104,10 @@ export default function WalletPage() {
   const handleSelectPlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId || p.slug === planId);
     if (!plan || plan.slug === "free") return;
+    if (plan.slug === "enterprise") {
+      window.location.href = "mailto:sales@datacaptain.com?subject=Enterprise%20Plan%20Inquiry";
+      return;
+    }
     setSelectedPlan(mapPlanToPricing(plan));
     setCheckoutError(null);
     setPaymentModalOpen(true);
@@ -139,7 +145,7 @@ export default function WalletPage() {
     }
   };
 
-  const pricingPlans = plans.map(mapPlanToPricing).filter((p) => p.price > 0);
+  const pricingPlans = plans.map(mapPlanToPricing);
 
   if (isLoading && credits === 0) {
     return (
@@ -151,8 +157,8 @@ export default function WalletPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold">Billing</h1>
-      <p className="mt-1 text-white/60">Manage your subscription and billing</p>
+      <h1 className="text-3xl font-bold sm:text-4xl">Simple pricing</h1>
+      <p className="mt-2 text-lg text-white/60">Start free. Scale as you grow.</p>
 
       {(error || plansError) && (
         <div className="mt-4 rounded-lg border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
@@ -225,7 +231,7 @@ export default function WalletPage() {
                 <PricingCard
                   key={plan.id}
                   plan={plan}
-                  popular={plan.name.toLowerCase() === "creator"}
+                  popular={plan.slug === "pro"}
                   onSelect={handleSelectPlan}
                 />
               ))}

@@ -1,14 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="border-b border-white/5 px-4 py-4 lg:px-8">
-        <Link href="/" className="text-xl font-semibold">
-          Stock Data <span className="text-indigo-400">API</span>
-        </Link>
+        <DataCaptainLogo size="sm" />
       </header>
       <main className="mx-auto max-w-2xl px-4 py-16 lg:px-8">
         <h1 className="text-2xl font-semibold">Terms of Service</h1>

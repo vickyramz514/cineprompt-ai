@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { PRICING_PLANS } from "@/lib/mock-data";
 
 export default function PricingPage() {
@@ -11,7 +12,7 @@ export default function PricingPage() {
 
   const handleSelectPlan = (idOrSlug: string) => {
     if (idOrSlug === "enterprise") {
-      window.location.href = "mailto:sales@stockdata.example.com?subject=Enterprise%20Plan%20Inquiry";
+      window.location.href = "mailto:sales@datacaptain.com?subject=Enterprise%20Plan%20Inquiry";
       return;
     }
     if (!isAuthenticated) {
@@ -25,8 +26,11 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 lg:px-8">
-        <Link href="/" className="text-xl font-semibold">
-          Stock Data <span className="text-indigo-400">API</span>
+        <Link href="/" className="flex items-center gap-3">
+          <DataCaptainLogo size="md" />
+          <span className="text-xl font-semibold">
+            Data <span className="text-indigo-400">Captain</span>
+          </span>
         </Link>
         <div className="flex items-center gap-4">
           <Link href="/docs" className="text-sm font-medium text-white/70 hover:text-white">

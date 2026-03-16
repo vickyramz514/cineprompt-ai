@@ -38,7 +38,7 @@ export default function AdminLayout({
         <aside className="w-64 shrink-0 border-r border-white/5 bg-black/40">
           <div className="flex h-16 items-center gap-2 border-b border-white/5 px-4">
             <span className="text-lg font-semibold">
-              Stock Data <span className="text-amber-400">API Admin</span>
+              Data Captain <span className="text-amber-400">Admin</span>
             </span>
           </div>
           <nav className="space-y-1 p-4">
