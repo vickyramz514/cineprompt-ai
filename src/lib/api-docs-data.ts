@@ -3,10 +3,9 @@
  * Used by /docs and /dashboard/api-docs
  */
 
-export const API_BASE_URL =
-  typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_DATACAPTAIN_URL || process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/api$/, "") || "http://localhost:4000"
-    : "http://localhost:4000";
+import { getPublicApiOrigin } from "@/lib/public-env";
+
+export const API_BASE_URL = getPublicApiOrigin();
 
 export type EndpointParam = {
   name: string;

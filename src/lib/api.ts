@@ -6,6 +6,7 @@
  */
 
 import axios, { AxiosError } from "axios";
+import { getPublicApiBaseUrl } from "@/lib/public-env";
 
 const TOKEN_KEY = "cineprompt_access_token";
 const REFRESH_KEY = "cineprompt_refresh_token";
@@ -32,10 +33,7 @@ export const getRefreshToken = () => {
   return localStorage.getItem(REFRESH_KEY);
 };
 
-const baseURL =
-  typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api"
-    : process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api";
+const baseURL = getPublicApiBaseUrl();
 
 export const api = axios.create({
   baseURL,

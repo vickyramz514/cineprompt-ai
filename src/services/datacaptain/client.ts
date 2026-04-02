@@ -3,11 +3,9 @@
  */
 
 import axios, { AxiosError } from "axios";
+import { getPublicApiOrigin } from "@/lib/public-env";
 
-const BASE_URL =
-  typeof window !== "undefined"
-    ? process.env.NEXT_PUBLIC_DATACAPTAIN_URL || "http://localhost:4000"
-    : process.env.NEXT_PUBLIC_DATACAPTAIN_URL || "http://localhost:4000";
+const BASE_URL = getPublicApiOrigin();
 
 const STORAGE_KEY = "datacaptain_api_key";
 
