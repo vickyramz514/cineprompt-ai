@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { getAccessToken } from "@/lib/api";
 import GoogleLoginButton from "@/components/GoogleLoginButton";
+import AuthPageShell from "@/components/auth/AuthPageShell";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,9 +32,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <AuthPageShell>
       <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 shadow-2xl">
+        <div className="rounded-2xl border border-white/10 bg-black/45 p-8 shadow-2xl shadow-black/50 backdrop-blur-xl ring-1 ring-white/[0.06]">
           <div className="text-center">
             <h1 className="text-2xl font-bold">Welcome back</h1>
             <p className="mt-2 text-white/60">Sign in to Data Captain</p>
@@ -107,7 +108,7 @@ export default function LoginPage() {
                 <div className="w-full border-t border-white/10" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="bg-zinc-900 px-4 text-white/50">or continue with</span>
+                <span className="bg-[#0a0a0f]/85 px-4 text-white/50 backdrop-blur-sm">or continue with</span>
               </div>
             </div>
             <div className="mt-4 flex justify-center">
@@ -125,6 +126,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </div>
+    </AuthPageShell>
   );
 }
