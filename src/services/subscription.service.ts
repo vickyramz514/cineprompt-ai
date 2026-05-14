@@ -53,6 +53,8 @@ export async function getMySubscription(): Promise<UserSubscription | null> {
 export type CreateSubscriptionResponse = {
   subscriptionId: string;
   checkoutUrl: string;
+  /** Same as RAZORPAY_KEY_ID; safe for browser Standard Checkout. */
+  razorpayKeyId: string | null;
   planId: string;
   planSlug: string;
 };

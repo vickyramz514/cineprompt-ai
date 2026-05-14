@@ -10,6 +10,7 @@ import Modal from "@/components/Modal";
 import Loader from "@/components/Loader";
 import * as subscriptionService from "@/services/subscription.service";
 import * as walletService from "@/services/wallet.service";
+import { openRazorpaySubscriptionCheckout } from "@/lib/razorpayCheckout";
 import type { Plan } from "@/components/PricingCard";
 
 function mapPlanToPricing(plan: {
@@ -101,6 +102,15 @@ export default function WalletPage() {
     }
   }, [searchParams, plans]);
 
+  // After Razorpay Standard Checkout redirects back with payment params, refresh and clean URL
+  useEffect(() => {
+    const paymentId = searchParams.get("razorpay_payment_id");
+    if (!paymentId) return;
+    void fetchBalance();
+    void fetchSubscription();
+    window.history.replaceState({}, "", "/dashboard/wallet");
+  }, [searchParams, fetchBalance, fetchSubscription]);
+
   const handleSelectPlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId || p.slug === planId);
     if (!plan || plan.slug === "free") return;
@@ -118,11 +128,24 @@ export default function WalletPage() {
 
     setCheckoutLoading(true);
     setCheckoutError(null);
+    const planName = selectedPlan.name;
     try {
-      const { checkoutUrl } = await subscriptionService.createSubscription(selectedPlan.slug);
+      const data = await subscriptionService.createSubscription(selectedPlan.slug);
       setPaymentModalOpen(false);
       setSelectedPlan(null);
-      window.location.href = checkoutUrl;
+
+      if (data.razorpayKeyId && data.subscriptionId) {
+        const callbackUrl = `${window.location.origin}${window.location.pathname}`;
+        await openRazorpaySubscriptionCheckout({
+          key: data.razorpayKeyId,
+          subscriptionId: data.subscriptionId,
+          name: "CinePrompt",
+          description: planName,
+          callbackUrl,
+        });
+      } else {
+        window.location.href = data.checkoutUrl;
+      }
     } catch (err) {
       setCheckoutError(subscriptionService.getErrorMessage(err));
     } finally {
