@@ -1,83 +1,82 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { PRICING_PLANS } from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import {
+  AudienceCard,
+  AudienceIconAlgo,
+  AudienceIconAnalyst,
+  AudienceIconBot,
+  AudienceIconFintechDev,
+  AudienceIconQuant,
+  FeatureFloatIcon,
+  type FeatureIconKey,
+} from "@/components/landing/LandingAnimatedIcons";
+import HeroMarketChartBackdrop from "@/components/landing/HeroMarketChartBackdrop";
+import ProductShowcaseSection from "@/components/landing/ProductShowcaseSection";
+import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 
-const FEATURES = [
+const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
   {
     title: "25+ Years of Historical Market Data",
     desc: "Access daily historical prices for US stocks and ETFs from 2000 to present.",
+    icon: "historical",
   },
   {
     title: "Simple REST API",
     desc: "Fetch market data using simple endpoints with predictable JSON responses.",
+    icon: "api",
   },
   {
     title: "Developer Friendly",
     desc: "Well documented endpoints, consistent schema, and easy authentication using API keys.",
+    icon: "dev",
   },
   {
     title: "Fast & Reliable",
     desc: "Optimized infrastructure designed for high performance data retrieval.",
+    icon: "fast",
   },
   {
     title: "ETF & Equity Coverage",
     desc: "Access historical data for thousands of equities and exchange traded funds.",
+    icon: "etf",
   },
 ];
 
-const TARGET_USERS = [
-  "Algorithmic traders",
-  "Financial analysts",
-  "Developers building fintech apps",
-  "Quantitative researchers",
-  "Trading bot developers",
+const TARGET_USERS: { label: string; icon: ReactNode }[] = [
+  { label: "Algorithmic traders", icon: <AudienceIconAlgo /> },
+  { label: "Financial analysts", icon: <AudienceIconAnalyst /> },
+  { label: "Developers building fintech apps", icon: <AudienceIconFintechDev /> },
+  { label: "Quantitative researchers", icon: <AudienceIconQuant /> },
+  { label: "Trading bot developers", icon: <AudienceIconBot /> },
 ];
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5">
-          <DataCaptainLogo size="md" />
-          <span className="text-xl font-semibold tracking-tight">Data Captain</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link href="/docs" className="text-sm font-medium text-white/70 hover:text-white">
-            API Docs
-          </Link>
-          <Link href="/pricing" className="text-sm font-medium text-white/70 hover:text-white">
-            Pricing
-          </Link>
-          <Link
-            href="/auth/login"
-            className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10"
-          >
-            Login
-          </Link>
-          <Link
-            href="/auth/signup"
-            className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-600"
-          >
-            Get Started
-          </Link>
-        </div>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
+        <DataCaptainLogo size="md" />
+        <MarketingHeaderActions variant="landing" />
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden px-4 pt-32 pb-20 sm:px-6 lg:px-8">
-        <div className="absolute inset-0 bg-gradient-to-b from-indigo-900/10 via-transparent to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-20%,rgba(99,102,241,0.15),transparent)]" />
-        <div className="relative mx-auto max-w-4xl text-center">
+      <section className="relative overflow-hidden px-4 pt-32 pb-24 sm:px-6 lg:px-8">
+        <HeroMarketChartBackdrop />
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_85%_55%_at_50%_-5%,rgba(10,10,15,0.94),rgba(10,10,15,0.55)_42%,transparent_70%)]" />
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-indigo-900/[0.08] via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_65%_45%_at_50%_8%,rgba(99,102,241,0.16),transparent_62%)]" />
+        <div className="relative z-10 mx-auto max-w-4xl text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl"
+            className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl [text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
           >
             US Stock & ETF Historical Data API
           </motion.h1>
@@ -114,6 +113,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <ProductShowcaseSection />
+
       {/* Key Features */}
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
@@ -133,8 +134,11 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.05 }}
-                className="rounded-xl border border-white/5 bg-white/[0.02] p-6"
+                whileHover={{ y: -3 }}
+                className="group relative overflow-hidden rounded-xl border border-white/5 bg-white/[0.02] p-6 transition-colors hover:border-indigo-500/25"
               >
+                <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-indigo-500/10 blur-2xl transition-opacity group-hover:bg-indigo-500/15" />
+                <FeatureFloatIcon iconKey={item.icon} index={i} />
                 <h3 className="font-semibold">{item.title}</h3>
                 <p className="mt-2 text-sm text-white/60">{item.desc}</p>
               </motion.div>
@@ -162,18 +166,11 @@ export default function LandingPage() {
           >
             This platform is designed for professionals who need reliable market data
           </motion.p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
+          <div className="mt-12 flex flex-wrap justify-center gap-4 lg:gap-5">
             {TARGET_USERS.map((user, i) => (
-              <motion.span
-                key={user}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.03 }}
-                className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80"
-              >
-                {user}
-              </motion.span>
+              <AudienceCard key={user.label} label={user.label} index={i}>
+                {user.icon}
+              </AudienceCard>
             ))}
           </div>
         </div>

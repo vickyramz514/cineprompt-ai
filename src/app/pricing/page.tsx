@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 import { PRICING_PLANS } from "@/lib/mock-data";
 
 export default function PricingPage() {
@@ -25,41 +25,9 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-4 lg:px-8">
-        <Link href="/" className="flex items-center gap-3">
-          <DataCaptainLogo size="md" />
-          <span className="text-xl font-semibold">
-            Data <span className="text-indigo-400">Captain</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <Link href="/docs" className="text-sm font-medium text-white/70 hover:text-white">
-            API Docs
-          </Link>
-          {isAuthenticated ? (
-            <Link
-              href="/dashboard"
-              className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Dashboard
-            </Link>
-          ) : (
-            <>
-              <Link
-                href="/auth/login"
-                className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium text-white"
-              >
-                Login
-              </Link>
-              <Link
-                href="/auth/signup"
-                className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white"
-              >
-                Get Started
-              </Link>
-            </>
-          )}
-        </div>
+      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
+        <DataCaptainLogo size="md" />
+        <MarketingHeaderActions variant="pricing" isAuthenticated={isAuthenticated} />
       </header>
 
       <section className="px-4 pt-32 pb-20 sm:px-6 lg:px-8">

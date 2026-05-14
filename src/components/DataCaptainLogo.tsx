@@ -5,6 +5,8 @@ import Link from "next/link";
 interface DataCaptainLogoProps {
   size?: "sm" | "md" | "lg";
   showText?: boolean;
+  /** Logo link target (default home). */
+  href?: string;
   className?: string;
 }
 
@@ -14,7 +16,12 @@ const sizes = {
   lg: { icon: 40, text: "text-2xl" },
 };
 
-export default function DataCaptainLogo({ size = "md", showText = true, className = "" }: DataCaptainLogoProps) {
+export default function DataCaptainLogo({
+  size = "md",
+  showText = true,
+  href = "/",
+  className = "",
+}: DataCaptainLogoProps) {
   const { icon: iconSize, text: textClass } = sizes[size];
 
   const logoSvg = (
@@ -37,7 +44,7 @@ export default function DataCaptainLogo({ size = "md", showText = true, classNam
   );
 
   return (
-    <Link href="/" className={`inline-flex items-center gap-2.5 font-semibold tracking-tight ${className}`}>
+    <Link href={href} className={`inline-flex items-center gap-2.5 font-semibold tracking-tight ${className}`}>
       {logoSvg}
       {showText && (
         <span className={textClass}>

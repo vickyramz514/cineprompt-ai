@@ -9,10 +9,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <Link href="/" className="flex items-center gap-2 font-semibold">
-              <DataCaptainLogo size="sm" />
-              <span>Data Captain</span>
-            </Link>
+            <DataCaptainLogo size="sm" />
           </div>
           <div>
             <h3 className="mb-3 text-sm font-semibold text-white/80">Product</h3>

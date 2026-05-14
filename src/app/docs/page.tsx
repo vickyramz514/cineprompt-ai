@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import Footer from "@/components/Footer";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 import { API_BASE_URL, API_DOC_SECTIONS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
 
 const SECTION_TITLES: Record<string, string> = {
@@ -53,25 +53,10 @@ function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
 export default function PublicDocsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-black/60 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/70 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <DataCaptainLogo size="md" />
-            <span className="text-xl font-semibold">
-              Data <span className="text-indigo-400">Captain</span>
-            </span>
-          </Link>
-          <div className="flex gap-4">
-            <Link href="/pricing" className="text-sm font-medium text-white/70 hover:text-white">
-              Pricing
-            </Link>
-            <Link href="/auth/login" className="rounded-lg border border-white/20 px-4 py-2 text-sm font-medium">
-              Login
-            </Link>
-            <Link href="/auth/signup" className="rounded-lg bg-indigo-500 px-4 py-2 text-sm font-semibold text-white">
-              Get API Key
-            </Link>
-          </div>
+          <DataCaptainLogo size="md" />
+          <MarketingHeaderActions variant="docs" />
         </div>
       </header>
 
