@@ -5,7 +5,7 @@ import { getApiKey, setApiKey } from "@/services/datacaptain/client";
 import { useApiKey } from "@/hooks/useApiKey";
 
 export function useDataCaptainKey() {
-  const { apiKey: dashboardKey } = useApiKey();
+  const { apiKey: dashboardKey, refetch: refetchApiKey } = useApiKey();
   const [localKey, setLocalKeyState] = useState<string | null>(null);
 
   useEffect(() => {
@@ -19,5 +19,5 @@ export function useDataCaptainKey() {
     setLocalKeyState(key);
   }, []);
 
-  return { apiKey: effectiveKey, saveKey };
+  return { apiKey: effectiveKey, saveKey, refetchApiKey };
 }

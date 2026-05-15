@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
+import * as apiKeyService from "@/services/api-key.service";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import type { DeveloperUsage, MarketStatus } from "@/services/datacaptain/endpoints";
 import DashboardCards from "@/components/DashboardCards";
@@ -36,13 +37,15 @@ const EXAMPLE_RESPONSE = {
 };
 
 export default function DashboardPage() {
-  const { apiKey, saveKey } = useDataCaptainKey();
+  const { apiKey, saveKey, refetchApiKey } = useDataCaptainKey();
   const [usage, setUsage] = useState<DeveloperUsage | null>(null);
   const [marketStatus, setMarketStatus] = useState<MarketStatus | null>(null);
   const [apiKeyInput, setApiKeyInput] = useState("");
   const [usageLoading, setUsageLoading] = useState(true);
   const [marketLoading, setMarketLoading] = useState(true);
   const [usageError, setUsageError] = useState<string | null>(null);
+  const [regeneratingKey, setRegeneratingKey] = useState(false);
+  const [regenerateKeyError, setRegenerateKeyError] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     if (!apiKey) {
@@ -80,6 +83,24 @@ export default function DashboardPage() {
     }
   };
 
+  const handleGenerateApiKey = useCallback(async () => {
+    if (!confirm("Regenerate your API key? Your old key will stop working immediately.")) return;
+    setRegenerateKeyError(null);
+    setRegeneratingKey(true);
+    try {
+      const data = await apiKeyService.regenerateApiKey();
+      if (data.key && !data.key.endsWith("...")) {
+        saveKey(data.key);
+      }
+      await refetchApiKey();
+      await fetchData();
+    } catch (err) {
+      setRegenerateKeyError(apiKeyService.getErrorMessage(err));
+    } finally {
+      setRegeneratingKey(false);
+    }
+  }, [fetchData, refetchApiKey, saveKey]);
+
   const displayKey = apiKey ? `${apiKey.slice(0, 12)}...` : "";
 
   return (
@@ -93,9 +114,22 @@ export default function DashboardPage() {
       <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
         <h2 className="text-sm font-medium text-white/60 uppercase tracking-wider">API Key</h2>
         {apiKey ? (
-          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
-            <code className="font-mono text-sm text-white/90 break-all">{displayKey}</code>
-            <CopyButton text={apiKey} label="Copy API Key" />
+          <div className="mt-4 space-y-3">
+            <div className="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-black/30 px-4 py-3">
+              <code className="font-mono text-sm text-white/90 break-all">{displayKey}</code>
+              <CopyButton text={apiKey} label="Copy API Key" />
+              <button
+                type="button"
+                onClick={handleGenerateApiKey}
+                disabled={regeneratingKey}
+                className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2 text-sm font-medium text-amber-400 hover:bg-amber-500/20 transition-colors disabled:opacity-50"
+              >
+                {regeneratingKey ? "Generating…" : "Generate API Key"}
+              </button>
+            </div>
+            {regenerateKeyError && (
+              <p className="text-sm text-red-400">{regenerateKeyError}</p>
+            )}
           </div>
         ) : (
           <div className="mt-4 flex flex-wrap gap-3">
