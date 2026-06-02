@@ -31,7 +31,7 @@ export type UIState = {
 };
 
 export const useUIStore = create<UIState>((set) => ({
-  sidebarOpen: true,
+  sidebarOpen: false,
   modalOpen: null,
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   setModalOpen: (modal) => set({ modalOpen: modal }),
