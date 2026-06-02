@@ -14,7 +14,7 @@ export const PRICING_PLANS = [
   {
     id: "starter",
     name: "Starter",
-    price: 99,
+    price: 1500,
     currency: "INR",
     requestsPerDay: 1000,
     features: ["1,000 requests/day", "Historical stock data", "ETF data", "Email support"],
@@ -22,7 +22,7 @@ export const PRICING_PLANS = [
   {
     id: "pro",
     name: "Pro",
-    price: 999,
+    price: 2500,
     currency: "INR",
     requestsPerDay: 10000,
     features: ["10,000 requests/day", "Historical stock data", "ETF data", "Priority support"],
@@ -30,7 +30,7 @@ export const PRICING_PLANS = [
   {
     id: "ultra",
     name: "Ultra",
-    price: 1999,
+    price: 5000,
     currency: "INR",
     requestsPerDay: 100000,
     features: ["100,000 requests/day", "Historical stock data", "ETF data", "All premium APIs"],
