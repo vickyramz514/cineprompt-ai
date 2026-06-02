@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCallback, useState } from "react";
 import { getPublicApiOrigin } from "@/lib/public-env";
+import JsonHighlight from "@/components/dashboard/JsonHighlight";
 
 const EXAMPLE_RESPONSE = {
   symbol: "AAPL",
@@ -292,35 +293,3 @@ export default function QuickApiExample({ apiKey }: QuickApiExampleProps) {
   );
 }
 
-/** Lightweight JSON syntax coloring */
-function JsonHighlight({ json }: { json: string }) {
-  const parts = json.split(/("(?:\\.|[^"\\])*")|(:)|(\b\d+\.?\d*\b)|(true|false|null)/g);
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (!part) return null;
-        if (part.startsWith('"') && part.endsWith('"')) {
-          const isKey = parts[i + 1] === ":";
-          return (
-            <span key={i} className={isKey ? "text-sky-300/90" : "text-emerald-300/90"}>
-              {part}
-            </span>
-          );
-        }
-        if (part === ":") return <span key={i} className="text-white/40">{part}</span>;
-        if (/^\d/.test(part)) return <span key={i} className="text-amber-300/90">{part}</span>;
-        if (["true", "false", "null"].includes(part))
-          return (
-            <span key={i} className="text-violet-300/90">
-              {part}
-            </span>
-          );
-        return (
-          <span key={i} className="text-white/70">
-            {part}
-          </span>
-        );
-      })}
-    </>
-  );
-}
