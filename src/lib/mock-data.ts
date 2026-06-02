@@ -8,7 +8,7 @@ export const PRICING_PLANS = [
     name: "Free",
     price: 0,
     requestsPerDay: 100,
-    features: ["100 requests/day", "Historical stock data", "ETF data", "Basic support"],
+    features: ["50 requests/day", "Historical stock data", "ETF data", "Basic support"],
   },
   {
     id: "starter",

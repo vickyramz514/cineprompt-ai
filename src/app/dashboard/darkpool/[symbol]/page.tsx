@@ -6,8 +6,9 @@ import Link from "next/link";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import DarkPoolTable from "@/components/DarkPoolTable";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function DarkPoolPage() {
+function DarkPoolPageContent() {
   const params = useParams();
   const symbol = String(params.symbol ?? "").toUpperCase();
   const { apiKey } = useDataCaptainKey();
@@ -57,5 +58,13 @@ export default function DarkPoolPage() {
         error={error}
       />
     </div>
+  );
+}
+
+export default function DarkPoolPage() {
+  return (
+    <PlanGate feature="darkpool">
+      <DarkPoolPageContent />
+    </PlanGate>
   );
 }

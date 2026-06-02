@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 
 type QuickLink = {
   href: string;
@@ -11,6 +12,7 @@ type QuickLink = {
   icon: ReactNode;
   accent: "indigo" | "emerald" | "violet" | "amber";
   featured?: boolean;
+  premium?: boolean;
 };
 
 const links: QuickLink[] = [
@@ -42,6 +44,7 @@ const links: QuickLink[] = [
     title: "Economic Indicators",
     description: "Macro data — inflation, GDP, rates",
     accent: "amber",
+    premium: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="9" />
@@ -139,6 +142,8 @@ function MiniSpark({ accent }: { accent: QuickLink["accent"] }) {
 }
 
 export default function QuickLinks() {
+  const { isFree } = usePlanAccess();
+
   return (
     <section className="relative">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -163,17 +168,20 @@ export default function QuickLinks() {
       >
         {links.map((link) => {
           const styles = accentStyles[link.accent];
+          const locked = Boolean(isFree && link.premium);
           return (
             <motion.div key={link.href} variants={item}>
               <Link href={link.href} className="group relative block h-full">
                 <motion.div
                   className={`relative h-full overflow-hidden rounded-2xl border bg-[#0c0c14]/80 p-5 backdrop-blur-sm transition-all duration-300 ${
-                    link.featured
-                      ? "border-indigo-500/30 ring-1 ring-indigo-500/20"
-                      : "border-white/10"
-                  } ${styles.ring} ${styles.glow}`}
-                  whileHover={{ y: -4, scale: 1.01 }}
-                  whileTap={{ scale: 0.99 }}
+                    locked
+                      ? "border-amber-500/25"
+                      : link.featured
+                        ? "border-indigo-500/30 ring-1 ring-indigo-500/20"
+                        : "border-white/10"
+                  } ${locked ? "" : `${styles.ring} ${styles.glow}`}`}
+                  whileHover={locked ? undefined : { y: -4, scale: 1.01 }}
+                  whileTap={locked ? undefined : { scale: 0.99 }}
                   transition={{ type: "spring", stiffness: 400, damping: 25 }}
                 >
                   <div
@@ -188,7 +196,19 @@ export default function QuickLinks() {
                     }}
                   />
 
-                  {link.featured && (
+                  {locked && (
+                    <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-amber-300">
+                      <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3" aria-hidden>
+                        <path
+                          fillRule="evenodd"
+                          d="M10 1a4.5 4.5 0 0 0-2.45 8.26v2.07a1 1 0 0 0 .55.9l3.5 1.75a1 1 0 0 0 .9 0l3.5-1.75a1 1 0 0 0 .55-.9v-2.07A4.5 4.5 0 0 0 10 1Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      Pro
+                    </span>
+                  )}
+                  {link.featured && !locked && (
                     <span className="absolute right-3 top-3 rounded-full border border-indigo-500/30 bg-indigo-500/15 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-indigo-300">
                       Popular
                     </span>

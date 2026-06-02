@@ -7,6 +7,7 @@ import { useUIStore, useAuthStore } from "@/store/useStore";
 import { useAuth } from "@/hooks/useAuth";
 import { useApiUsage } from "@/hooks/useApiUsage";
 import { SIDEBAR_SECTIONS, type SidebarIcon } from "@/lib/sidebar-nav";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
 
 const ICON_PATHS: Record<SidebarIcon, string> = {
@@ -76,11 +77,15 @@ function NavLink({
   href,
   label,
   icon,
+  premium,
+  locked,
   onNavigate,
 }: {
   href: string;
   label: string;
   icon: SidebarIcon;
+  premium?: boolean;
+  locked?: boolean;
   onNavigate: () => void;
 }) {
   const isActive = useNavActive(href);
@@ -90,7 +95,7 @@ function NavLink({
       href={href}
       onClick={onNavigate}
       className={`group relative flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium transition-colors ${
-        isActive ? "text-white" : "text-white/55 hover:text-white/90"
+        isActive ? "text-white" : locked ? "text-white/40 hover:text-white/65" : "text-white/55 hover:text-white/90"
       }`}
     >
       {isActive && (
@@ -106,7 +111,23 @@ function NavLink({
       <span className="relative">
         <NavIcon name={icon} active={isActive} />
       </span>
-      <span className="relative truncate">{label}</span>
+      <span className="relative flex min-w-0 flex-1 items-center justify-between gap-2 truncate">
+        <span className="truncate">{label}</span>
+        {premium && locked && (
+          <svg
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="h-3.5 w-3.5 shrink-0 text-amber-400/80"
+            aria-label="Paid plan required"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 1a4.5 4.5 0 0 0-2.45 8.26v2.07a1 1 0 0 0 .55.9l3.5 1.75a1 1 0 0 0 .9 0l3.5-1.75a1 1 0 0 0 .55-.9v-2.07A4.5 4.5 0 0 0 10 1Zm2.45 6.76a2.45 2.45 0 1 0-4.9 0 2.45 2.45 0 0 0 4.9 0ZM8.26 12.74v1.52l1.74.87 1.74-.87v-1.52H8.26Z"
+              clipRule="evenodd"
+            />
+          </svg>
+        )}
+      </span>
     </Link>
   );
 }
@@ -134,6 +155,7 @@ export default function Sidebar() {
   const user = useAuthStore((s) => s.user);
   const { logout } = useAuth();
   const { stats } = useApiUsage();
+  const { isFree } = usePlanAccess();
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
   const pathname = usePathname();
 
@@ -212,7 +234,11 @@ export default function Sidebar() {
               <ul className="flex flex-col gap-0.5">
                 {section.items.map((item) => (
                   <li key={item.href}>
-                    <NavLink {...item} onNavigate={closeMobile} />
+                    <NavLink
+                      {...item}
+                      locked={Boolean(item.premium && isFree)}
+                      onNavigate={closeMobile}
+                    />
                   </li>
                 ))}
               </ul>

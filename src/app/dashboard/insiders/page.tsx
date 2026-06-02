@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function InsidersIndexPage() {
+function InsidersIndexContent() {
   const [symbol, setSymbol] = useState("");
   const router = useRouter();
 
@@ -38,5 +39,13 @@ export default function InsidersIndexPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function InsidersIndexPage() {
+  return (
+    <PlanGate feature="insiders">
+      <InsidersIndexContent />
+    </PlanGate>
   );
 }

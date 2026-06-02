@@ -6,8 +6,9 @@ import Link from "next/link";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import InsiderTradesTable from "@/components/InsiderTradesTable";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function InsidersPage() {
+function InsidersPageContent() {
   const params = useParams();
   const symbol = String(params.symbol ?? "").toUpperCase();
   const { apiKey } = useDataCaptainKey();
@@ -57,5 +58,13 @@ export default function InsidersPage() {
         error={error}
       />
     </div>
+  );
+}
+
+export default function InsidersPage() {
+  return (
+    <PlanGate feature="insiders">
+      <InsidersPageContent />
+    </PlanGate>
   );
 }

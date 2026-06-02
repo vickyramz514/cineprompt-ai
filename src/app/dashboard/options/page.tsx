@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function OptionsIndexPage() {
+function OptionsIndexContent() {
   const [symbol, setSymbol] = useState("");
   const router = useRouter();
 
@@ -38,5 +39,13 @@ export default function OptionsIndexPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function OptionsIndexPage() {
+  return (
+    <PlanGate feature="options">
+      <OptionsIndexContent />
+    </PlanGate>
   );
 }

@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function DarkPoolIndexPage() {
+function DarkPoolIndexContent() {
   const [symbol, setSymbol] = useState("");
   const router = useRouter();
 
@@ -38,5 +39,13 @@ export default function DarkPoolIndexPage() {
         </div>
       </form>
     </div>
+  );
+}
+
+export default function DarkPoolIndexPage() {
+  return (
+    <PlanGate feature="darkpool">
+      <DarkPoolIndexContent />
+    </PlanGate>
   );
 }

@@ -6,8 +6,9 @@ import Link from "next/link";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import OptionsTable from "@/components/OptionsTable";
+import PlanGate from "@/components/dashboard/PlanGate";
 
-export default function OptionsChainPage() {
+function OptionsChainContent() {
   const params = useParams();
   const symbol = String(params.symbol ?? "").toUpperCase();
   const { apiKey } = useDataCaptainKey();
@@ -70,5 +71,13 @@ export default function OptionsChainPage() {
         />
       </div>
     </div>
+  );
+}
+
+export default function OptionsChainPage() {
+  return (
+    <PlanGate feature="options">
+      <OptionsChainContent />
+    </PlanGate>
   );
 }

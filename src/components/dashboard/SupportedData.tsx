@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
+import type { PlanFeature } from "@/lib/plan-access";
 
 type DataCategory = {
   title: string;
@@ -11,6 +13,8 @@ type DataCategory = {
   href: string;
   accent: "indigo" | "emerald" | "violet" | "amber" | "cyan" | "rose" | "sky";
   icon: ReactNode;
+  premium?: boolean;
+  feature?: PlanFeature;
 };
 
 const categories: DataCategory[] = [
@@ -45,6 +49,8 @@ const categories: DataCategory[] = [
     tags: ["Calls", "Puts"],
     href: "/dashboard/options",
     accent: "emerald",
+    premium: true,
+    feature: "options",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V8m5 8V4m5 12v-6" />
@@ -58,6 +64,8 @@ const categories: DataCategory[] = [
     tags: ["SEC", "Trades"],
     href: "/dashboard/insiders",
     accent: "amber",
+    premium: true,
+    feature: "insiders",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" />
@@ -70,6 +78,8 @@ const categories: DataCategory[] = [
     tags: ["Blocks", "Volume"],
     href: "/dashboard/darkpool",
     accent: "rose",
+    premium: true,
+    feature: "darkpool",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1" />
@@ -83,6 +93,8 @@ const categories: DataCategory[] = [
     tags: ["Macro", "Rates"],
     href: "/dashboard/economy",
     accent: "cyan",
+    premium: true,
+    feature: "economy",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <circle cx="12" cy="12" r="9" />
@@ -211,6 +223,8 @@ function MiniBars({ accent, seed }: { accent: DataCategory["accent"]; seed: numb
 }
 
 export default function SupportedData() {
+  const { isFree } = usePlanAccess();
+
   return (
     <section className="relative">
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
@@ -218,6 +232,9 @@ export default function SupportedData() {
           <h2 className="text-lg font-semibold">Supported Data</h2>
           <p className="mt-1 text-sm text-white/50">
             Market datasets available through the DataCaptain API
+            {isFree && (
+              <span className="text-amber-300/80"> — some require a paid plan</span>
+            )}
           </p>
         </div>
         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/50">
@@ -234,12 +251,15 @@ export default function SupportedData() {
       >
         {categories.map((cat, index) => {
           const styles = accentStyles[cat.accent];
+          const locked = Boolean(isFree && cat.premium);
           return (
             <motion.div key={cat.title} variants={item}>
               <Link href={cat.href} className="group relative block h-full">
                 <motion.div
-                  className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5 backdrop-blur-sm ring-1 ring-transparent transition-shadow ${styles.ring} ${styles.glow}`}
-                  whileHover={{ y: -3 }}
+                  className={`relative flex h-full flex-col overflow-hidden rounded-2xl border bg-[#0c0c14]/90 p-5 backdrop-blur-sm ring-1 ring-transparent transition-shadow ${
+                    locked ? "border-amber-500/20 opacity-90" : `border-white/10 ${styles.ring} ${styles.glow}`
+                  }`}
+                  whileHover={{ y: locked ? 0 : -3 }}
                   transition={{ type: "spring", stiffness: 400, damping: 28 }}
                 >
                   <div
@@ -255,8 +275,23 @@ export default function SupportedData() {
                   />
 
                   <div className="relative flex items-start justify-between gap-2">
-                    <div className={`rounded-xl p-2.5 ${styles.iconBg}`}>{cat.icon}</div>
-                    <MiniBars accent={cat.accent} seed={index} />
+                    <div className={`rounded-xl p-2.5 ${locked ? "bg-amber-500/15 text-amber-300/80" : styles.iconBg}`}>
+                      {cat.icon}
+                    </div>
+                    {locked ? (
+                      <span className="flex items-center gap-1 rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium text-amber-300">
+                        <svg viewBox="0 0 20 20" fill="currentColor" className="h-3 w-3">
+                          <path
+                            fillRule="evenodd"
+                            d="M10 1a4.5 4.5 0 0 0-2.45 8.26v2.07a1 1 0 0 0 .55.9l3.5 1.75a1 1 0 0 0 .9 0l3.5-1.75a1 1 0 0 0 .55-.9v-2.07A4.5 4.5 0 0 0 10 1Z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Pro
+                      </span>
+                    ) : (
+                      <MiniBars accent={cat.accent} seed={index} />
+                    )}
                   </div>
 
                   <h3 className="relative mt-4 font-semibold text-white">{cat.title}</h3>

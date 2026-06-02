@@ -48,7 +48,13 @@ export async function datacaptainFetch<T>(
 
 export function getDataCaptainErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data as { message?: string } | undefined;
+    const data = err.response?.data as {
+      message?: string;
+      code?: string;
+    } | undefined;
+    if (data?.code === "PLAN_UPGRADE_REQUIRED") {
+      return data.message || "Upgrade your plan to access this API.";
+    }
     return data?.message || err.message || "Request failed";
   }
   return err instanceof Error ? err.message : "Request failed";

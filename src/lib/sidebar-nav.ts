@@ -25,6 +25,8 @@ export type SidebarNavItem = {
   href: string;
   label: string;
   icon: SidebarIcon;
+  /** Shown with lock on free plan */
+  premium?: boolean;
 };
 
 export type SidebarSection = {
@@ -51,10 +53,10 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     items: [
       { href: "/dashboard/tools/prices", label: "Batch Prices", icon: "prices" },
       { href: "/dashboard/etf", label: "ETF Explorer", icon: "etf" },
-      { href: "/dashboard/options", label: "Options", icon: "options" },
-      { href: "/dashboard/insiders", label: "Insiders", icon: "insiders" },
-      { href: "/dashboard/darkpool", label: "Dark Pool", icon: "darkpool" },
-      { href: "/dashboard/economy", label: "Economy", icon: "economy" },
+      { href: "/dashboard/options", label: "Options", icon: "options", premium: true },
+      { href: "/dashboard/insiders", label: "Insiders", icon: "insiders", premium: true },
+      { href: "/dashboard/darkpool", label: "Dark Pool", icon: "darkpool", premium: true },
+      { href: "/dashboard/economy", label: "Economy", icon: "economy", premium: true },
     ],
   },
   {
