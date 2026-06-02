@@ -7,6 +7,8 @@ export interface Plan {
   credits: number;
   features: string[];
   slug?: string;
+  /** ISO currency code, e.g. USD, INR. Used only for billing UI. */
+  currency?: string;
 }
 
 interface PricingCardProps {
@@ -19,6 +21,19 @@ interface PricingCardProps {
 export default function PricingCard({ plan, popular, isCurrent, onSelect }: PricingCardProps) {
   const isEnterprise = plan.price === -1;
   const isFree = plan.price === 0;
+
+  const formatMonthlyPrice = (amount: number) => {
+    const code = (plan.currency || "USD").toUpperCase();
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: code,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    } catch {
+      return `${code} ${amount}`;
+    }
+  };
 
   return (
     <div
@@ -47,7 +62,7 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
         ) : (
           <>
             <span className="text-3xl font-bold">
-              {isFree ? "Free" : `$${plan.price}`}
+              {isFree ? "Free" : formatMonthlyPrice(plan.price)}
             </span>
             {!isFree && <span className="text-white/50">/month</span>}
           </>

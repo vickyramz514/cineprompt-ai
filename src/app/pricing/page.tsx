@@ -11,10 +11,6 @@ export default function PricingPage() {
   const { isAuthenticated } = useAuth();
 
   const handleSelectPlan = (idOrSlug: string) => {
-    if (idOrSlug === "enterprise") {
-      window.location.href = "mailto:sales@datacaptain.com?subject=Enterprise%20Plan%20Inquiry";
-      return;
-    }
     if (!isAuthenticated) {
       window.location.href = `/auth/login?redirect=/pricing`;
       return;
@@ -45,6 +41,7 @@ export default function PricingPage() {
                   id: plan.id,
                   name: plan.name,
                   price: plan.price,
+                  currency: plan.currency,
                   credits: plan.requestsPerDay,
                   features: plan.features,
                 }}

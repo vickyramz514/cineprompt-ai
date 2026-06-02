@@ -5,7 +5,7 @@ export type User = {
   name: string;
   email: string;
   avatar?: string | null;
-  plan?: "free" | "starter" | "creator" | "pro" | string;
+  plan?: "free" | "starter" | "pro" | "ultra" | "creator" | string;
   credits?: number;
   provider?: string | null;
   role?: "USER" | "CREATOR" | "ADMIN" | "SUPER_ADMIN";

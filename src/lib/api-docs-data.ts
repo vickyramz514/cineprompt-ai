@@ -275,7 +275,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       query: "",
       description: "Usage stats — plan, requests today, remaining, daily limit.",
       params: [],
-      responseExample: '{"plan":"FREE","requestsToday":42,"requestsRemaining":958,"dailyLimit":1000}',
+      responseExample: '{"plan":"FREE","requestsToday":12,"requestsRemaining":38,"dailyLimit":50}',
     },
   ],
 };

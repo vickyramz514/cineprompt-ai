@@ -191,6 +191,7 @@ export default function LandingPage() {
                   id: plan.id,
                   name: plan.name,
                   price: plan.price,
+                  currency: plan.currency,
                   credits: plan.requestsPerDay,
                   features: plan.features,
                 }}

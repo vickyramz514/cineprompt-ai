@@ -99,7 +99,7 @@ export default function DashboardPage() {
             <DashboardCards
               requestsToday={usage?.requestsToday ?? 0}
               requestsRemaining={usage?.requestsRemaining ?? 0}
-              dailyLimit={usage?.dailyLimit ?? 1000}
+              dailyLimit={usage?.dailyLimit ?? 50}
               plan={usage?.plan ?? "—"}
               isLoading={usageLoading}
             />

@@ -21,6 +21,7 @@ function mapPlanToPricing(plan: {
   slug: string;
   priceCents: number;
   credits: number;
+  currency: string;
   features?: unknown;
 }): Plan {
   const price = plan.priceCents < 0 ? -1 : Math.round(plan.priceCents / 100);
@@ -32,6 +33,7 @@ function mapPlanToPricing(plan: {
     credits,
     features: Array.isArray(plan.features) ? (plan.features as string[]) : [],
     slug: plan.slug,
+    currency: plan.currency,
   };
 }
 
@@ -68,6 +70,19 @@ export default function BillingView() {
   const [subscription, setSubscription] = useState<Awaited<ReturnType<typeof subscriptionService.getSubscriptionStatus>>>(null);
   const [cancelling, setCancelling] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+
+  const formatMonthlyPrice = (amount: number, currency?: string) => {
+    const code = (currency || "USD").toUpperCase();
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: code,
+        maximumFractionDigits: 0,
+      }).format(amount);
+    } catch {
+      return `${code} ${amount}`;
+    }
+  };
 
   const fetchHistory = useCallback(async () => {
     setHistoryLoading(true);
@@ -122,10 +137,6 @@ export default function BillingView() {
   const handleSelectPlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId || p.slug === planId);
     if (!plan || plan.slug === "free") return;
-    if (plan.slug === "enterprise") {
-      window.location.href = "mailto:sales@datacaptain.com?subject=Enterprise%20Plan%20Inquiry";
-      return;
-    }
     setSelectedPlan(mapPlanToPricing(plan));
     setCheckoutError(null);
     setPaymentModalOpen(true);
@@ -456,7 +467,7 @@ export default function BillingView() {
                   ? "Custom"
                   : selectedPlan.price === 0
                     ? "Free"
-                    : `$${selectedPlan.price}/mo`}
+                    : `${formatMonthlyPrice(selectedPlan.price, selectedPlan.currency)}/mo`}
               </p>
             </div>
           )}

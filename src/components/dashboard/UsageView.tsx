@@ -108,7 +108,7 @@ function StatTile({
 }
 
 export default function UsageView({ stats, isLoading, error, onRefresh }: UsageViewProps) {
-  const dailyLimit = stats?.dailyLimit ?? 1000;
+  const dailyLimit = stats?.dailyLimit ?? 50;
   const requestsToday = stats?.requestsToday ?? 0;
   const remainingToday = stats?.remainingToday ?? Math.max(0, dailyLimit - requestsToday);
   const dailyPct = dailyLimit > 0 ? (requestsToday / dailyLimit) * 100 : 0;
