@@ -6,7 +6,8 @@ import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useWallet } from "@/hooks/useWallet";
 import { useSubscriptionPlans } from "@/hooks/useSubscriptionPlans";
-import { useCreditsStore } from "@/store/useStore";
+import { useAuthStore, useCreditsStore } from "@/store/useStore";
+import { useApiUsage } from "@/hooks/useApiUsage";
 import PricingCard from "@/components/PricingCard";
 import Modal from "@/components/Modal";
 import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
@@ -58,6 +59,8 @@ const TX_ICONS: Record<string, string> = {
 export default function BillingView() {
   const searchParams = useSearchParams();
   const { credits, fetchBalance } = useWallet();
+  const { refetch: refetchUsage } = useApiUsage();
+  const setUser = useAuthStore((s) => s.setUser);
   const { plans, isLoading: plansLoading, error: plansError } = useSubscriptionPlans();
   const { isLoading, error } = useCreditsStore();
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -127,12 +130,43 @@ export default function BillingView() {
 
   useEffect(() => {
     const paymentId = searchParams.get("razorpay_payment_id");
-    if (!paymentId) return;
-    setPaymentSuccess(true);
-    void fetchBalance();
-    void fetchSubscription();
-    window.history.replaceState({}, "", "/dashboard/wallet");
-  }, [searchParams, fetchBalance, fetchSubscription]);
+    const subscriptionId = searchParams.get("razorpay_subscription_id");
+    if (!paymentId && !subscriptionId) return;
+
+    let cancelled = false;
+
+    const syncAfterCheckout = async () => {
+      try {
+        if (subscriptionId) {
+          const confirmed = await subscriptionService.confirmSubscription(subscriptionId);
+          if (!cancelled && confirmed.user) {
+            setUser(confirmed.user);
+          }
+          if (!cancelled && confirmed.subscription) {
+            setSubscription(confirmed.subscription);
+          }
+        }
+        if (!cancelled) {
+          await Promise.all([fetchBalance(), fetchSubscription(), refetchUsage()]);
+        }
+      } catch {
+        if (!cancelled) {
+          await Promise.all([fetchBalance(), fetchSubscription(), refetchUsage()]);
+        }
+      } finally {
+        if (!cancelled) {
+          setPaymentSuccess(true);
+          window.history.replaceState({}, "", "/dashboard/wallet");
+        }
+      }
+    };
+
+    void syncAfterCheckout();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [searchParams, fetchBalance, fetchSubscription, refetchUsage, setUser]);
 
   const handleSelectPlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId || p.slug === planId);

@@ -3,6 +3,7 @@
  */
 
 import { api, getErrorMessage } from "@/lib/api";
+import type { User } from "@/services/auth.service";
 
 export type SubscriptionPlan = {
   id: string;
@@ -90,6 +91,19 @@ export async function getSubscriptionStatus(): Promise<SubscriptionStatusRespons
   const res = await api.get<ApiResponse<SubscriptionStatusResponse>>("/subscriptions/status");
   if (!res.data.success) throw new Error("Failed to fetch subscription status");
   return res.data.data.subscription;
+}
+
+export type ConfirmSubscriptionResponse = {
+  subscription: SubscriptionStatusResponse["subscription"];
+  user: User;
+};
+
+export async function confirmSubscription(subscriptionId: string): Promise<ConfirmSubscriptionResponse> {
+  const res = await api.post<ApiResponse<ConfirmSubscriptionResponse>>("/subscriptions/confirm", {
+    subscriptionId,
+  });
+  if (!res.data.success) throw new Error("Failed to confirm subscription");
+  return res.data.data;
 }
 
 export { getErrorMessage };
