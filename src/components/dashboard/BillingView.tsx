@@ -157,7 +157,7 @@ export default function BillingView() {
           subscriptionId: data.subscriptionId,
           name: "DataCaptain",
           description: planName,
-          callbackUrl: `${window.location.origin}${window.location.pathname}`,
+          callbackUrl: `${window.location.origin}/api/payment/razorpay-callback`,
         });
       } else {
         window.location.href = data.checkoutUrl;

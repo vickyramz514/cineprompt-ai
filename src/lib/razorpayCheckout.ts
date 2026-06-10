@@ -42,7 +42,7 @@ export type OpenSubscriptionCheckoutParams = {
   subscriptionId: string;
   name: string;
   description: string;
-  /** Full URL (e.g. https://app.com/dashboard/wallet); Razorpay appends payment query params. */
+  /** POST endpoint that redirects to /dashboard/wallet (Razorpay callback_url must accept POST). */
   callbackUrl: string;
 };
 
