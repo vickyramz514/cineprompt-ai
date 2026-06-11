@@ -45,6 +45,38 @@ const ENDPOINTS: EndpointDef[] = [
     params: [{ key: "symbols", label: "Symbols", placeholder: "AAPL,TSLA,NVDA" }],
   },
   {
+    path: "/stocks/:symbol/snapshot",
+    method: "GET",
+    label: "Stock snapshot",
+    description: "Quote, profile, sentiment, indicators, news — one call",
+    category: "Stocks",
+    params: [{ key: "symbol", label: "Symbol", placeholder: "AAPL" }],
+  },
+  {
+    path: "/stocks/:symbol/news",
+    method: "GET",
+    label: "Stock news",
+    description: "Headlines and summaries for a symbol",
+    category: "Stocks",
+    premium: true,
+    params: [
+      { key: "symbol", label: "Symbol", placeholder: "AAPL" },
+      { key: "limit", label: "Limit", placeholder: "20" },
+    ],
+  },
+  {
+    path: "/market/earnings-calendar",
+    method: "GET",
+    label: "Earnings calendar",
+    description: "Upcoming and recent earnings dates",
+    category: "Market",
+    params: [
+      { key: "from", label: "From (YYYY-MM-DD)", placeholder: "2026-06-01" },
+      { key: "to", label: "To (YYYY-MM-DD)", placeholder: "2026-06-30" },
+      { key: "symbol", label: "Symbol (optional)", placeholder: "AAPL" },
+    ],
+  },
+  {
     path: "/etf/list",
     method: "GET",
     label: "ETF list",

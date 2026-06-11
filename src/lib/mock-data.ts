@@ -9,7 +9,7 @@ export const PRICING_PLANS = [
     price: 0,
     currency: "INR",
     requestsPerDay: 50,
-    features: ["50 requests/day", "Historical stock data", "ETF data", "Basic support"],
+    features: ["50 requests/day", "Stock snapshot API", "Earnings calendar", "ETF & batch prices"],
   },
   {
     id: "starter",
@@ -17,7 +17,7 @@ export const PRICING_PLANS = [
     price: 1500,
     currency: "INR",
     requestsPerDay: 1000,
-    features: ["1,000 requests/day", "Historical stock data", "ETF data", "Email support"],
+    features: ["1,000 requests/day", "Full news feed API", "Historical data", "Email support"],
   },
   {
     id: "pro",

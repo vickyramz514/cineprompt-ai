@@ -17,6 +17,21 @@ type QuickLink = {
 
 const links: QuickLink[] = [
   {
+    href: "/dashboard/snapshot",
+    title: "Stock Snapshot",
+    description: "Quote, AI score, news & earnings in one call",
+    accent: "indigo",
+    featured: true,
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <path strokeLinecap="round" d="M14 17h7M17.5 14v7" />
+      </svg>
+    ),
+  },
+  {
     href: "/dashboard/tools/prices",
     title: "Batch Prices",
     description: "Multi-symbol quotes in one request",
@@ -56,8 +71,7 @@ const links: QuickLink[] = [
     href: "/dashboard/api-explorer",
     title: "API Explorer",
     description: "Try endpoints live with your key",
-    accent: "indigo",
-    featured: true,
+    accent: "violet",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 5h14v14H5z" />

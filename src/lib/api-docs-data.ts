@@ -29,6 +29,26 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   stocks: [
     {
       method: "GET",
+      path: "/api/stocks/:symbol/snapshot",
+      query: "",
+      description:
+        "Unified snapshot — quote, profile, sentiment, key indicators, AI score, next earnings, recent news headlines. Ideal for watchlists and detail screens.",
+      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker (e.g. AAPL)", in: "path" }],
+      cache: "60s",
+    },
+    {
+      method: "GET",
+      path: "/api/stocks/:symbol/news",
+      query: "?limit=20",
+      description: "News feed for a symbol — headline, summary, source, URL, published time.",
+      params: [
+        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
+        { name: "limit", type: "integer", required: false, desc: "Max articles (default 20, max 50)", in: "query" },
+      ],
+      cache: "60s",
+    },
+    {
+      method: "GET",
       path: "/api/stocks/prices",
       query: "?symbols=AAPL,TSLA,NVDA",
       description: "Batch stock prices — get real-time prices for up to 50 symbols in a single request. Cached 60s.",
@@ -95,6 +115,20 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   ],
 
   market: [
+    {
+      method: "GET",
+      path: "/api/market/earnings-calendar",
+      query: "?from=2024-03-01&to=2024-03-31&symbol=AAPL",
+      description:
+        "Earnings calendar — upcoming and recent report dates with EPS, consensus, and surprise. Defaults to past 7 days through next 30 days.",
+      params: [
+        { name: "from", type: "string", required: false, desc: "Start date (YYYY-MM-DD)", in: "query" },
+        { name: "to", type: "string", required: false, desc: "End date (YYYY-MM-DD)", in: "query" },
+        { name: "symbol", type: "string", required: false, desc: "Filter by ticker", in: "query" },
+        { name: "limit", type: "integer", required: false, desc: "Max events (default 100)", in: "query" },
+      ],
+      cache: "60s",
+    },
     {
       method: "GET",
       path: "/api/market/status",

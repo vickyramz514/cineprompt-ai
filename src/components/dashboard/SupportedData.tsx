@@ -19,11 +19,26 @@ type DataCategory = {
 
 const categories: DataCategory[] = [
   {
+    title: "Stock Snapshot",
+    description: "All-in-one symbol view — quote, sentiment, AI score, news, and earnings.",
+    tags: ["Free API", "1 request"],
+    href: "/dashboard/snapshot",
+    accent: "indigo",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <path strokeLinecap="round" d="M14 17h7M17.5 14v7" />
+      </svg>
+    ),
+  },
+  {
     title: "Stocks",
     description: "Prices, history, candles, dividends, and company profiles for US equities.",
     tags: ["OHLCV", "Profile"],
     href: "/dashboard/tools/prices",
-    accent: "indigo",
+    accent: "cyan",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" d="M4 18V8M10 18V4M16 18v-6M22 18V10" />
