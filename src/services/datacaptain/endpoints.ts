@@ -29,6 +29,52 @@ export type EtfListResponse = {
   offset: number;
 };
 
+export type EtfHeatmapCell = {
+  symbol: string;
+  name: string;
+  returnPct: number | null;
+  latestPrice: number | null;
+  dividendYieldTtm: number | null;
+  assetClass: string | null;
+};
+
+export type EtfHeatmapResponse = {
+  period: string;
+  asOf: string;
+  basket: { id: string; label: string; symbols: string[] } | null;
+  cells: EtfHeatmapCell[];
+};
+
+export type EtfHeatmapBasket = {
+  id: string;
+  label: string;
+  symbols: string[];
+};
+
+export type EtfScreenerRow = {
+  symbol: string;
+  name: string;
+  latestPrice: number | null;
+  asOf: string | null;
+  returnYtd: number | null;
+  return1y: number | null;
+  return3y: number | null;
+  return5y: number | null;
+  dividendYieldTtm: number | null;
+  volatility1y: number | null;
+  avgVolume30d: number | null;
+  assetClass: string | null;
+};
+
+export type EtfScreenerResponse = {
+  period: string;
+  data: EtfScreenerRow[];
+  total: number;
+  limit: number;
+  offset: number;
+  freeTierLimited?: boolean;
+};
+
 export type BacktestResult = {
   strategy: string;
   symbol: string;
@@ -55,6 +101,40 @@ export type CompareResult = {
     | (Pick<BacktestResult, "symbol" | "name" | "totalReturn" | "annualReturn" | "maxDrawdown" | "finalValue" | "dividendYield" | "riskScore">)
     | { symbol: string; error: string }
   >;
+};
+
+export type RebalanceAllocation = {
+  symbol: string;
+  name: string;
+  price: number;
+  shares: number;
+  currentValue: number;
+  currentWeight: number;
+  targetWeight: number;
+  drift: number;
+  tradeValue: number;
+  tradeShares: number;
+  action: "BUY" | "SELL" | "HOLD";
+  reason: string;
+};
+
+export type RebalanceTrade = {
+  symbol: string;
+  name: string;
+  action: "BUY" | "SELL";
+  shares: number;
+  value: number;
+  reason: string;
+};
+
+export type RebalanceResult = {
+  totalValue: number;
+  driftThreshold: number;
+  mode: "rebalance" | "contributions_only";
+  needsRebalance: boolean;
+  maxDrift: { symbol: string; drift: number } | null;
+  allocation: RebalanceAllocation[];
+  trades: RebalanceTrade[];
 };
 
 export type OptionLeg = {
@@ -187,6 +267,27 @@ export const datacaptainEndpoints = {
       key
     ),
 
+  etfHeatmap: (
+    key: string | null,
+    params?: { basket?: string; symbols?: string; period?: string }
+  ) => datacaptainFetch<EtfHeatmapResponse>("/etf/heatmap", key, params as Record<string, string>),
+
+  etfHeatmapBaskets: (key: string | null) =>
+    datacaptainFetch<{ baskets: EtfHeatmapBasket[] }>("/etf/heatmap/baskets", key),
+
+  etfScreener: (
+    key: string | null,
+    params?: {
+      returnMin?: string;
+      dividendYieldMin?: string;
+      period?: string;
+      assetClass?: string;
+      sort?: string;
+      limit?: string;
+      offset?: string;
+    }
+  ) => datacaptainFetch<EtfScreenerResponse>("/etf/screener", key, params as Record<string, string>),
+
   optionsChain: (key: string | null, symbol: string, params?: { expirationDate?: string; limit?: string }) =>
     datacaptainFetch<OptionsChain>(`/options/${encodeURIComponent(symbol)}`, key, params as Record<string, string>),
 
@@ -237,6 +338,16 @@ export const datacaptainEndpoints = {
       endDate: string;
     }
   ) => datacaptainPost<CompareResult>("/backtest/compare", key, body),
+
+  portfolioRebalance: (
+    key: string | null,
+    body: {
+      holdings: Array<{ symbol: string; shares?: number; value?: number }>;
+      target: Array<{ symbol: string; weight: number }>;
+      driftThreshold?: number;
+      mode?: "rebalance" | "contributions_only";
+    }
+  ) => datacaptainPost<RebalanceResult>("/portfolio/rebalance", key, body),
 };
 
 export { getDataCaptainErrorMessage };

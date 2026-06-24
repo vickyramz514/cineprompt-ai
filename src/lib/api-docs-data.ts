@@ -49,6 +49,32 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
+      path: "/api/etf/heatmap",
+      query: "?basket=broad&period=1y",
+      description: "ETF performance heatmap — colored cells by return % for preset baskets or custom symbol lists.",
+      params: [
+        { name: "basket", type: "string", required: false, desc: "broad | dividend | sector | growth | bonds", in: "query" },
+        { name: "symbols", type: "string", required: false, desc: "Comma-separated ETF tickers (max 40)", in: "query" },
+        { name: "period", type: "string", required: false, desc: "ytd | 1y | 3y | 5y (default 1y)", in: "query" },
+      ],
+      cache: "60s",
+    },
+    {
+      method: "GET",
+      path: "/api/etf/screener",
+      query: "?returnMin=10&dividendYieldMin=2&period=1y",
+      description: "Filter ETFs by return and dividend yield. Free plan returns top 10 matches.",
+      params: [
+        { name: "returnMin", type: "number", required: false, desc: "Minimum return % for selected period", in: "query" },
+        { name: "dividendYieldMin", type: "number", required: false, desc: "Minimum trailing dividend yield %", in: "query" },
+        { name: "period", type: "string", required: false, desc: "ytd | 1y | 3y | 5y", in: "query" },
+        { name: "sort", type: "string", required: false, desc: "return | yield | volatility", in: "query" },
+        { name: "limit", type: "number", required: false, desc: "Max results (10 on Free)", in: "query" },
+      ],
+      cache: "60s",
+    },
+    {
+      method: "GET",
       path: "/api/stocks/prices",
       query: "?symbols=SPY,QQQ,VOO",
       description: "Batch ETF prices — latest close for up to 50 ETF tickers in one request. Cached 60s.",
@@ -83,6 +109,19 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
         { name: "startDate", type: "string", required: true, desc: "YYYY-MM-DD" },
         { name: "endDate", type: "string", required: true, desc: "YYYY-MM-DD" },
         { name: "strategy", type: "string", required: false, desc: "buy_and_hold (only option today)" },
+      ],
+    },
+    {
+      method: "POST",
+      path: "/api/portfolio/rebalance",
+      query: "",
+      description:
+        "ETF portfolio rebalancer — compare current holdings to target weights and get buy/sell suggestions.",
+      params: [
+        { name: "holdings", type: "object[]", required: true, desc: '[{ "symbol": "VOO", "shares": 63 }]' },
+        { name: "target", type: "object[]", required: true, desc: '[{ "symbol": "VOO", "weight": 60 }]' },
+        { name: "driftThreshold", type: "number", required: false, desc: "Min drift % before suggesting trades (default 0)" },
+        { name: "mode", type: "string", required: false, desc: "rebalance | contributions_only" },
       ],
     },
     {

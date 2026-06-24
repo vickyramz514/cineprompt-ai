@@ -65,6 +65,29 @@ const ENDPOINTS: EndpointDef[] = [
     params: [{ key: "symbol", label: "Symbol", placeholder: "SPY" }],
   },
   {
+    path: "/etf/heatmap",
+    method: "GET",
+    label: "ETF heatmap",
+    description: "Performance grid by basket and period",
+    category: "ETF",
+    params: [
+      { key: "basket", label: "Basket", placeholder: "broad" },
+      { key: "period", label: "Period", placeholder: "1y" },
+    ],
+  },
+  {
+    path: "/etf/screener",
+    method: "GET",
+    label: "ETF screener",
+    description: "Filter by return and dividend yield",
+    category: "ETF",
+    params: [
+      { key: "returnMin", label: "Min return %", placeholder: "10" },
+      { key: "dividendYieldMin", label: "Min yield %", placeholder: "2" },
+      { key: "period", label: "Period", placeholder: "1y" },
+    ],
+  },
+  {
     path: "/backtest/buy-and-hold",
     method: "GET",
     label: "Backtest buy & hold",
@@ -76,6 +99,27 @@ const ENDPOINTS: EndpointDef[] = [
       { key: "investment", label: "Investment", placeholder: "10000" },
       { key: "startDate", label: "Start", placeholder: "2015-01-01" },
       { key: "endDate", label: "End", placeholder: "2025-01-01" },
+    ],
+  },
+  {
+    path: "/portfolio/rebalance",
+    method: "GET",
+    label: "Portfolio rebalance",
+    description: "Target allocation drift and trade suggestions",
+    category: "Platform",
+    premium: true,
+    params: [
+      {
+        key: "holdings",
+        label: "Holdings JSON",
+        placeholder: '[{"symbol":"VOO","shares":63},{"symbol":"QQQ","shares":37}]',
+      },
+      {
+        key: "target",
+        label: "Target JSON",
+        placeholder: '[{"symbol":"VOO","weight":60},{"symbol":"QQQ","weight":40}]',
+      },
+      { key: "driftThreshold", label: "Drift %", placeholder: "2" },
     ],
   },
   {

@@ -12,10 +12,11 @@ export type PlanFeature =
   | "insiders"
   | "darkpool"
   | "economy"
-  | "market-screener";
+  | "etf-screener"
+  | "etf-heatmap"
 
 /** Features included on the free plan */
-export const FREE_PLAN_FEATURES: PlanFeature[] = ["batch-prices", "etf-list"];
+export const FREE_PLAN_FEATURES: PlanFeature[] = ["batch-prices", "etf-list", "etf-heatmap", "etf-screener"];
 
 /** DataCaptain API paths allowed on free (for explorer) */
 export const FREE_API_PATHS = new Set([
@@ -23,6 +24,9 @@ export const FREE_API_PATHS = new Set([
   "/market/status",
   "/stocks/prices",
   "/etf/list",
+  "/etf/heatmap",
+  "/etf/heatmap/baskets",
+  "/etf/screener",
 ]);
 
 /** Mirrors backend FREE_API_PATH_PATTERNS */
@@ -68,8 +72,10 @@ export function planDisplayName(plan?: string | null): string {
 /** Map dashboard routes to plan features */
 export function featureForPath(pathname: string): PlanFeature | null {
   if (pathname.startsWith("/dashboard/tools/prices")) return "batch-prices";
-  if (pathname === "/dashboard/etf") return "etf-list";
+  if (pathname.startsWith("/dashboard/etf/heatmap")) return "etf-heatmap";
+  if (pathname.startsWith("/dashboard/etf/screener")) return "etf-screener";
   if (pathname.startsWith("/dashboard/etf/")) return "etf-detail";
+  if (pathname === "/dashboard/etf") return "etf-list";
   if (pathname.startsWith("/dashboard/backtesting")) return "backtesting";
   if (pathname.startsWith("/dashboard/portfolio")) return "portfolio";
   if (pathname.startsWith("/dashboard/options")) return "options";

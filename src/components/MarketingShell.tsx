@@ -31,7 +31,7 @@ export function PlatformPillars() {
   const items = [
     { title: "ETF APIs", desc: "Universe, prices, details", href: "/docs" },
     { title: "Backtesting", desc: "Buy & hold on ETF history", href: "/backtesting" },
-    { title: "Portfolio", desc: "Compare ETFs side-by-side", href: "/portfolio" },
+    { title: "Portfolio", desc: "Rebalance & compare ETFs", href: "/portfolio" },
     { title: "Charts", desc: "Equity curves & metrics", href: "/dashboard/backtesting", badge: "Soon" },
   ];
 

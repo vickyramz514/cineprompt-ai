@@ -24,8 +24,8 @@ const FEATURE_COPY: Record<PlanFeature, { title: string; description: string }> 
     description: "Run buy-and-hold simulations on historical ETF data with a paid plan.",
   },
   portfolio: {
-    title: "Portfolio simulator",
-    description: "Compare ETF performance side-by-side with a paid plan.",
+    title: "Portfolio tools",
+    description: "Rebalance allocations and compare ETF performance with a paid plan.",
   },
   options: {
     title: "Options chain",
@@ -43,9 +43,13 @@ const FEATURE_COPY: Record<PlanFeature, { title: string; description: string }> 
     title: "Economic indicators",
     description: "Macro indicators require a paid plan.",
   },
-  "market-screener": {
-    title: "Market screener",
-    description: "Advanced market tools require a paid plan.",
+  "etf-heatmap": {
+    title: "ETF heatmap",
+    description: "Available on the Free plan with preset baskets.",
+  },
+  "etf-screener": {
+    title: "ETF screener",
+    description: "Free plan shows top 10 results. Upgrade for full screener access.",
   },
 };
 

@@ -56,12 +56,14 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     title: "Platform",
     items: [
       { href: "/dashboard/backtesting", label: "Backtesting", icon: "backtest", premium: true },
-      { href: "/dashboard/portfolio", label: "Portfolio", icon: "portfolio", premium: true },
+      { href: "/dashboard/portfolio", label: "Portfolio Tools", icon: "portfolio", premium: true },
     ],
   },
   {
     title: "Market data",
     items: [
+      { href: "/dashboard/etf/heatmap", label: "ETF Heatmap", icon: "chart" },
+      { href: "/dashboard/etf/screener", label: "ETF Screener", icon: "chart" },
       { href: "/dashboard/tools/prices", label: "Batch ETF Prices", icon: "prices" },
       { href: "/dashboard/etf", label: "ETF Explorer", icon: "etf" },
     ],

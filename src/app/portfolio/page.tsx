@@ -2,8 +2,8 @@ import { MarketingShell } from "@/components/MarketingShell";
 import PortfolioView from "@/components/dashboard/PortfolioView";
 
 export const metadata = {
-  title: "Portfolio Simulator | Data Captain",
-  description: "Compare ETF performance — VOO vs SPY vs QQQ and more.",
+  title: "Portfolio Rebalancer & Compare | Data Captain",
+  description: "Rebalance ETF allocations toward target weights or compare VOO vs SPY vs QQQ historically.",
 };
 
 export default function PortfolioPage() {
