@@ -21,7 +21,7 @@ export default function LegalDocumentView({ document, sibling }: Props) {
     <div className="min-h-screen bg-[#0a0a0f] text-white">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl lg:px-8">
         <DataCaptainLogo size="md" />
-        <MarketingHeaderActions variant="docs" isAuthenticated={isAuthenticated} />
+        <MarketingHeaderActions active="docs" isAuthenticated={isAuthenticated} />
       </header>
 
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>

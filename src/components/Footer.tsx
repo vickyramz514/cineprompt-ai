@@ -18,6 +18,12 @@ export default function Footer() {
                 <Link href="/docs" className="hover:text-white">API Documentation</Link>
               </li>
               <li>
+                <Link href="/backtesting" className="hover:text-white">Backtesting</Link>
+              </li>
+              <li>
+                <Link href="/portfolio" className="hover:text-white">Portfolio</Link>
+              </li>
+              <li>
                 <Link href="/pricing" className="hover:text-white">Pricing</Link>
               </li>
               <li>

@@ -16,6 +16,8 @@ export type SidebarIcon =
   | "economy"
   | "snapshot"
   | "calendar"
+  | "backtest"
+  | "portfolio"
   | "usage"
   | "billing"
   | "referral"
@@ -48,6 +50,13 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
       { href: "/dashboard/api-explorer", label: "API Explorer", icon: "terminal" },
       { href: "/dashboard/api-keys", label: "API Keys", icon: "key" },
       { href: "/dashboard/usage", label: "Usage", icon: "usage" },
+    ],
+  },
+  {
+    title: "Platform",
+    items: [
+      { href: "/dashboard/backtesting", label: "Backtesting", icon: "backtest", premium: true },
+      { href: "/dashboard/portfolio", label: "Portfolio", icon: "portfolio", premium: true },
     ],
   },
   {

@@ -46,6 +46,16 @@ export async function datacaptainFetch<T>(
   return res.data;
 }
 
+export async function datacaptainPost<T>(
+  path: string,
+  apiKey: string | null,
+  body?: Record<string, unknown>
+): Promise<T> {
+  const client = createClient(apiKey);
+  const res = await client.post<T>(path, body ?? {});
+  return res.data;
+}
+
 export function getDataCaptainErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
     const data = err.response?.data as {

@@ -9,6 +9,7 @@ const SECTION_TITLES: Record<string, string> = {
   stocks: "Stock Endpoints",
   market: "Market Endpoints",
   etf: "ETF Endpoints",
+  platform: "Backtesting & Portfolio",
   options: "Options Endpoints",
   insiders: "Insider Trades",
   sentiment: "Sentiment",
@@ -56,7 +57,7 @@ export default function PublicDocsPage() {
       <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/70 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 lg:px-8">
           <DataCaptainLogo size="md" />
-          <MarketingHeaderActions variant="docs" />
+          <MarketingHeaderActions active="docs" />
         </div>
       </header>
 

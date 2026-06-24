@@ -2,7 +2,7 @@
  * DataCaptain API endpoints - Types and fetch helpers
  */
 
-import { datacaptainFetch, getDataCaptainErrorMessage } from "./client";
+import { datacaptainFetch, datacaptainPost, getDataCaptainErrorMessage } from "./client";
 
 export type DeveloperUsage = {
   plan: string;
@@ -20,7 +20,42 @@ export type MarketStatus = {
 
 export type BatchPrice = { symbol: string; price: number };
 
-export type EtfItem = { symbol: string; name: string; price: number | null };
+export type EtfItem = { symbol: string; name: string; price: number | null; exchange?: string | null };
+
+export type EtfListResponse = {
+  data: EtfItem[];
+  total: number;
+  limit: number;
+  offset: number;
+};
+
+export type BacktestResult = {
+  strategy: string;
+  symbol: string;
+  name?: string;
+  startDate: string;
+  endDate: string;
+  initialInvestment: number;
+  finalValue: number;
+  totalReturn: number;
+  annualReturn: number;
+  maxDrawdown: number;
+  dividendYield: number | null;
+  riskScore: number;
+  equityCurve: { date: string; value: number }[];
+};
+
+export type CompareResult = {
+  investment: number;
+  startDate: string;
+  endDate: string;
+  winner: string | null;
+  ranked: string[];
+  results: Array<
+    | (Pick<BacktestResult, "symbol" | "name" | "totalReturn" | "annualReturn" | "maxDrawdown" | "finalValue" | "dividendYield" | "riskScore">)
+    | { symbol: string; error: string }
+  >;
+};
 
 export type OptionLeg = {
   strike: number;
@@ -141,8 +176,10 @@ export const datacaptainEndpoints = {
   batchPrices: (key: string | null, symbols: string) =>
     datacaptainFetch<BatchPrice[]>("/stocks/prices", key, { symbols }),
 
-  etfList: (key: string | null) =>
-    datacaptainFetch<EtfItem[]>("/etf/list", key),
+  etfList: (
+    key: string | null,
+    params?: { limit?: string; offset?: string; search?: string }
+  ) => datacaptainFetch<EtfListResponse>("/etf/list", key, params as Record<string, string>),
 
   etfBySymbol: (key: string | null, symbol: string) =>
     datacaptainFetch<EtfItem & { type?: string; date?: string }>(
@@ -179,6 +216,27 @@ export const datacaptainEndpoints = {
     key: string | null,
     params?: { from?: string; to?: string; symbol?: string; limit?: string }
   ) => datacaptainFetch<EarningsCalendar>("/market/earnings-calendar", key, params as Record<string, string>),
+
+  backtestBuyAndHold: (
+    key: string | null,
+    body: {
+      symbol: string;
+      investment?: number;
+      startDate: string;
+      endDate: string;
+      strategy?: string;
+    }
+  ) => datacaptainPost<BacktestResult>("/backtest/buy-and-hold", key, body),
+
+  backtestCompare: (
+    key: string | null,
+    body: {
+      symbols: string[];
+      investment?: number;
+      startDate: string;
+      endDate: string;
+    }
+  ) => datacaptainPost<CompareResult>("/backtest/compare", key, body),
 };
 
 export { getDataCaptainErrorMessage };

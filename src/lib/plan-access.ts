@@ -6,6 +6,8 @@ export type PlanFeature =
   | "batch-prices"
   | "etf-list"
   | "etf-detail"
+  | "backtesting"
+  | "portfolio"
   | "options"
   | "insiders"
   | "darkpool"
@@ -69,6 +71,8 @@ export function featureForPath(pathname: string): PlanFeature | null {
   if (pathname.startsWith("/dashboard/tools/prices")) return "batch-prices";
   if (pathname === "/dashboard/etf") return "etf-list";
   if (pathname.startsWith("/dashboard/etf/")) return "etf-detail";
+  if (pathname.startsWith("/dashboard/backtesting")) return "backtesting";
+  if (pathname.startsWith("/dashboard/portfolio")) return "portfolio";
   if (pathname.startsWith("/dashboard/options")) return "options";
   if (pathname.startsWith("/dashboard/insiders")) return "insiders";
   if (pathname.startsWith("/dashboard/darkpool")) return "darkpool";

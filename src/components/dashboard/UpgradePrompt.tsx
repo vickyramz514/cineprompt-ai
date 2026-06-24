@@ -19,6 +19,14 @@ const FEATURE_COPY: Record<PlanFeature, { title: string; description: string }> 
     title: "ETF details",
     description: "Full ETF symbol data requires a paid plan.",
   },
+  backtesting: {
+    title: "Backtesting",
+    description: "Run buy-and-hold simulations on historical ETF data with a paid plan.",
+  },
+  portfolio: {
+    title: "Portfolio simulator",
+    description: "Compare ETF performance side-by-side with a paid plan.",
+  },
   options: {
     title: "Options chain",
     description: "Options data is available on Starter and Pro plans.",

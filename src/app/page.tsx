@@ -19,6 +19,7 @@ import {
 } from "@/components/landing/LandingAnimatedIcons";
 import HeroMarketChartBackdrop from "@/components/landing/HeroMarketChartBackdrop";
 import ProductShowcaseSection from "@/components/landing/ProductShowcaseSection";
+import { PlatformPillars } from "@/components/MarketingShell";
 import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 
 const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
@@ -62,7 +63,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
         <DataCaptainLogo size="md" />
-        <MarketingHeaderActions variant="landing" />
+        <MarketingHeaderActions active="home" />
       </header>
 
       {/* Hero */}
@@ -78,7 +79,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl [text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
           >
-            US Stock & ETF Historical Data API
+            US Stock & ETF Data Platform
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -109,11 +110,29 @@ export default function LandingPage() {
             >
               Get API Key
             </Link>
+            <Link
+              href="/backtesting"
+              className="ml-3 inline-flex rounded-xl border border-white/15 bg-white/5 px-8 py-3 font-semibold text-white/80 transition-all hover:bg-white/10"
+            >
+              Try Backtesting
+            </Link>
           </motion.div>
         </div>
       </section>
 
       <ProductShowcaseSection />
+
+      <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-2xl font-semibold sm:text-3xl">One platform, more than APIs</h2>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-white/55">
+            ETFs, stocks, backtesting, and portfolio tools — same login, same database, same API key.
+          </p>
+          <div className="mt-10">
+            <PlatformPillars />
+          </div>
+        </div>
+      </section>
 
       {/* Key Features */}
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">

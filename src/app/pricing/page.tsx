@@ -23,7 +23,7 @@ export default function PricingPage() {
     <div className="min-h-screen bg-[#0a0a0f]">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
         <DataCaptainLogo size="md" />
-        <MarketingHeaderActions variant="pricing" isAuthenticated={isAuthenticated} />
+        <MarketingHeaderActions active="pricing" isAuthenticated={isAuthenticated} />
       </header>
 
       <section className="px-4 pt-32 pb-20 sm:px-6 lg:px-8">

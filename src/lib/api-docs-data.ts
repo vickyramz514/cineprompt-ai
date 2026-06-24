@@ -168,9 +168,13 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     {
       method: "GET",
       path: "/api/etf/list",
-      query: "",
-      description: "Popular ETFs — SPY, QQQ, VTI, DIA, ARKK with current prices.",
-      params: [],
+      query: "limit=100&offset=0&search=SPY",
+      description: "Paginated ETF list from database. Returns { data, total, limit, offset }.",
+      params: [
+        { name: "limit", type: "number", required: false, desc: "Page size (max 500, default 100)", in: "query" },
+        { name: "offset", type: "number", required: false, desc: "Skip N rows", in: "query" },
+        { name: "search", type: "string", required: false, desc: "Filter by symbol or name", in: "query" },
+      ],
       cache: "60s",
     },
     {
@@ -180,6 +184,34 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       description: "Single ETF details — symbol, name, price, metadata.",
       params: [{ name: "symbol", type: "string", required: true, desc: "ETF ticker (e.g. SPY)", in: "path" }],
       cache: "60s",
+    },
+  ],
+
+  platform: [
+    {
+      method: "POST",
+      path: "/api/backtest/buy-and-hold",
+      query: "",
+      description: "Buy-and-hold backtest — total return, CAGR, drawdown, dividend yield, risk score, equity curve.",
+      params: [
+        { name: "symbol", type: "string", required: true, desc: "ETF or stock ticker (e.g. SPY)" },
+        { name: "investment", type: "number", required: false, desc: "Initial capital USD (default 10000)" },
+        { name: "startDate", type: "string", required: true, desc: "YYYY-MM-DD" },
+        { name: "endDate", type: "string", required: true, desc: "YYYY-MM-DD" },
+        { name: "strategy", type: "string", required: false, desc: "buy_and_hold (only option today)" },
+      ],
+    },
+    {
+      method: "POST",
+      path: "/api/backtest/compare",
+      query: "",
+      description: "Compare multiple symbols — e.g. VOO vs SPY vs QQQ. Returns ranked results.",
+      params: [
+        { name: "symbols", type: "string[]", required: true, desc: "Array or comma-separated tickers" },
+        { name: "investment", type: "number", required: false, desc: "Per-symbol investment USD" },
+        { name: "startDate", type: "string", required: true, desc: "YYYY-MM-DD" },
+        { name: "endDate", type: "string", required: true, desc: "YYYY-MM-DD" },
+      ],
     },
   ],
 
