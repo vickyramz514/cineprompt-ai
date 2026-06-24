@@ -202,8 +202,8 @@ export default function EtfScreenerView() {
         </div>
       )}
 
-      <Link href="/dashboard/etf/heatmap" className="text-sm text-violet-400 hover:underline">
-        View ETF Heatmap →
+      <Link href="/dashboard/etf/rankings" className="text-sm text-violet-400 hover:underline">
+        View ETF Rankings →
       </Link>
     </div>
   );

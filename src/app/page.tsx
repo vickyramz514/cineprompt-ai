@@ -19,6 +19,7 @@ import {
 } from "@/components/landing/LandingAnimatedIcons";
 import HeroMarketChartBackdrop from "@/components/landing/HeroMarketChartBackdrop";
 import ProductShowcaseSection from "@/components/landing/ProductShowcaseSection";
+import WhyPaySection from "@/components/landing/WhyPaySection";
 import { PlatformPillars } from "@/components/MarketingShell";
 import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 
@@ -79,7 +80,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl [text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
           >
-            US ETF Data Platform
+            US ETF API for builders
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -87,16 +88,20 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 max-w-2xl text-lg text-white/70"
           >
-            Access reliable historical ETF data through a simple and fast REST API — plus backtesting and portfolio tools.
+            Screener, heatmap, rankings, backtests, and portfolio rebalance — one API key.
+            Ship ETF tools in your app, not in another browser tab.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="mx-auto mt-4 max-w-2xl text-base text-white/60"
+            transition={{ duration: 0.5, delay: 0.12 }}
+            className="mx-auto mt-4 max-w-xl text-sm text-white/50"
           >
-            Our platform provides clean, structured ETF market data for developers, traders, and financial analysts.
-            Build allocation models, ETF screeners, research tools, and analytics platforms using our scalable API.
+            TypeScript & Python SDKs in{" "}
+            <Link href="/docs#sdks" className="text-indigo-400 hover:underline">
+              docs
+            </Link>
+            {" · "}Starter from ₹1,500/mo when you ship to production
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -121,6 +126,8 @@ export default function LandingPage() {
       </section>
 
       <ProductShowcaseSection />
+
+      <WhyPaySection />
 
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">

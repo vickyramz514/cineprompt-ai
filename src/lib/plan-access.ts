@@ -13,10 +13,17 @@ export type PlanFeature =
   | "darkpool"
   | "economy"
   | "etf-screener"
+  | "etf-rankings"
   | "etf-heatmap"
 
 /** Features included on the free plan */
-export const FREE_PLAN_FEATURES: PlanFeature[] = ["batch-prices", "etf-list", "etf-heatmap", "etf-screener"];
+export const FREE_PLAN_FEATURES: PlanFeature[] = [
+  "batch-prices",
+  "etf-list",
+  "etf-heatmap",
+  "etf-screener",
+  "etf-rankings",
+];
 
 /** DataCaptain API paths allowed on free (for explorer) */
 export const FREE_API_PATHS = new Set([
@@ -27,6 +34,7 @@ export const FREE_API_PATHS = new Set([
   "/etf/heatmap",
   "/etf/heatmap/baskets",
   "/etf/screener",
+  "/etf/rankings",
 ]);
 
 /** Mirrors backend FREE_API_PATH_PATTERNS */
@@ -73,6 +81,7 @@ export function planDisplayName(plan?: string | null): string {
 export function featureForPath(pathname: string): PlanFeature | null {
   if (pathname.startsWith("/dashboard/tools/prices")) return "batch-prices";
   if (pathname.startsWith("/dashboard/etf/heatmap")) return "etf-heatmap";
+  if (pathname.startsWith("/dashboard/etf/rankings")) return "etf-rankings";
   if (pathname.startsWith("/dashboard/etf/screener")) return "etf-screener";
   if (pathname.startsWith("/dashboard/etf/")) return "etf-detail";
   if (pathname === "/dashboard/etf") return "etf-list";

@@ -88,6 +88,18 @@ const ENDPOINTS: EndpointDef[] = [
     ],
   },
   {
+    path: "/etf/rankings",
+    method: "GET",
+    label: "ETF rankings",
+    description: "Leaderboards — top return, yield, or lowest volatility",
+    category: "ETF",
+    params: [
+      { key: "category", label: "Category", placeholder: "return" },
+      { key: "period", label: "Period", placeholder: "1y" },
+      { key: "limit", label: "Limit", placeholder: "20" },
+    ],
+  },
+  {
     path: "/backtest/buy-and-hold",
     method: "GET",
     label: "Backtest buy & hold",

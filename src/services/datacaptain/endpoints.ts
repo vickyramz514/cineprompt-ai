@@ -75,6 +75,18 @@ export type EtfScreenerResponse = {
   freeTierLimited?: boolean;
 };
 
+export type EtfRankingsRow = EtfScreenerRow & { rank: number };
+
+export type EtfRankingsResponse = {
+  category: string;
+  period: string;
+  data: EtfRankingsRow[];
+  total: number;
+  limit: number;
+  offset: number;
+  freeTierLimited?: boolean;
+};
+
 export type BacktestResult = {
   strategy: string;
   symbol: string;
@@ -287,6 +299,17 @@ export const datacaptainEndpoints = {
       offset?: string;
     }
   ) => datacaptainFetch<EtfScreenerResponse>("/etf/screener", key, params as Record<string, string>),
+
+  etfRankings: (
+    key: string | null,
+    params?: {
+      category?: string;
+      period?: string;
+      assetClass?: string;
+      limit?: string;
+      offset?: string;
+    }
+  ) => datacaptainFetch<EtfRankingsResponse>("/etf/rankings", key, params as Record<string, string>),
 
   optionsChain: (key: string | null, symbol: string, params?: { expirationDate?: string; limit?: string }) =>
     datacaptainFetch<OptionsChain>(`/options/${encodeURIComponent(symbol)}`, key, params as Record<string, string>),

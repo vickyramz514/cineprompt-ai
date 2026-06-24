@@ -7,17 +7,25 @@ import { API_BASE_URL } from "@/lib/api-docs-data";
 const stats = [
   { value: "ETF", label: "Focused data", detail: "US exchange-traded funds" },
   { value: "REST + WS", label: "One platform", detail: "HTTP & WebSocket" },
-  { value: "Free tier", label: "Start at $0", detail: "No card required" },
+  { value: "Free tier", label: "Start at ₹0", detail: "No card required" },
   { value: "Swagger", label: "Live docs", detail: "Try requests in-browser" },
 ];
 
 const offerings = [
   {
+    title: "ETF Screener & Rankings",
+    description:
+      "Filter ETFs by return and yield, or pull leaderboards — same data in the dashboard and via API for your app.",
+    tag: "Research tools",
+    span: "md:col-span-7",
+    accent: "from-violet-500/20 to-transparent",
+  },
+  {
     title: "ETF prices & history",
     description:
       "Batch ETF quotes and historical series for backtests — structured JSON you can trust for apps and research.",
     tag: "Core data",
-    span: "md:col-span-7",
+    span: "md:col-span-5",
     accent: "from-indigo-500/20 to-transparent",
   },
   {
@@ -28,20 +36,12 @@ const offerings = [
     accent: "from-violet-500/20 to-transparent",
   },
   {
-    title: "ETF universe",
+    title: "ETF heatmap",
     description:
-      "Paginated ETF list with search — symbol-level details and batch pricing for your watchlists and screeners.",
-    tag: "Coverage",
-    span: "md:col-span-5",
-    accent: "from-fuchsia-500/15 to-transparent",
-  },
-  {
-    title: "Built for shipping",
-    description:
-      "API key auth, predictable routes, OpenAPI/Swagger, and generous limits so your team ships dashboards and quant pipelines faster.",
-    tag: "DX",
+      "Preset baskets (broad, dividend, sector) or custom symbol lists — colored by return for quick sector reads.",
+    tag: "Visualization",
     span: "md:col-span-7",
-    accent: "from-cyan-500/15 to-transparent",
+    accent: "from-fuchsia-500/15 to-transparent",
   },
 ];
 

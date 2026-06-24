@@ -67,6 +67,44 @@ export default function PublicDocsPage() {
             </a>
           </div>
 
+          <section id="sdks" className="scroll-mt-28 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+            <h2 className="text-lg font-semibold">Official SDKs</h2>
+            <p className="mt-2 text-sm text-white/70">
+              Use the official client libraries instead of hand-rolling HTTP calls. Same API key, typed methods for
+              screener, rankings, heatmap, backtest, and portfolio endpoints.
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <p className="text-xs font-medium uppercase tracking-widest text-white/40">JavaScript / TypeScript</p>
+                <pre className="mt-2 overflow-x-auto text-sm">
+                  <code className="text-emerald-400">npm install ../packages/datacaptain</code>
+                </pre>
+                <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-white/70">
+{`import { DataCaptain } from "datacaptain";
+
+const dc = new DataCaptain({ apiKey: process.env.DATACAPTAIN_KEY });
+const rankings = await dc.etf.rankings({ category: "return", period: "1y" });`}
+                </pre>
+              </div>
+              <div className="rounded-xl border border-white/10 bg-black/30 p-4">
+                <p className="text-xs font-medium uppercase tracking-widest text-white/40">Python</p>
+                <pre className="mt-2 overflow-x-auto text-sm">
+                  <code className="text-emerald-400">pip install -e ../packages/datacaptain-py</code>
+                </pre>
+                <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-white/70">
+{`from datacaptain import DataCaptain
+
+dc = DataCaptain(api_key="sdata_...")
+rankings = dc.etf_rankings(category="return", period="1y")`}
+                </pre>
+              </div>
+            </div>
+            <p className="mt-4 text-xs text-white/45">
+              Packages live in this repo under <code className="rounded bg-white/10 px-1">packages/datacaptain</code> and{" "}
+              <code className="rounded bg-white/10 px-1">packages/datacaptain-py</code>. Publish to npm/PyPI when ready.
+            </p>
+          </section>
+
           <section className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
             <h2 className="text-lg font-semibold">Authentication</h2>
             <p className="mt-2 text-sm text-white/70">

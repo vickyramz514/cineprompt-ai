@@ -198,6 +198,9 @@ export default function EtfHeatmapView() {
         <Link href="/dashboard/etf/screener" className="text-violet-400 hover:underline">
           Open ETF Screener →
         </Link>
+        <Link href="/dashboard/etf/rankings" className="text-cyan-400 hover:underline">
+          ETF Rankings →
+        </Link>
         <Link href="/dashboard/etf" className="text-white/45 hover:text-white/70">
           ETF Explorer
         </Link>

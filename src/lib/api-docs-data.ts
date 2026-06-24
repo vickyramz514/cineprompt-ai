@@ -75,6 +75,20 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
+      path: "/api/etf/rankings",
+      query: "?category=return&period=1y&limit=20",
+      description:
+        "ETF leaderboards — top return, top dividend yield, or lowest volatility. Free plan returns top 10.",
+      params: [
+        { name: "category", type: "string", required: false, desc: "return | yield | volatility (default return)", in: "query" },
+        { name: "period", type: "string", required: false, desc: "ytd | 1y | 3y | 5y (for return category)", in: "query" },
+        { name: "assetClass", type: "string", required: false, desc: "Filter by asset class", in: "query" },
+        { name: "limit", type: "number", required: false, desc: "Max results (10 on Free)", in: "query" },
+      ],
+      cache: "60s",
+    },
+    {
+      method: "GET",
       path: "/api/stocks/prices",
       query: "?symbols=SPY,QQQ,VOO",
       description: "Batch ETF prices — latest close for up to 50 ETF tickers in one request. Cached 60s.",

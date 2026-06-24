@@ -29,10 +29,12 @@ export function MarketingShell({
 
 export function PlatformPillars() {
   const items = [
-    { title: "ETF APIs", desc: "Universe, prices, details", href: "/docs" },
+    { title: "ETF Screener", desc: "Filter by return & yield", href: "/auth/signup" },
+    { title: "ETF Rankings", desc: "Top performers leaderboard", href: "/auth/signup" },
+    { title: "ETF Heatmap", desc: "Basket performance at a glance", href: "/auth/signup" },
     { title: "Backtesting", desc: "Buy & hold on ETF history", href: "/backtesting" },
     { title: "Portfolio", desc: "Rebalance & compare ETFs", href: "/portfolio" },
-    { title: "Charts", desc: "Equity curves & metrics", href: "/dashboard/backtesting", badge: "Soon" },
+    { title: "REST API", desc: "Universe, prices, Swagger docs", href: "/docs" },
   ];
 
   return (
