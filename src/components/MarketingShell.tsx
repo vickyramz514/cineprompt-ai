@@ -41,14 +41,7 @@ export function PlatformPillars() {
           href={item.href}
           className="rounded-2xl border border-white/10 bg-[#0c0c14]/80 p-5 transition-colors hover:border-indigo-500/30 hover:bg-indigo-500/5"
         >
-          <div className="flex items-center justify-between gap-2">
-            <h3 className="font-semibold text-white">{item.title}</h3>
-            {item.badge && (
-              <span className="rounded-full border border-white/10 px-2 py-0.5 text-[10px] uppercase tracking-wider text-white/45">
-                {item.badge}
-              </span>
-            )}
-          </div>
+          <h3 className="font-semibold text-white">{item.title}</h3>
           <p className="mt-2 text-sm text-white/50">{item.desc}</p>
         </Link>
       ))}

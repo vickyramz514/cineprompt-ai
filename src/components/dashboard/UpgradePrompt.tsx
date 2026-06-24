@@ -51,6 +51,10 @@ const FEATURE_COPY: Record<PlanFeature, { title: string; description: string }> 
     title: "ETF screener",
     description: "Free plan shows top 10 results. Upgrade for full screener access.",
   },
+  "etf-rankings": {
+    title: "ETF rankings",
+    description: "Available on the Free plan with leaderboard previews.",
+  },
 };
 
 type UpgradePromptProps = {
