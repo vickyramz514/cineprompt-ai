@@ -7,6 +7,8 @@ import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import type { CompareResult } from "@/services/datacaptain/endpoints";
 import PortfolioRebalancerView from "@/components/dashboard/PortfolioRebalancerView";
+import DatePickerField from "@/components/dashboard/DatePickerField";
+import { getDefaultBacktestDates } from "@/lib/date-utils";
 
 const COMPARE_PRESETS = [
   { label: "VOO vs SPY vs QQQ", symbols: ["VOO", "SPY", "QQQ"] },
@@ -21,8 +23,8 @@ export default function PortfolioView() {
   const [tab, setTab] = useState<Tab>("rebalance");
   const [symbols, setSymbols] = useState("VOO,SPY,QQQ");
   const [investment, setInvestment] = useState("10000");
-  const [startDate, setStartDate] = useState("2015-01-01");
-  const [endDate, setEndDate] = useState("2025-01-01");
+  const [startDate, setStartDate] = useState(() => getDefaultBacktestDates(5).startDate);
+  const [endDate, setEndDate] = useState(() => getDefaultBacktestDates(5).endDate);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<CompareResult | null>(null);
@@ -30,6 +32,10 @@ export default function PortfolioView() {
   const runCompare = async () => {
     if (!apiKey) {
       setError("Sign in and set your API key to compare portfolios.");
+      return;
+    }
+    if (startDate >= endDate) {
+      setError("Start date must be before end date.");
       return;
     }
     setLoading(true);
@@ -120,24 +126,18 @@ export default function PortfolioView() {
                   />
                 </label>
                 <div className="grid grid-cols-2 gap-3">
-                  <label className="block text-sm">
-                    <span className="text-white/50">Start</span>
-                    <input
-                      type="date"
-                      value={startDate}
-                      onChange={(e) => setStartDate(e.target.value)}
-                      className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-white"
-                    />
-                  </label>
-                  <label className="block text-sm">
-                    <span className="text-white/50">End</span>
-                    <input
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-white"
-                    />
-                  </label>
+                  <DatePickerField
+                    label="Start"
+                    value={startDate}
+                    max={endDate}
+                    onChange={setStartDate}
+                  />
+                  <DatePickerField
+                    label="End"
+                    value={endDate}
+                    min={startDate}
+                    onChange={setEndDate}
+                  />
                 </div>
               </div>
               <button

@@ -1,9 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import DataCaptainLogo from "@/components/DataCaptainLogo";
 import Footer from "@/components/Footer";
-import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
+import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import { useAuth } from "@/hooks/useAuth";
 
 export function MarketingShell({
@@ -17,11 +16,8 @@ export function MarketingShell({
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl lg:px-8">
-        <DataCaptainLogo size="md" />
-        <MarketingHeaderActions active={active} isAuthenticated={isAuthenticated} />
-      </header>
-      <main className="relative pt-24">{children}</main>
+      <SiteHeader active={active} isAuthenticated={isAuthenticated} />
+      <main className={`relative ${SITE_HEADER_OFFSET}`}>{children}</main>
       <Footer />
     </div>
   );

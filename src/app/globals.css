@@ -77,3 +77,20 @@ body {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+input[type="date"].date-picker-field {
+  color-scheme: dark;
+  min-height: 2.75rem;
+}
+
+input[type="date"].date-picker-field::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 0.75;
+  filter: invert(0.85);
+}
+
+.logo-brand-mark {
+  user-select: none;
+  -webkit-user-drag: none;
+  display: block;
+}

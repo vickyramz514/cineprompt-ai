@@ -3,8 +3,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
-import DataCaptainLogo from "@/components/DataCaptainLogo";
-import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
+import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import { PRICING_PLANS } from "@/lib/mock-data";
 
 export default function PricingPage() {
@@ -21,12 +20,9 @@ export default function PricingPage() {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
-        <DataCaptainLogo size="md" />
-        <MarketingHeaderActions active="pricing" isAuthenticated={isAuthenticated} />
-      </header>
+      <SiteHeader active="pricing" isAuthenticated={isAuthenticated} />
 
-      <section className="px-4 pt-32 pb-20 sm:px-6 lg:px-8">
+      <section className={`px-4 pb-20 sm:px-6 lg:px-8 ${SITE_HEADER_OFFSET}`}>
         <div className="mx-auto max-w-6xl">
           <h1 className="text-center text-3xl font-bold sm:text-4xl">Simple pricing</h1>
           <p className="mx-auto mt-2 max-w-2xl text-center text-white/60">

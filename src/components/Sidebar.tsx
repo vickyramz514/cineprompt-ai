@@ -204,9 +204,9 @@ export default function Sidebar() {
         />
 
         {/* Header: logo + close (mobile) */}
-        <div className="relative border-b border-white/10 bg-gradient-to-b from-indigo-500/10 to-transparent px-4 py-4">
+        <div className="relative border-b border-white/10 bg-gradient-to-b from-indigo-500/10 to-transparent px-4 py-3">
           <div className="flex items-center justify-between gap-2">
-            <DataCaptainLogo size="sm" href="/dashboard" />
+            <DataCaptainLogo variant="sidebar" href="/dashboard" />
             <button
               type="button"
               onClick={closeMobile}

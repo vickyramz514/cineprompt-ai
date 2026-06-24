@@ -3,6 +3,7 @@
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
 import AdminRoute from "@/components/AdminRoute";
+import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { useAuth } from "@/hooks/useAuth";
 
 const SIDEBAR_NAV = [
@@ -36,10 +37,9 @@ export default function AdminLayout({
     <AdminRoute>
       <div className="flex min-h-screen bg-[#0a0a0f]">
         <aside className="w-64 shrink-0 border-r border-white/5 bg-black/40">
-          <div className="flex h-16 items-center gap-2 border-b border-white/5 px-4">
-            <span className="text-lg font-semibold">
-              Data Captain <span className="text-amber-400">Admin</span>
-            </span>
+          <div className="flex min-h-14 items-center gap-2 border-b border-white/5 px-4 py-2.5">
+            <DataCaptainLogo variant="sidebar" href="/admin/dashboard" className="min-w-0 flex-1" />
+            <span className="shrink-0 text-xs font-medium text-amber-400">Admin</span>
           </div>
           <nav className="space-y-1 p-4">
             {SIDEBAR_NAV.map((item) => (

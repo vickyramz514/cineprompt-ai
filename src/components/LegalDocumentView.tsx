@@ -4,8 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import type { LegalDocument } from "@/lib/legal-content";
 import Footer from "@/components/Footer";
-import DataCaptainLogo from "@/components/DataCaptainLogo";
-import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
+import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import { useAuth } from "@/hooks/useAuth";
 
 type Props = {
@@ -19,17 +18,14 @@ export default function LegalDocumentView({ document, sibling }: Props) {
 
   return (
     <div className="min-h-screen bg-[#0a0a0f] text-white">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl lg:px-8">
-        <DataCaptainLogo size="md" />
-        <MarketingHeaderActions active="docs" isAuthenticated={isAuthenticated} />
-      </header>
+      <SiteHeader active="docs" isAuthenticated={isAuthenticated} />
 
       <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
         <div className="absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-indigo-600/10 blur-3xl" />
         <div className="absolute top-1/3 right-0 h-80 w-80 rounded-full bg-violet-600/8 blur-3xl" />
       </div>
 
-      <main className="relative px-4 pb-20 pt-28 sm:px-6 lg:px-8">
+      <main className={`relative px-4 pb-20 sm:px-6 lg:px-8 ${SITE_HEADER_OFFSET}`}>
         <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 12 }}

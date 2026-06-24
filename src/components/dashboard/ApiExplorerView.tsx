@@ -8,6 +8,7 @@ import { datacaptainFetch, getApiKey } from "@/services/datacaptain/client";
 import { getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import { getPublicApiOrigin } from "@/lib/public-env";
 import JsonHighlight from "@/components/dashboard/JsonHighlight";
+import DatePickerField from "@/components/dashboard/DatePickerField";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { isApiPathFree } from "@/lib/plan-access";
 
@@ -18,7 +19,7 @@ type EndpointDef = {
   description: string;
   category: string;
   premium?: boolean;
-  params?: { key: string; label: string; placeholder: string }[];
+  params?: { key: string; label: string; placeholder: string; inputType?: "text" | "date" }[];
 };
 
 const ENDPOINTS: EndpointDef[] = [
@@ -109,8 +110,8 @@ const ENDPOINTS: EndpointDef[] = [
     params: [
       { key: "symbol", label: "Symbol", placeholder: "SPY" },
       { key: "investment", label: "Investment", placeholder: "10000" },
-      { key: "startDate", label: "Start", placeholder: "2015-01-01" },
-      { key: "endDate", label: "End", placeholder: "2025-01-01" },
+      { key: "startDate", label: "Start", placeholder: "2015-01-01", inputType: "date" },
+      { key: "endDate", label: "End", placeholder: "2025-01-01", inputType: "date" },
     ],
   },
   {
@@ -144,8 +145,8 @@ const ENDPOINTS: EndpointDef[] = [
     params: [
       { key: "symbols", label: "Symbols", placeholder: "VOO,SPY,QQQ" },
       { key: "investment", label: "Investment", placeholder: "10000" },
-      { key: "startDate", label: "Start", placeholder: "2015-01-01" },
-      { key: "endDate", label: "End", placeholder: "2025-01-01" },
+      { key: "startDate", label: "Start", placeholder: "2015-01-01", inputType: "date" },
+      { key: "endDate", label: "End", placeholder: "2025-01-01", inputType: "date" },
     ],
   },
 ];
@@ -396,19 +397,31 @@ export default function ApiExplorerView() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {selected.params.map((p) => (
                     <div key={p.key}>
-                      <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-white/40">
-                        {p.label}
-                      </label>
-                      <input
-                        type="text"
-                        placeholder={p.placeholder}
-                        value={paramValues[p.key] ?? ""}
-                        onChange={(e) =>
-                          setParamValues((prev) => ({ ...prev, [p.key]: e.target.value }))
-                        }
-                        onKeyDown={(e) => e.key === "Enter" && sendRequest()}
-                        className={inputClass}
-                      />
+                      {p.inputType === "date" ? (
+                        <DatePickerField
+                          label={p.label}
+                          value={paramValues[p.key] ?? ""}
+                          onChange={(value) =>
+                            setParamValues((prev) => ({ ...prev, [p.key]: value }))
+                          }
+                        />
+                      ) : (
+                        <>
+                          <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-white/40">
+                            {p.label}
+                          </label>
+                          <input
+                            type="text"
+                            placeholder={p.placeholder}
+                            value={paramValues[p.key] ?? ""}
+                            onChange={(e) =>
+                              setParamValues((prev) => ({ ...prev, [p.key]: e.target.value }))
+                            }
+                            onKeyDown={(e) => e.key === "Enter" && sendRequest()}
+                            className={inputClass}
+                          />
+                        </>
+                      )}
                     </div>
                   ))}
                 </div>

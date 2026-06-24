@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   },
   description:
     "US ETF historical data API, backtesting, and portfolio comparison for developers and fintech teams. Free tier with clear upgrade path.",
+  icons: {
+    icon: "/logo/logo.jpeg",
+    apple: "/logo/logo.jpeg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -20,6 +24,14 @@ export const metadata: Metadata = {
     siteName: "Data Captain",
     title: "Data Captain — US ETF Data Platform",
     description: "ETF APIs, backtesting, and portfolio tools for US market data.",
+    images: [
+      {
+        url: "/logo/logo.jpeg",
+        width: 1254,
+        height: 1254,
+        alt: "Data Captain — Navigate Smarter Investments",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",

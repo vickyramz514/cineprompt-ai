@@ -58,14 +58,34 @@ export async function datacaptainPost<T>(
 
 export function getDataCaptainErrorMessage(err: unknown): string {
   if (axios.isAxiosError(err)) {
-    const data = err.response?.data as {
-      message?: string;
-      code?: string;
-    } | undefined;
-    if (data?.code === "PLAN_UPGRADE_REQUIRED") {
-      return data.message || "Upgrade your plan to access this API.";
+    const data = err.response?.data as
+      | {
+          message?: string;
+          code?: string;
+          error?: string | { message?: string; details?: string; hint?: string; code?: string };
+        }
+      | undefined;
+
+    const nested =
+      typeof data?.error === "object" && data.error !== null ? data.error : undefined;
+
+    if (data?.code === "PLAN_UPGRADE_REQUIRED" || nested?.code === "PLAN_UPGRADE_REQUIRED") {
+      return nested?.message || data?.message || "Upgrade your plan to access this API.";
     }
-    return data?.message || err.message || "Request failed";
+
+    if (nested?.message) {
+      return nested.hint ? `${nested.message} ${nested.hint}` : nested.message;
+    }
+    if (typeof data?.error === "string") return data.error;
+    if (nested?.details && nested.details !== nested.message) return nested.details;
+    if (data?.message) return data.message;
+
+    const status = err.response?.status;
+    if (status && err.message?.includes(String(status))) {
+      return `Request failed (${status})`;
+    }
+
+    return err.message || "Request failed";
   }
   return err instanceof Error ? err.message : "Request failed";
 }

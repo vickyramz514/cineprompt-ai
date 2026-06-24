@@ -6,7 +6,7 @@ import { motion } from "framer-motion";
 import { PRICING_PLANS } from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
-import DataCaptainLogo from "@/components/DataCaptainLogo";
+import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import {
   AudienceCard,
   AudienceIconAlgo,
@@ -21,7 +21,6 @@ import HeroMarketChartBackdrop from "@/components/landing/HeroMarketChartBackdro
 import ProductShowcaseSection from "@/components/landing/ProductShowcaseSection";
 import WhyPaySection from "@/components/landing/WhyPaySection";
 import { PlatformPillars } from "@/components/MarketingShell";
-import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 
 const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
   {
@@ -62,13 +61,10 @@ const TARGET_USERS: { label: string; icon: ReactNode }[] = [
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between border-b border-white/[0.06] bg-[#0a0a0f]/70 px-4 py-3 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55 lg:px-8">
-        <DataCaptainLogo size="md" />
-        <MarketingHeaderActions active="home" />
-      </header>
+      <SiteHeader active="home" />
 
       {/* Hero */}
-      <section className="relative overflow-hidden px-4 pt-32 pb-24 sm:px-6 lg:px-8">
+      <section className={`relative overflow-hidden px-4 pb-24 sm:px-6 lg:px-8 ${SITE_HEADER_OFFSET}`}>
         <HeroMarketChartBackdrop />
         <div className="pointer-events-none absolute inset-0 z-[1] bg-[radial-gradient(ellipse_85%_55%_at_50%_-5%,rgba(10,10,15,0.94),rgba(10,10,15,0.55)_42%,transparent_70%)]" />
         <div className="pointer-events-none absolute inset-0 z-[1] bg-gradient-to-b from-indigo-900/[0.08] via-transparent to-transparent" />

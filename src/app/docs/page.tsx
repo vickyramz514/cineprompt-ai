@@ -1,8 +1,7 @@
 "use client";
 
 import Footer from "@/components/Footer";
-import DataCaptainLogo from "@/components/DataCaptainLogo";
-import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
+import { SiteHeader } from "@/components/SiteHeader";
 import { API_BASE_URL, API_DOC_SECTIONS, SECTION_LABELS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
 
 function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
@@ -37,12 +36,7 @@ function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
 export default function PublicDocsPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0a0a0f]/70 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/55">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4 lg:px-8">
-          <DataCaptainLogo size="md" />
-          <MarketingHeaderActions active="docs" />
-        </div>
-      </header>
+      <SiteHeader active="docs" contained containedMax="max-w-4xl" sticky />
 
       <main className="mx-auto max-w-4xl px-4 py-12 lg:px-8">
         <div className="space-y-10">

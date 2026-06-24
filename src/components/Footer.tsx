@@ -9,7 +9,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <DataCaptainLogo size="sm" />
+            <DataCaptainLogo variant="footer" href="/" />
           </div>
           <div>
             <h3 className="mb-3 text-sm font-semibold text-white/80">Product</h3>
