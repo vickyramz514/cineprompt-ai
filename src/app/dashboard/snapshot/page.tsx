@@ -1,28 +1,11 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import { Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import StockSnapshotView from "@/components/dashboard/StockSnapshotView";
+type Props = {
+  searchParams: Promise<{ symbol?: string }>;
+};
 
-function SnapshotPageInner() {
-  const searchParams = useSearchParams();
-  const symbol = searchParams.get("symbol");
-  return <StockSnapshotView key={symbol ?? "default"} initialSymbol={symbol ?? undefined} />;
-}
-
-function SnapshotFallback() {
-  return (
-    <div className="space-y-6">
-      <div className="h-24 animate-pulse rounded-2xl bg-white/5" />
-      <div className="h-48 animate-pulse rounded-2xl bg-white/5" />
-    </div>
-  );
-}
-
-export default function SnapshotPage() {
-  return (
-    <Suspense fallback={<SnapshotFallback />}>
-      <SnapshotPageInner />
-    </Suspense>
-  );
+export default async function SnapshotPage({ searchParams }: Props) {
+  const params = await searchParams;
+  const symbol = params.symbol?.trim().toUpperCase();
+  redirect(symbol ? `/dashboard/etf/${encodeURIComponent(symbol)}` : "/dashboard/etf");
 }

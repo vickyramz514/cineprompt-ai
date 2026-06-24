@@ -29,7 +29,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
       id: "service",
       title: "2. The Service",
       paragraphs: [
-        "Data Captain provides programmatic access to US stock and ETF market data, including prices, historical series, ETFs, and related datasets as described in our API documentation.",
+        "Data Captain provides programmatic access to US ETF market data, including prices, historical series, and related datasets as described in our API documentation.",
         "We may add, change, or retire endpoints, fields, rate limits, or plan features. Material changes will be communicated via the dashboard, email, or documentation where practicable.",
       ],
       bullets: [

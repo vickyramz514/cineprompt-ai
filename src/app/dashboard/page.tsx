@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import type { DeveloperUsage, MarketStatus } from "@/services/datacaptain/endpoints";
+import FreeTierUpgradeBanner from "@/components/dashboard/FreeTierUpgradeBanner";
 import ApiKeySection from "@/components/dashboard/ApiKeySection";
 import DashboardCards from "@/components/DashboardCards";
 import QuickLinks from "@/components/dashboard/QuickLinks";
@@ -64,6 +65,8 @@ export default function DashboardPage() {
       </div>
 
       <ApiKeySection apiKey={apiKey} onSaveKey={handleSaveKey} />
+
+      <FreeTierUpgradeBanner />
 
       {/* Usage Cards + Market Status */}
       <section className="relative">

@@ -62,14 +62,8 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     title: "Market data",
     items: [
-      { href: "/dashboard/snapshot", label: "Stock Snapshot", icon: "snapshot" },
-      { href: "/dashboard/earnings", label: "Earnings Calendar", icon: "calendar" },
-      { href: "/dashboard/tools/prices", label: "Batch Prices", icon: "prices" },
+      { href: "/dashboard/tools/prices", label: "Batch ETF Prices", icon: "prices" },
       { href: "/dashboard/etf", label: "ETF Explorer", icon: "etf" },
-      { href: "/dashboard/options", label: "Options", icon: "options", premium: true },
-      { href: "/dashboard/insiders", label: "Insiders", icon: "insiders", premium: true },
-      { href: "/dashboard/darkpool", label: "Dark Pool", icon: "darkpool", premium: true },
-      { href: "/dashboard/economy", label: "Economy", icon: "economy", premium: true },
     ],
   },
   {

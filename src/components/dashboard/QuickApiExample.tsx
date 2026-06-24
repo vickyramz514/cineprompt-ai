@@ -7,16 +7,16 @@ import { getPublicApiOrigin } from "@/lib/public-env";
 import JsonHighlight from "@/components/dashboard/JsonHighlight";
 
 const EXAMPLE_RESPONSE = {
-  symbol: "AAPL",
-  date: "2024-03-01",
-  open: 182.2,
-  high: 185.1,
-  low: 180.5,
-  close: 184.7,
-  volume: 120000000,
+  data: [
+    { symbol: "SPY", name: "SPDR S&P 500 ETF Trust", type: "ETF" },
+    { symbol: "QQQ", name: "Invesco QQQ Trust", type: "ETF" },
+  ],
+  total: 2847,
+  limit: 10,
+  offset: 0,
 };
 
-const API_PATH = "/api/stocks/history?symbol=AAPL";
+const API_PATH = "/api/etf/list?search=SPY&limit=10";
 
 type TabId = "request" | "response" | "curl";
 
@@ -103,7 +103,7 @@ export default function QuickApiExample({ apiKey }: QuickApiExampleProps) {
             </p>
             <h2 className="mt-0.5 text-lg font-semibold text-white">Quick API Example</h2>
             <p className="mt-1 text-sm text-white/50">
-              Copy-paste ready snippets for stock history
+              Copy-paste ready snippets for the ETF list API
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -187,8 +187,8 @@ export default function QuickApiExample({ apiKey }: QuickApiExampleProps) {
                     <LineNumbers lines={1} />
                     <pre className="flex-1 overflow-x-auto p-4 font-mono text-sm leading-relaxed">
                       <span className="text-violet-400">GET</span>{" "}
-                      <span className="text-emerald-400">/api/stocks/history</span>
-                      <span className="text-amber-300/90">?symbol=AAPL</span>
+                      <span className="text-emerald-400">/api/etf/list</span>
+                      <span className="text-amber-300/90">?search=SPY&limit=10</span>
                     </pre>
                   </div>
                 </div>

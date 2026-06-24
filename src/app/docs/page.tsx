@@ -3,27 +3,10 @@
 import Footer from "@/components/Footer";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
-import { API_BASE_URL, API_DOC_SECTIONS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
-
-const SECTION_TITLES: Record<string, string> = {
-  stocks: "Stock Endpoints",
-  market: "Market Endpoints",
-  etf: "ETF Endpoints",
-  platform: "Backtesting & Portfolio",
-  options: "Options Endpoints",
-  insiders: "Insider Trades",
-  sentiment: "Sentiment",
-  darkpool: "Dark Pool",
-  economy: "Economic Indicators",
-  search: "Search",
-  screener: "Stock Screener",
-  indicators: "Technical Indicators",
-  ai: "AI Stock Score",
-  developer: "Developer",
-};
+import { API_BASE_URL, API_DOC_SECTIONS, SECTION_LABELS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
 
 function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
-  const pathForUrl = ep.path.replace(/:symbol/g, "AAPL").replace(/:\w+/g, "VALUE");
+  const pathForUrl = ep.path.replace(/:symbol/g, "SPY").replace(/:\w+/g, "VALUE");
   const fullUrl = `${baseUrl}${pathForUrl}${ep.query || ""}`;
   return (
     <div className="rounded-xl border border-white/5 bg-black/20 p-4">
@@ -66,7 +49,7 @@ export default function PublicDocsPage() {
           <div>
             <h1 className="text-2xl font-semibold">API Documentation</h1>
             <p className="mt-1 text-white/60">
-              REST API for US Stock Market, ETFs, options, insider trades, sentiment, and more. Historical data 2000–Present.
+              REST API for US ETF data — universe, batch prices, market status, and backtesting endpoints.
             </p>
           </div>
 
@@ -97,7 +80,7 @@ export default function PublicDocsPage() {
 
           {Object.entries(API_DOC_SECTIONS).map(([key, endpoints]) => (
             <section key={key} className="rounded-2xl border border-white/5 bg-white/[0.02] p-6">
-              <h2 className="text-lg font-semibold">{SECTION_TITLES[key] || key}</h2>
+              <h2 className="text-lg font-semibold">{SECTION_LABELS[key] || key}</h2>
               <div className="mt-6 space-y-4">
                 {endpoints.map((ep) => (
                   <EndpointCard key={ep.path + (ep.query || "")} ep={ep} baseUrl={API_BASE_URL} />

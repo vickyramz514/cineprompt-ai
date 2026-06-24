@@ -28,7 +28,7 @@ const NAV: { key: MarketingNavKey; label: string; href: string }[] = [
   { key: "backtesting", label: "Backtesting", href: "/backtesting" },
   { key: "portfolio", label: "Portfolio", href: "/portfolio" },
   { key: "pricing", label: "Pricing", href: "/pricing" },
-  { key: "docs", label: "Documentation", href: "/docs" },
+  { key: "docs", label: "Blog", href: "/blog" },
 ];
 
 export function MarketingHeaderActions({

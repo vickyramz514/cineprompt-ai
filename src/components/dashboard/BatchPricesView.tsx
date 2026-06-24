@@ -13,10 +13,10 @@ const inputClass =
   "w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 font-mono text-sm text-white placeholder:text-white/35 focus:border-emerald-500/50 focus:outline-none focus:ring-2 focus:ring-emerald-500/20";
 
 const PRESETS: { label: string; symbols: string }[] = [
-  { label: "Mag 7", symbols: "AAPL,MSFT,GOOGL,AMZN,NVDA,META,TSLA" },
-  { label: "Tech", symbols: "AAPL,NVDA,AMD,INTC,AVGO,CRM" },
-  { label: "Banks", symbols: "JPM,BAC,WFC,GS,MS" },
-  { label: "ETFs", symbols: "SPY,QQQ,VTI,DIA,IWM" },
+  { label: "Broad market", symbols: "SPY,VOO,VTI,DIA,IWM" },
+  { label: "Growth", symbols: "QQQ,ARKK,SMH,XLK" },
+  { label: "Bonds", symbols: "BND,AGG,TLT,SHY" },
+  { label: "Sector", symbols: "XLF,XLE,XLV,XLI" },
 ];
 
 function parseSymbols(input: string) {
@@ -28,7 +28,7 @@ function parseSymbols(input: string) {
 
 export default function BatchPricesView() {
   const { apiKey } = useDataCaptainKey();
-  const [symbolsInput, setSymbolsInput] = useState("AAPL,TSLA,NVDA");
+  const [symbolsInput, setSymbolsInput] = useState("SPY,QQQ,VOO");
   const [prices, setPrices] = useState<BatchPrice[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,14 +75,14 @@ export default function BatchPricesView() {
   );
 
   const baseUrl = getPublicApiOrigin();
-  const apiPath = `/api/stocks/prices?symbols=${symbolList.slice(0, 3).join(",") || "AAPL,TSLA"}`;
+  const apiPath = `/api/stocks/prices?symbols=${symbolList.slice(0, 3).join(",") || "SPY,QQQ"}`;
   const exampleJson = prices
     ? JSON.stringify(prices, null, 2)
     : JSON.stringify(
         [
-          { symbol: "AAPL", price: 175.42 },
-          { symbol: "TSLA", price: 248.5 },
-          { symbol: "NVDA", price: 892.1 },
+          { symbol: "SPY", price: 512.34 },
+          { symbol: "QQQ", price: 445.12 },
+          { symbol: "VOO", price: 468.9 },
         ],
         null,
         2
@@ -96,10 +96,10 @@ export default function BatchPricesView() {
         className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
       >
         <div>
-          <p className="text-xs font-medium uppercase tracking-widest text-emerald-300/80">Stocks</p>
-          <h1 className="mt-0.5 text-2xl font-semibold sm:text-3xl">Batch Stock Prices</h1>
+          <p className="text-xs font-medium uppercase tracking-widest text-emerald-300/80">ETF</p>
+          <h1 className="mt-0.5 text-2xl font-semibold sm:text-3xl">Batch ETF Prices</h1>
           <p className="mt-1 max-w-xl text-sm text-white/50">
-            Fetch up to 50 real-time quotes in one request — comma or space separated symbols
+            Fetch up to 50 ETF quotes in one request — comma or space separated tickers
           </p>
         </div>
         <Link

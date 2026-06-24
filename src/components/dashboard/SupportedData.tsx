@@ -19,36 +19,9 @@ type DataCategory = {
 
 const categories: DataCategory[] = [
   {
-    title: "Stock Snapshot",
-    description: "All-in-one symbol view — quote, sentiment, AI score, news, and earnings.",
-    tags: ["Free API", "1 request"],
-    href: "/dashboard/snapshot",
-    accent: "indigo",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <path strokeLinecap="round" d="M14 17h7M17.5 14v7" />
-      </svg>
-    ),
-  },
-  {
-    title: "Stocks",
-    description: "Prices, history, candles, dividends, and company profiles for US equities.",
-    tags: ["OHLCV", "Profile"],
-    href: "/dashboard/tools/prices",
-    accent: "cyan",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" d="M4 18V8M10 18V4M16 18v-6M22 18V10" />
-      </svg>
-    ),
-  },
-  {
-    title: "ETFs",
-    description: "Listings and symbol-level data for major exchange-traded funds.",
-    tags: ["List", "Holdings"],
+    title: "ETF Explorer",
+    description: "Browse the US ETF universe and open symbol-level details.",
+    tags: ["List", "Search"],
     href: "/dashboard/etf",
     accent: "violet",
     icon: (
@@ -59,87 +32,55 @@ const categories: DataCategory[] = [
     ),
   },
   {
-    title: "Options",
-    description: "Options chains with strikes, bids, asks, volume, and open interest.",
-    tags: ["Calls", "Puts"],
-    href: "/dashboard/options",
+    title: "Batch ETF Prices",
+    description: "Latest prices for multiple ETF tickers in a single API call.",
+    tags: ["Quotes", "Batch"],
+    href: "/dashboard/tools/prices",
     accent: "emerald",
-    premium: true,
-    feature: "options",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V8m5 8V4m5 12v-6" />
-        <path strokeLinecap="round" d="M3 20h18" />
+        <path strokeLinecap="round" d="M4 18V8M10 18V4M16 18v-6M22 18V10" />
       </svg>
     ),
   },
   {
-    title: "Insiders",
-    description: "Insider transactions — filings, share counts, and trade types.",
-    tags: ["SEC", "Trades"],
-    href: "/dashboard/insiders",
-    accent: "amber",
+    title: "Backtesting",
+    description: "Buy-and-hold simulations on historical ETF data — CAGR, drawdown, equity curve.",
+    tags: ["History", "Simulations"],
+    href: "/dashboard/backtesting",
+    accent: "indigo",
     premium: true,
-    feature: "insiders",
+    feature: "backtesting",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0ZM12 14a7 7 0 0 0-7 7h14a7 7 0 0 0-7-7Z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 19V5M20 19V9M12 19V3" />
       </svg>
     ),
   },
   {
-    title: "Dark Pool",
-    description: "Off-exchange block trades with price, volume, and timestamps.",
-    tags: ["Blocks", "Volume"],
-    href: "/dashboard/darkpool",
-    accent: "rose",
-    premium: true,
-    feature: "darkpool",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1M5.6 18.4l2.1-2.1m8.6-8.6 2.1-2.1" />
-        <circle cx="12" cy="12" r="4" />
-      </svg>
-    ),
-  },
-  {
-    title: "Economy",
-    description: "Macro indicators — inflation, rates, GDP growth, and unemployment.",
-    tags: ["Macro", "Rates"],
-    href: "/dashboard/economy",
+    title: "Portfolio",
+    description: "Compare ETF performance side-by-side — e.g. VOO vs SPY vs QQQ.",
+    tags: ["Compare", "Rank"],
+    href: "/dashboard/portfolio",
     accent: "cyan",
     premium: true,
-    feature: "economy",
+    feature: "portfolio",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="9" />
-        <path strokeLinecap="round" d="M2 12h20M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" />
+        <path strokeLinecap="round" d="M3 17l4-5 4 3 5-7 5 9M3 20h18" />
       </svg>
     ),
   },
   {
     title: "Market",
-    description: "Top gainers, losers, most active, screener, and market status.",
-    tags: ["Live", "Screener"],
+    description: "US market session status — open, closed, and next session times.",
+    tags: ["Status"],
     href: "/dashboard/api-explorer",
     accent: "sky",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 17l4-5 4 3 5-7 5 9" />
-        <path strokeLinecap="round" d="M3 20h18" />
-      </svg>
-    ),
-  },
-  {
-    title: "AI Scores",
-    description: "Stock sentiment and AI-powered scores via the DataCaptain API.",
-    tags: ["Sentiment", "Score"],
-    href: "/dashboard/api-docs",
-    accent: "indigo",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.75 12 2l2.25 1.75L16.5 2.5 18 5.25l2.25.75-.75 2.25L21 10.5l-1.75 2.25L21 15l-2.25 1.75.75 2.25L18 19.75l-1.5 2.75L12 21l-2.25 1.5L8.25 19.75 6 21l-.75-2.25L3 18l1.75-2.25L3 13.5l1.75-2.25L3 10.5l2.25-.75L6 7.5 4.5 4.75 6 2.5Z" />
-        <circle cx="12" cy="12" r="3" />
+        <circle cx="12" cy="12" r="9" />
+        <path strokeLinecap="round" d="M12 7v5l3 2" />
       </svg>
     ),
   },
@@ -246,9 +187,9 @@ export default function SupportedData() {
         <div>
           <h2 className="text-lg font-semibold">Supported Data</h2>
           <p className="mt-1 text-sm text-white/50">
-            Market datasets available through the DataCaptain API
+            ETF datasets available through the DataCaptain API
             {isFree && (
-              <span className="text-amber-300/80"> — some require a paid plan</span>
+              <span className="text-amber-300/80"> — backtests require a paid plan</span>
             )}
           </p>
         </div>

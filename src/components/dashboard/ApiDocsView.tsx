@@ -15,18 +15,9 @@ import JsonHighlight from "@/components/dashboard/JsonHighlight";
 const SECTION_ORDER = Object.keys(API_DOC_SECTIONS);
 
 const SECTION_ACCENTS: Record<string, string> = {
-  stocks: "from-emerald-500/10",
-  market: "from-sky-500/10",
   etf: "from-violet-500/10",
-  options: "from-indigo-500/10",
-  insiders: "from-amber-500/10",
-  sentiment: "from-rose-500/10",
-  darkpool: "from-fuchsia-500/10",
-  economy: "from-cyan-500/10",
-  search: "from-white/5",
-  screener: "from-white/5",
-  indicators: "from-indigo-500/10",
-  ai: "from-violet-500/10",
+  market: "from-sky-500/10",
+  platform: "from-indigo-500/10",
   developer: "from-emerald-500/10",
 };
 
@@ -34,7 +25,7 @@ function getExamplePath(ep: ApiEndpoint): string {
   let p = ep.path;
   ep.params.forEach((param) => {
     if (param.in === "path") {
-      const example = param.name === "symbol" ? "AAPL" : "VALUE";
+      const example = param.name === "symbol" ? "SPY" : "VALUE";
       p = p.replace(`:${param.name}`, example);
     }
   });
@@ -211,8 +202,7 @@ export default function ApiDocsView() {
           <p className="text-xs font-medium uppercase tracking-widest text-indigo-300/80">DataCaptain API</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">API Documentation</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/55 sm:text-base">
-            REST endpoints for US stocks, ETFs, options, market data, macro indicators, and developer usage.
-            Historical data from 2000–present.
+            REST endpoints for US ETF data — universe, batch prices, market status, backtesting, and developer usage.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <a

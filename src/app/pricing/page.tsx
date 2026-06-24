@@ -29,9 +29,15 @@ export default function PricingPage() {
       <section className="px-4 pt-32 pb-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
           <h1 className="text-center text-3xl font-bold sm:text-4xl">Simple pricing</h1>
-          <p className="mx-auto mt-2 max-w-xl text-center text-white/60">
-            Choose the plan that fits your API usage. All plans include historical stock and ETF data.
+          <p className="mx-auto mt-2 max-w-2xl text-center text-white/60">
+            Start free with 50 requests/day. Upgrade to Starter for historical data, backtesting, and 1,000
+            requests/day — no credit card required on the free tier.
           </p>
+
+          <div className="mx-auto mt-8 max-w-3xl rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center text-sm text-white/55">
+            <strong className="text-white/80">Free:</strong> ETF list, batch prices, market status ·{" "}
+            <strong className="text-indigo-300">Starter+:</strong> history, backtests, news, premium APIs
+          </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PRICING_PLANS.map((plan) => (

@@ -3,7 +3,7 @@ import { TERMS_OF_SERVICE } from "@/lib/legal-content";
 
 export const metadata = {
   title: "Terms of Service | Data Captain",
-  description: "Terms of Service for the Data Captain US stock and ETF data API.",
+  description: "Terms of Service for the Data Captain US ETF data API.",
 };
 
 export default function TermsPage() {

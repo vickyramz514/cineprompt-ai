@@ -17,36 +17,11 @@ type QuickLink = {
 
 const links: QuickLink[] = [
   {
-    href: "/dashboard/snapshot",
-    title: "Stock Snapshot",
-    description: "Quote, AI score, news & earnings in one call",
-    accent: "indigo",
-    featured: true,
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <rect x="3" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="3" y="14" width="7" height="7" rx="1" />
-        <path strokeLinecap="round" d="M14 17h7M17.5 14v7" />
-      </svg>
-    ),
-  },
-  {
-    href: "/dashboard/tools/prices",
-    title: "Batch Prices",
-    description: "Multi-symbol quotes in one request",
-    accent: "emerald",
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <path strokeLinecap="round" d="M4 18V8M10 18V4M16 18v-6M22 18V10" />
-      </svg>
-    ),
-  },
-  {
     href: "/dashboard/etf",
     title: "ETF Explorer",
-    description: "Browse and drill into ETF data",
-    accent: "violet",
+    description: "Browse and search the US ETF universe",
+    accent: "indigo",
+    featured: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h10" />
@@ -55,15 +30,25 @@ const links: QuickLink[] = [
     ),
   },
   {
-    href: "/dashboard/economy",
-    title: "Economic Indicators",
-    description: "Macro data — inflation, GDP, rates",
-    accent: "amber",
+    href: "/dashboard/tools/prices",
+    title: "Batch ETF Prices",
+    description: "Multi-ticker ETF quotes in one request",
+    accent: "emerald",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
+        <path strokeLinecap="round" d="M4 18V8M10 18V4M16 18v-6M22 18V10" />
+      </svg>
+    ),
+  },
+  {
+    href: "/dashboard/backtesting",
+    title: "Backtesting",
+    description: "Run buy-and-hold simulations on ETFs",
+    accent: "violet",
     premium: true,
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6" stroke="currentColor" strokeWidth="1.5">
-        <circle cx="12" cy="12" r="9" />
-        <path strokeLinecap="round" d="M2 12h20M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4 19V5M20 19V9M12 19V3" />
       </svg>
     ),
   },

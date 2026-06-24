@@ -29,12 +29,10 @@ export function MarketingShell({
 
 export function PlatformPillars() {
   const items = [
-    { title: "ETF APIs", desc: "Universe, prices, profiles", href: "/docs" },
-    { title: "Stock APIs", desc: "History, snapshot, news", href: "/docs" },
-    { title: "Backtesting", desc: "Buy & hold simulations", href: "/backtesting" },
-    { title: "Portfolio", desc: "Compare & simulate", href: "/portfolio" },
+    { title: "ETF APIs", desc: "Universe, prices, details", href: "/docs" },
+    { title: "Backtesting", desc: "Buy & hold on ETF history", href: "/backtesting" },
+    { title: "Portfolio", desc: "Compare ETFs side-by-side", href: "/portfolio" },
     { title: "Charts", desc: "Equity curves & metrics", href: "/dashboard/backtesting", badge: "Soon" },
-    { title: "AI Insights", desc: "Scores & sentiment", href: "/dashboard/snapshot", badge: "Beta" },
   ];
 
   return (

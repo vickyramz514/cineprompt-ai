@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { API_BASE_URL } from "@/lib/api-docs-data";
 
 const stats = [
-  { value: "25+", label: "Years of history", detail: "US stocks & ETFs" },
+  { value: "ETF", label: "Focused data", detail: "US exchange-traded funds" },
   { value: "REST + WS", label: "One platform", detail: "HTTP & WebSocket" },
   { value: "Free tier", label: "Start at $0", detail: "No card required" },
   { value: "Swagger", label: "Live docs", detail: "Try requests in-browser" },
@@ -13,32 +13,32 @@ const stats = [
 
 const offerings = [
   {
-    title: "Prices & history",
+    title: "ETF prices & history",
     description:
-      "Batch quotes, single-ticker snapshots, daily OHLCV, and intraday candles—structured JSON you can trust for backtests and apps.",
+      "Batch ETF quotes and historical series for backtests — structured JSON you can trust for apps and research.",
     tag: "Core data",
     span: "md:col-span-7",
     accent: "from-indigo-500/20 to-transparent",
   },
   {
-    title: "Real-time stream",
-    description: "WebSocket feed for live updates when you need freshness, not just end-of-day files.",
-    tag: "WebSocket",
+    title: "Backtesting",
+    description: "Buy-and-hold simulations with CAGR, drawdown, dividend yield, and equity curves on ETF history.",
+    tag: "Platform",
     span: "md:col-span-5",
     accent: "from-violet-500/20 to-transparent",
   },
   {
-    title: "Research-grade coverage",
+    title: "ETF universe",
     description:
-      "ETFs, options chains, insider trades, sentiment, dark pool activity, macro indicators, screeners, and technical signals—in one API surface.",
-    tag: "Breadth",
+      "Paginated ETF list with search — symbol-level details and batch pricing for your watchlists and screeners.",
+    tag: "Coverage",
     span: "md:col-span-5",
     accent: "from-fuchsia-500/15 to-transparent",
   },
   {
     title: "Built for shipping",
     description:
-      "API key auth, predictable routes, OpenAPI/Swagger, and generous limits so your team ships dashboards, bots, and quant pipelines faster.",
+      "API key auth, predictable routes, OpenAPI/Swagger, and generous limits so your team ships dashboards and quant pipelines faster.",
     tag: "DX",
     span: "md:col-span-7",
     accent: "from-cyan-500/15 to-transparent",
@@ -81,11 +81,11 @@ export default function ProductShowcaseSection() {
           <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-tight">
             Everything you need to build with{" "}
             <span className="bg-gradient-to-r from-indigo-300 via-white to-violet-300 bg-clip-text text-transparent">
-              US market data
+              US ETF data
             </span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/65">
-            One API for historical depth, live context, and advanced market signals—designed so your
+            One API for ETF historical depth, batch pricing, and backtesting—designed so your
             users see polished charts, not broken pipes.
           </p>
         </motion.div>
@@ -175,7 +175,7 @@ export default function ProductShowcaseSection() {
                 <span className="text-emerald-400/90">&quot;x-api-key: YOUR_KEY&quot;</span> \
                 {"\n"}
                 {`  `}
-                <span className="text-indigo-300/90">{API_BASE_URL}/api/stocks/AAPL/history?interval=1d</span>
+                <span className="text-indigo-300/90">{API_BASE_URL}/api/etf/list?search=SPY&limit=10</span>
               </code>
             </pre>
           </div>

@@ -69,9 +69,9 @@ export default function EarningsCalendarView() {
         </div>
         <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">Earnings calendar</h1>
         <p className="mt-1 text-sm text-white/50">
-          Upcoming and recent US earnings — filter by symbol or open a{" "}
-          <Link href="/dashboard/snapshot" className="text-indigo-400 hover:underline">
-            stock snapshot
+          Upcoming and recent US earnings — filter by symbol or open an{" "}
+          <Link href="/dashboard/etf" className="text-indigo-400 hover:underline">
+            ETF detail
           </Link>
           .
         </p>

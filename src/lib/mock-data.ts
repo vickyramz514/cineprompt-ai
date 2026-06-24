@@ -1,5 +1,5 @@
 /**
- * Stock Market Data API - Mock data and constants
+ * DataCaptain ETF API - Mock data and constants
  */
 
 export const PRICING_PLANS = [
@@ -9,7 +9,12 @@ export const PRICING_PLANS = [
     price: 0,
     currency: "INR",
     requestsPerDay: 50,
-    features: ["50 requests/day", "Stock snapshot API", "Earnings calendar", "ETF & batch prices"],
+    features: [
+      "50 requests/day",
+      "ETF list & batch prices",
+      "Market status",
+      "Upgrade for historical data & backtests",
+    ],
   },
   {
     id: "starter",
@@ -17,7 +22,13 @@ export const PRICING_PLANS = [
     price: 1500,
     currency: "INR",
     requestsPerDay: 1000,
-    features: ["1,000 requests/day", "Full news feed API", "Historical data", "Email support"],
+    features: [
+      "1,000 requests/day",
+      "Historical ETF data",
+      "Backtesting & portfolio compare",
+      "ETF symbol details",
+      "Email support",
+    ],
   },
   {
     id: "pro",
@@ -25,7 +36,12 @@ export const PRICING_PLANS = [
     price: 2500,
     currency: "INR",
     requestsPerDay: 10000,
-    features: ["10,000 requests/day", "Historical stock data", "ETF data", "Priority support"],
+    features: [
+      "10,000 requests/day",
+      "All Starter features",
+      "Higher rate limits",
+      "Priority support",
+    ],
   },
   {
     id: "ultra",
@@ -33,7 +49,12 @@ export const PRICING_PLANS = [
     price: 5000,
     currency: "INR",
     requestsPerDay: 100000,
-    features: ["100,000 requests/day", "Historical stock data", "ETF data", "All premium APIs"],
+    features: [
+      "100,000 requests/day",
+      "All Pro features",
+      "High-volume production",
+      "Dedicated onboarding",
+    ],
   },
 ];
 

@@ -1,5 +1,5 @@
 /**
- * Full API documentation data - DataCaptain Stock Market API
+ * Full API documentation data - DataCaptain ETF Data API
  * Used by /docs and /dashboard/api-docs
  */
 
@@ -26,150 +26,12 @@ export type ApiEndpoint = {
 };
 
 export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
-  stocks: [
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/snapshot",
-      query: "",
-      description:
-        "Unified snapshot — quote, profile, sentiment, key indicators, AI score, next earnings, recent news headlines. Ideal for watchlists and detail screens.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker (e.g. AAPL)", in: "path" }],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/news",
-      query: "?limit=20",
-      description: "News feed for a symbol — headline, summary, source, URL, published time.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "limit", type: "integer", required: false, desc: "Max articles (default 20, max 50)", in: "query" },
-      ],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/prices",
-      query: "?symbols=AAPL,TSLA,NVDA",
-      description: "Batch stock prices — get real-time prices for up to 50 symbols in a single request. Cached 60s.",
-      params: [
-        { name: "symbols", type: "string", required: true, desc: "Comma-separated tickers (e.g. AAPL,TSLA,NVDA)", in: "query" },
-      ],
-      responseExample: '[{"symbol":"AAPL","price":175.42},{"symbol":"TSLA","price":242.18}]',
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/price",
-      query: "",
-      description: "Single stock price — current price, change, changePercent, timestamp.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker (e.g. AAPL)", in: "path" }],
-      responseExample: '{"symbol":"AAPL","price":175.42,"change":2.1,"changePercent":1.21,"timestamp":"2024-03-10T16:00:00Z"}',
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/history",
-      query: "?startDate=2024-01-01&endDate=2024-03-01&interval=1d",
-      description: "Historical OHLCV data — daily, weekly, or monthly bars.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "startDate", type: "string", required: false, desc: "Start date (YYYY-MM-DD)", in: "query" },
-        { name: "endDate", type: "string", required: false, desc: "End date (YYYY-MM-DD)", in: "query" },
-        { name: "interval", type: "string", required: false, desc: "1d, 1wk, 1mo", in: "query" },
-      ],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/candles",
-      query: "?interval=5m",
-      description: "OHLC candle data — intraday or daily candles.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "interval", type: "string", required: false, desc: "1m, 5m, 15m, 1h, 1d", in: "query" },
-      ],
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/profile",
-      query: "",
-      description: "Company profile — sector, industry, market cap, exchange.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" }],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/dividends",
-      query: "",
-      description: "Dividend history — ex-date, amount, payment date.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" }],
-    },
-    {
-      method: "GET",
-      path: "/api/stocks/:symbol/earnings",
-      query: "",
-      description: "Earnings data — report date, EPS, revenue, consensus.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" }],
-    },
-  ],
-
-  market: [
-    {
-      method: "GET",
-      path: "/api/market/earnings-calendar",
-      query: "?from=2024-03-01&to=2024-03-31&symbol=AAPL",
-      description:
-        "Earnings calendar — upcoming and recent report dates with EPS, consensus, and surprise. Defaults to past 7 days through next 30 days.",
-      params: [
-        { name: "from", type: "string", required: false, desc: "Start date (YYYY-MM-DD)", in: "query" },
-        { name: "to", type: "string", required: false, desc: "End date (YYYY-MM-DD)", in: "query" },
-        { name: "symbol", type: "string", required: false, desc: "Filter by ticker", in: "query" },
-        { name: "limit", type: "integer", required: false, desc: "Max events (default 100)", in: "query" },
-      ],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/market/status",
-      query: "",
-      description: "US market status — OPEN/CLOSED, next open time, next close time.",
-      params: [],
-      responseExample: '{"market":"US","status":"OPEN","nextOpen":"2024-03-11T09:30:00","nextClose":"2024-03-10T16:00:00"}',
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/market/top-gainers",
-      query: "",
-      description: "Top gaining stocks for the day.",
-      params: [],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/market/top-losers",
-      query: "",
-      description: "Top losing stocks for the day.",
-      params: [],
-      cache: "60s",
-    },
-    {
-      method: "GET",
-      path: "/api/market/most-active",
-      query: "",
-      description: "Most traded stocks by volume.",
-      params: [],
-      cache: "60s",
-    },
-  ],
-
   etf: [
     {
       method: "GET",
       path: "/api/etf/list",
       query: "limit=100&offset=0&search=SPY",
-      description: "Paginated ETF list from database. Returns { data, total, limit, offset }.",
+      description: "Paginated US ETF universe from database. Returns { data, total, limit, offset }.",
       params: [
         { name: "limit", type: "number", required: false, desc: "Page size (max 500, default 100)", in: "query" },
         { name: "offset", type: "number", required: false, desc: "Skip N rows", in: "query" },
@@ -181,8 +43,30 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       method: "GET",
       path: "/api/etf/:symbol",
       query: "",
-      description: "Single ETF details — symbol, name, price, metadata.",
+      description: "Single ETF details — symbol, name, latest price, exchange.",
       params: [{ name: "symbol", type: "string", required: true, desc: "ETF ticker (e.g. SPY)", in: "path" }],
+      cache: "60s",
+    },
+    {
+      method: "GET",
+      path: "/api/stocks/prices",
+      query: "?symbols=SPY,QQQ,VOO",
+      description: "Batch ETF prices — latest close for up to 50 ETF tickers in one request. Cached 60s.",
+      params: [
+        { name: "symbols", type: "string", required: true, desc: "Comma-separated ETF tickers (e.g. SPY,QQQ,VOO)", in: "query" },
+      ],
+      responseExample: '[{"symbol":"SPY","price":512.34},{"symbol":"QQQ","price":445.12}]',
+      cache: "60s",
+    },
+  ],
+
+  market: [
+    {
+      method: "GET",
+      path: "/api/market/status",
+      query: "",
+      description: "US market session status — open/closed and next session times.",
+      params: [],
       cache: "60s",
     },
   ],
@@ -192,9 +76,9 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       method: "POST",
       path: "/api/backtest/buy-and-hold",
       query: "",
-      description: "Buy-and-hold backtest — total return, CAGR, drawdown, dividend yield, risk score, equity curve.",
+      description: "ETF buy-and-hold backtest — total return, CAGR, drawdown, dividend yield, risk score, equity curve.",
       params: [
-        { name: "symbol", type: "string", required: true, desc: "ETF or stock ticker (e.g. SPY)" },
+        { name: "symbol", type: "string", required: true, desc: "ETF ticker (e.g. SPY)" },
         { name: "investment", type: "number", required: false, desc: "Initial capital USD (default 10000)" },
         { name: "startDate", type: "string", required: true, desc: "YYYY-MM-DD" },
         { name: "endDate", type: "string", required: true, desc: "YYYY-MM-DD" },
@@ -205,132 +89,13 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       method: "POST",
       path: "/api/backtest/compare",
       query: "",
-      description: "Compare multiple symbols — e.g. VOO vs SPY vs QQQ. Returns ranked results.",
+      description: "Compare multiple ETFs — e.g. VOO vs SPY vs QQQ. Returns ranked results.",
       params: [
-        { name: "symbols", type: "string[]", required: true, desc: "Array or comma-separated tickers" },
-        { name: "investment", type: "number", required: false, desc: "Per-symbol investment USD" },
+        { name: "symbols", type: "string[]", required: true, desc: "Array or comma-separated ETF tickers" },
+        { name: "investment", type: "number", required: false, desc: "Per-ETF investment USD" },
         { name: "startDate", type: "string", required: true, desc: "YYYY-MM-DD" },
         { name: "endDate", type: "string", required: true, desc: "YYYY-MM-DD" },
       ],
-    },
-  ],
-
-  options: [
-    {
-      method: "GET",
-      path: "/api/options/:symbol",
-      query: "?expirationDate=2024-03-15&limit=50",
-      description: "Options chain — calls and puts with strike, bid, ask, volume, open interest.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Underlying ticker (e.g. AAPL)", in: "path" },
-        { name: "expirationDate", type: "string", required: false, desc: "YYYY-MM-DD", in: "query" },
-        { name: "limit", type: "integer", required: false, desc: "Max legs (default 50)", in: "query" },
-      ],
-      cache: "60s",
-    },
-  ],
-
-  insiders: [
-    {
-      method: "GET",
-      path: "/api/insiders/:symbol",
-      query: "?limit=50",
-      description: "Insider trading — name, title, transaction type, shares, price, date.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "limit", type: "integer", required: false, desc: "Max results (default 50)", in: "query" },
-      ],
-    },
-  ],
-
-  sentiment: [
-    {
-      method: "GET",
-      path: "/api/sentiment/:symbol",
-      query: "",
-      description: "Stock sentiment score (-1 to +1) — BULLISH, NEUTRAL, BEARISH, mentions count.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" }],
-      cache: "60s",
-    },
-  ],
-
-  darkpool: [
-    {
-      method: "GET",
-      path: "/api/darkpool/:symbol",
-      query: "?limit=50",
-      description: "Dark pool trading — price, volume, trade time for off-exchange activity.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "limit", type: "integer", required: false, desc: "Max trades (default 50)", in: "query" },
-      ],
-    },
-  ],
-
-  economy: [
-    {
-      method: "GET",
-      path: "/api/economy/indicators",
-      query: "",
-      description: "Economic indicators — inflation, interest rate, GDP growth, unemployment.",
-      params: [],
-      responseExample: '{"inflation":3.2,"interestRate":5.25,"gdpGrowth":2.4,"unemploymentRate":3.8}',
-      cache: "5 min",
-    },
-  ],
-
-  search: [
-    {
-      method: "GET",
-      path: "/api/search",
-      query: "?q=apple",
-      description: "Search stocks — symbol and name search.",
-      params: [{ name: "q", type: "string", required: true, desc: "Search query", in: "query" }],
-    },
-  ],
-
-  screener: [
-    {
-      method: "GET",
-      path: "/api/screener",
-      query: "?sector=Technology&marketCapMin=1000000000&limit=50",
-      description: "Stock screener — filter by sector, market cap, price, volume.",
-      params: [
-        { name: "sector", type: "string", required: false, desc: "Sector filter", in: "query" },
-        { name: "marketCapMin", type: "integer", required: false, desc: "Min market cap", in: "query" },
-        { name: "marketCapMax", type: "integer", required: false, desc: "Max market cap", in: "query" },
-        { name: "priceMin", type: "number", required: false, desc: "Min price", in: "query" },
-        { name: "priceMax", type: "number", required: false, desc: "Max price", in: "query" },
-        { name: "volumeMin", type: "integer", required: false, desc: "Min volume", in: "query" },
-        { name: "limit", type: "integer", required: false, desc: "Max results (default 50)", in: "query" },
-      ],
-    },
-  ],
-
-  indicators: [
-    {
-      method: "GET",
-      path: "/api/indicators/:symbol",
-      query: "?rsiPeriod=14&smaPeriod=20",
-      description: "Technical indicators — RSI, SMA, EMA, MACD, Bollinger Bands.",
-      params: [
-        { name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" },
-        { name: "rsiPeriod", type: "integer", required: false, desc: "RSI period (default 14)", in: "query" },
-        { name: "smaPeriod", type: "integer", required: false, desc: "SMA period (default 20)", in: "query" },
-        { name: "emaPeriod", type: "integer", required: false, desc: "EMA period (default 20)", in: "query" },
-        { name: "bbPeriod", type: "integer", required: false, desc: "Bollinger Bands period (default 20)", in: "query" },
-      ],
-    },
-  ],
-
-  ai: [
-    {
-      method: "GET",
-      path: "/api/ai/stock-score/:symbol",
-      query: "",
-      description: "AI stock score (0–100) — trend, momentum, volume, volatility.",
-      params: [{ name: "symbol", type: "string", required: true, desc: "Stock ticker", in: "path" }],
-      cache: "60s",
     },
   ],
 
@@ -347,27 +112,18 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
 };
 
 export const SECTION_LABELS: Record<string, string> = {
-  stocks: "Stock Endpoints",
-  market: "Market Endpoints",
   etf: "ETF Endpoints",
-  options: "Options Chain",
-  insiders: "Insider Trading",
-  sentiment: "Stock Sentiment",
-  darkpool: "Dark Pool",
-  economy: "Economic Indicators",
-  search: "Search",
-  screener: "Stock Screener",
-  indicators: "Technical Indicators",
-  ai: "AI Stock Score",
-  developer: "Developer / Usage",
+  market: "Market",
+  platform: "Backtesting & Portfolio",
+  developer: "Developer",
 };
 
 export const WEBSOCKET_DOC = {
   path: "/ws",
-  description: "Real-time stock price streaming. Subscribe to symbols and receive price updates every 5 seconds.",
+  description: "Real-time ETF price streaming (when enabled). Subscribe to ETF symbols for periodic updates.",
   messageFormat: {
-    subscribe: '{"action":"subscribe","symbols":["AAPL","TSLA"]}',
-    unsubscribe: '{"action":"unsubscribe","symbols":["AAPL"]}',
-    response: '{"type":"prices","data":[{"symbol":"AAPL","price":175.42},...]}',
+    subscribe: '{"action":"subscribe","symbols":["SPY","QQQ"]}',
+    unsubscribe: '{"action":"unsubscribe","symbols":["SPY"]}',
+    response: '{"symbol":"SPY","price":512.34,"timestamp":"2026-06-10T16:00:00Z"}',
   },
 };

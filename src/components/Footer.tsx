@@ -15,7 +15,7 @@ export default function Footer() {
             <h3 className="mb-3 text-sm font-semibold text-white/80">Product</h3>
             <ul className="space-y-2 text-sm text-white/60">
               <li>
-                <Link href="/docs" className="hover:text-white">API Documentation</Link>
+                <Link href="/blog" className="hover:text-white">Blog & guides</Link>
               </li>
               <li>
                 <Link href="/backtesting" className="hover:text-white">Backtesting</Link>
@@ -55,7 +55,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-white/5 pt-8 text-center text-sm text-white/50">
-          © {new Date().getFullYear()} Data Captain. US Stock & ETF Historical Data API.
+          © {new Date().getFullYear()} Data Captain. US ETF Historical Data API.
         </div>
       </div>
     </footer>

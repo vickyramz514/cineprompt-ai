@@ -24,8 +24,8 @@ import { MarketingHeaderActions } from "@/components/MarketingHeaderActions";
 
 const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
   {
-    title: "25+ Years of Historical Market Data",
-    desc: "Access daily historical prices for US stocks and ETFs from 2000 to present.",
+    title: "Historical ETF Data",
+    desc: "Daily historical prices for US exchange-traded funds — built for backtests and research.",
     icon: "historical",
   },
   {
@@ -44,8 +44,8 @@ const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
     icon: "fast",
   },
   {
-    title: "ETF & Equity Coverage",
-    desc: "Access historical data for thousands of equities and exchange traded funds.",
+    title: "ETF Universe Coverage",
+    desc: "Browse the full ETF universe, fetch batch prices, and drill into symbol-level details.",
     icon: "etf",
   },
 ];
@@ -79,7 +79,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl [text-shadow:0_2px_40px_rgba(0,0,0,0.55)]"
           >
-            US Stock & ETF Data Platform
+            US ETF Data Platform
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -87,7 +87,7 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-6 max-w-2xl text-lg text-white/70"
           >
-            Access reliable historical market data for US equities and ETFs through a simple and fast REST API.
+            Access reliable historical ETF data through a simple and fast REST API — plus backtesting and portfolio tools.
           </motion.p>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -95,8 +95,8 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.15 }}
             className="mx-auto mt-4 max-w-2xl text-base text-white/60"
           >
-            Our platform provides clean, structured historical market data for developers, traders, and financial analysts.
-            Build trading algorithms, financial dashboards, research tools, and analytics platforms using our scalable API.
+            Our platform provides clean, structured ETF market data for developers, traders, and financial analysts.
+            Build allocation models, ETF screeners, research tools, and analytics platforms using our scalable API.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -126,7 +126,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-6xl">
           <h2 className="text-center text-2xl font-semibold sm:text-3xl">One platform, more than APIs</h2>
           <p className="mx-auto mt-3 max-w-2xl text-center text-white/55">
-            ETFs, stocks, backtesting, and portfolio tools — same login, same database, same API key.
+            ETF data, backtesting, and portfolio tools — same login, same database, same API key.
           </p>
           <div className="mt-10">
             <PlatformPillars />

@@ -21,13 +21,12 @@ export const FREE_PLAN_FEATURES: PlanFeature[] = ["batch-prices", "etf-list"];
 export const FREE_API_PATHS = new Set([
   "/developer/usage",
   "/market/status",
-  "/market/earnings-calendar",
   "/stocks/prices",
   "/etf/list",
 ]);
 
 /** Mirrors backend FREE_API_PATH_PATTERNS */
-const FREE_API_PATH_PATTERNS = [/^\/stocks\/[A-Za-z0-9.-]+\/snapshot$/];
+const FREE_API_PATH_PATTERNS: RegExp[] = [];
 
 export const PAID_PLAN_SLUGS = new Set([
   "starter",
