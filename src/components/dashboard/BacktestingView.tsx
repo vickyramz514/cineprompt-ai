@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import type { BacktestResult } from "@/services/datacaptain/endpoints";
+import type { EtfItem } from "@/services/datacaptain/endpoints";
 import DatePickerField from "@/components/dashboard/DatePickerField";
 import { getDefaultBacktestDates } from "@/lib/date-utils";
 
@@ -58,12 +59,39 @@ type Props = {
 export default function BacktestingView({ compact = false }: Props) {
   const { apiKey } = useDataCaptainKey();
   const [symbol, setSymbol] = useState("SPY");
+  const [symbolOptions, setSymbolOptions] = useState<EtfItem[]>([]);
+  const [symbolLoading, setSymbolLoading] = useState(false);
   const [investment, setInvestment] = useState("10000");
   const [startDate, setStartDate] = useState(() => getDefaultBacktestDates(5).startDate);
   const [endDate, setEndDate] = useState(() => getDefaultBacktestDates(5).endDate);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<BacktestResult | null>(null);
+
+  useEffect(() => {
+    if (!apiKey) {
+      setSymbolOptions([]);
+      return;
+    }
+    const q = symbol.trim();
+    const handle = setTimeout(async () => {
+      setSymbolLoading(true);
+      try {
+        const res = await datacaptainEndpoints.etfList(apiKey, {
+          limit: "50",
+          offset: "0",
+          ...(q ? { search: q } : {}),
+        });
+        setSymbolOptions(res.data);
+      } catch {
+        // Keep this non-blocking so backtesting can still run with manual symbol entry.
+        setSymbolOptions([]);
+      } finally {
+        setSymbolLoading(false);
+      }
+    }, 250);
+    return () => clearTimeout(handle);
+  }, [apiKey, symbol]);
 
   const runBacktest = async () => {
     if (!apiKey) {
@@ -118,7 +146,18 @@ export default function BacktestingView({ compact = false }: Props) {
                 onChange={(e) => setSymbol(e.target.value.toUpperCase())}
                 className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 font-mono text-white focus:border-indigo-500/50 focus:outline-none"
                 placeholder="SPY"
+                list="backtest-etf-options"
               />
+              <datalist id="backtest-etf-options">
+                {symbolOptions.map((etf) => (
+                  <option key={etf.symbol} value={etf.symbol}>
+                    {etf.symbol} - {etf.name}
+                  </option>
+                ))}
+              </datalist>
+              <p className="mt-1 text-xs text-white/40">
+                {symbolLoading ? "Loading ETFs..." : "Search by symbol or ETF name"}
+              </p>
             </label>
             <label className="block text-sm">
               <span className="text-white/50">Investment (USD)</span>
