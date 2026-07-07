@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
@@ -56,10 +56,17 @@ type Props = {
   compact?: boolean;
 };
 
+const RECENT_ETF_KEY = "dc_backtest_recent_etfs";
+const POPULAR_ETFS = ["SPY", "VOO", "QQQ", "VTI", "IWM", "DIA", "ARKK", "XLK"];
+const INITIAL_POOL_LIMIT = 250;
+
 export default function BacktestingView({ compact = false }: Props) {
   const { apiKey } = useDataCaptainKey();
   const [symbol, setSymbol] = useState("SPY");
-  const [symbolOptions, setSymbolOptions] = useState<EtfItem[]>([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [symbolPool, setSymbolPool] = useState<EtfItem[]>([]);
+  const [remoteMatches, setRemoteMatches] = useState<EtfItem[]>([]);
+  const [recentSymbols, setRecentSymbols] = useState<string[]>([]);
   const [symbolLoading, setSymbolLoading] = useState(false);
   const [investment, setInvestment] = useState("10000");
   const [startDate, setStartDate] = useState(() => getDefaultBacktestDates(5).startDate);
@@ -67,31 +74,117 @@ export default function BacktestingView({ compact = false }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<BacktestResult | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const queryCacheRef = useRef<Map<string, EtfItem[]>>(new Map());
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(RECENT_ETF_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as string[];
+      if (Array.isArray(parsed)) setRecentSymbols(parsed.slice(0, 6));
+    } catch {
+      // No-op: local cache is optional.
+    }
+  }, []);
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (!panelRef.current) return;
+      if (!panelRef.current.contains(e.target as Node)) setPickerOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    queryCacheRef.current.clear();
     if (!apiKey) {
-      setSymbolOptions([]);
+      setSymbolPool([]);
       return;
     }
-    const q = symbol.trim();
-    const handle = setTimeout(async () => {
+    const warmup = async () => {
       setSymbolLoading(true);
       try {
         const res = await datacaptainEndpoints.etfList(apiKey, {
-          limit: "50",
+          limit: String(INITIAL_POOL_LIMIT),
           offset: "0",
-          ...(q ? { search: q } : {}),
         });
-        setSymbolOptions(res.data);
+        setSymbolPool(res.data);
       } catch {
-        // Keep this non-blocking so backtesting can still run with manual symbol entry.
-        setSymbolOptions([]);
+        setSymbolPool([]);
       } finally {
         setSymbolLoading(false);
       }
-    }, 250);
+    };
+    void warmup();
+  }, [apiKey]);
+
+  useEffect(() => {
+    if (!apiKey) return;
+    const q = symbol.trim();
+    if (q.length < 2) {
+      setRemoteMatches([]);
+      return;
+    }
+    const key = q.toLowerCase();
+    const cached = queryCacheRef.current.get(key);
+    if (cached) {
+      setRemoteMatches(cached);
+      return;
+    }
+    const handle = setTimeout(async () => {
+      try {
+        const res = await datacaptainEndpoints.etfList(apiKey, {
+          limit: "40",
+          offset: "0",
+          search: q,
+        });
+        queryCacheRef.current.set(key, res.data);
+        setRemoteMatches(res.data);
+      } catch {
+        setRemoteMatches([]);
+      }
+    }, 180);
     return () => clearTimeout(handle);
   }, [apiKey, symbol]);
+
+  const localMatches = useMemo(() => {
+    const q = symbol.trim().toLowerCase();
+    if (!q) return symbolPool.slice(0, 16);
+    return symbolPool
+      .filter(
+        (etf) => etf.symbol.toLowerCase().includes(q) || etf.name.toLowerCase().includes(q)
+      )
+      .slice(0, 16);
+  }, [symbol, symbolPool]);
+
+  const mergedMatches = useMemo(() => {
+    const merged = [...localMatches, ...remoteMatches];
+    const seen = new Set<string>();
+    return merged.filter((etf) => {
+      if (seen.has(etf.symbol)) return false;
+      seen.add(etf.symbol);
+      return true;
+    });
+  }, [localMatches, remoteMatches]);
+
+  const saveRecentSymbol = (nextSymbol: string) => {
+    const normalized = nextSymbol.trim().toUpperCase();
+    if (!normalized) return;
+    const next = [normalized, ...recentSymbols.filter((s) => s !== normalized)].slice(0, 6);
+    setRecentSymbols(next);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(RECENT_ETF_KEY, JSON.stringify(next));
+    }
+  };
+
+  const selectSymbol = (nextSymbol: string) => {
+    setSymbol(nextSymbol.trim().toUpperCase());
+    saveRecentSymbol(nextSymbol);
+    setPickerOpen(false);
+  };
 
   const runBacktest = async () => {
     if (!apiKey) {
@@ -113,6 +206,7 @@ export default function BacktestingView({ compact = false }: Props) {
         strategy: "buy_and_hold",
       });
       setResult(data);
+      saveRecentSymbol(symbol);
     } catch (err) {
       setError(getDataCaptainErrorMessage(err));
       setResult(null);
@@ -141,22 +235,82 @@ export default function BacktestingView({ compact = false }: Props) {
           <div className="mt-6 space-y-4">
             <label className="block text-sm">
               <span className="text-white/50">ETF / Symbol</span>
-              <input
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 font-mono text-white focus:border-indigo-500/50 focus:outline-none"
-                placeholder="SPY"
-                list="backtest-etf-options"
-              />
-              <datalist id="backtest-etf-options">
-                {symbolOptions.map((etf) => (
-                  <option key={etf.symbol} value={etf.symbol}>
-                    {etf.symbol} - {etf.name}
-                  </option>
-                ))}
-              </datalist>
+              <div className="relative mt-1.5" ref={panelRef}>
+                <input
+                  value={symbol}
+                  onFocus={() => setPickerOpen(true)}
+                  onChange={(e) => {
+                    setSymbol(e.target.value);
+                    setPickerOpen(true);
+                  }}
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 pr-10 font-mono text-white focus:border-indigo-500/50 focus:outline-none"
+                  placeholder="Search symbol or ETF name"
+                />
+                <button
+                  type="button"
+                  onClick={() => setPickerOpen((v) => !v)}
+                  className="absolute inset-y-0 right-2 text-white/50 hover:text-white"
+                  aria-label="Toggle ETF dropdown"
+                >
+                  ▾
+                </button>
+                {pickerOpen && (
+                  <div className="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#0b0b14] p-2 shadow-2xl">
+                    {!symbol.trim() && (
+                      <div className="mb-2">
+                        <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Popular</p>
+                        <div className="flex flex-wrap gap-1 px-1">
+                          {POPULAR_ETFS.map((tag) => (
+                            <button
+                              key={tag}
+                              type="button"
+                              onClick={() => selectSymbol(tag)}
+                              className="rounded-md border border-white/15 bg-white/5 px-2 py-1 text-xs text-white/80 hover:bg-indigo-500/20"
+                            >
+                              {tag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {recentSymbols.length > 0 && !symbol.trim() && (
+                      <div className="mb-2">
+                        <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Recent</p>
+                        <div className="flex flex-wrap gap-1 px-1">
+                          {recentSymbols.map((tag) => (
+                            <button
+                              key={tag}
+                              type="button"
+                              onClick={() => selectSymbol(tag)}
+                              className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200 hover:bg-emerald-500/20"
+                            >
+                              {tag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    <div className="space-y-1">
+                      {mergedMatches.map((etf) => (
+                        <button
+                          key={etf.symbol}
+                          type="button"
+                          onClick={() => selectSymbol(etf.symbol)}
+                          className="w-full rounded-lg px-2 py-2 text-left hover:bg-white/10"
+                        >
+                          <p className="font-mono text-sm text-white">{etf.symbol}</p>
+                          <p className="truncate text-xs text-white/55">{etf.name}</p>
+                        </button>
+                      ))}
+                      {!symbolLoading && mergedMatches.length === 0 && symbol.trim().length >= 2 && (
+                        <p className="px-2 py-2 text-xs text-white/45">No ETF matches found</p>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
               <p className="mt-1 text-xs text-white/40">
-                {symbolLoading ? "Loading ETFs..." : "Search by symbol or ETF name"}
+                {symbolLoading ? "Loading ETF universe..." : "Instant suggestions with smart search"}
               </p>
             </label>
             <label className="block text-sm">
