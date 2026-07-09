@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import { SUPPORT_EMAIL, SALES_EMAIL, STATUS_PAGE_PATH, mailtoSupport, mailtoSales } from "@/lib/site";
 
 export default function Footer() {
   return (
     <footer className="border-t border-white/5">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-5">
           <div>
             <DataCaptainLogo variant="footer" href="/" />
           </div>
@@ -39,6 +40,24 @@ export default function Footer() {
               </li>
               <li>
                 <Link href="/docs" className="hover:text-white">API Reference</Link>
+              </li>
+              <li>
+                <Link href={STATUS_PAGE_PATH} className="hover:text-white">System status</Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="mb-3 text-sm font-semibold text-white/80">Support</h3>
+            <ul className="space-y-2 text-sm text-white/60">
+              <li>
+                <a href={mailtoSupport()} className="hover:text-white">
+                  {SUPPORT_EMAIL}
+                </a>
+              </li>
+              <li>
+                <a href={mailtoSales("Enterprise plan")} className="hover:text-white">
+                  {SALES_EMAIL} (sales)
+                </a>
               </li>
             </ul>
           </div>

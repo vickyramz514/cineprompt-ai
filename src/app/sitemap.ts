@@ -16,6 +16,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/auth/signup",
     "/terms",
     "/privacy",
+    "/status",
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,

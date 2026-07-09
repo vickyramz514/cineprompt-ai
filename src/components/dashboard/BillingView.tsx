@@ -14,6 +14,7 @@ import { AnimatedCounter } from "@/components/dashboard/AnimatedCounter";
 import * as subscriptionService from "@/services/subscription.service";
 import * as walletService from "@/services/wallet.service";
 import { openRazorpaySubscriptionCheckout } from "@/lib/razorpayCheckout";
+import { SUPPORT_EMAIL, mailtoSupport } from "@/lib/site";
 import type { Plan } from "@/components/PricingCard";
 
 function mapPlanToPricing(plan: {
@@ -61,6 +62,7 @@ export default function BillingView() {
   const { credits, fetchBalance } = useWallet();
   const { refetch: refetchUsage } = useApiUsage();
   const setUser = useAuthStore((s) => s.setUser);
+  const user = useAuthStore((s) => s.user);
   const { plans, isLoading: plansLoading, error: plansError } = useSubscriptionPlans();
   const { isLoading, error } = useCreditsStore();
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
@@ -256,7 +258,10 @@ export default function BillingView() {
               </span>
               <div>
                 <p className="text-sm font-medium text-emerald-200">Payment successful</p>
-                <p className="text-xs text-emerald-200/70">Your subscription is being activated. Refresh if balance doesn&apos;t update.</p>
+                <p className="text-xs text-emerald-200/70">
+                  Your subscription is being activated. Razorpay will email a payment receipt
+                  {user?.email ? ` to ${user.email}` : " to your account email"}.
+                </p>
               </div>
             </div>
             <button type="button" onClick={() => setPaymentSuccess(false)} className="text-white/40 hover:text-white">
@@ -381,7 +386,12 @@ export default function BillingView() {
                 transition={{ duration: 0.2 }}
               >
                 <p className="text-sm text-white/50">
-                  Secure checkout via Razorpay. Enterprise plans — contact sales.
+                  Secure checkout via Razorpay — invoices and receipts are sent to your account email.
+                  Questions?{" "}
+                  <a href={mailtoSupport("Billing help")} className="text-indigo-400 hover:underline">
+                    {SUPPORT_EMAIL}
+                  </a>
+                  . Enterprise plans — contact sales.
                 </p>
                 {plansLoading && pricingPlans.length === 0 ? (
                   <div className="flex justify-center py-16">

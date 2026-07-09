@@ -1,10 +1,12 @@
 "use client";
 
+import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import { PRICING_PLANS } from "@/lib/mock-data";
+import { SUPPORT_EMAIL, SALES_EMAIL, STATUS_PAGE_PATH, mailtoSupport, mailtoSales } from "@/lib/site";
 
 export default function PricingPage() {
   const { isAuthenticated } = useAuth();
@@ -33,6 +35,20 @@ export default function PricingPage() {
           <div className="mx-auto mt-8 max-w-3xl rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center text-sm text-white/55">
             <strong className="text-white/80">Free:</strong> ETF list, batch prices, market status ·{" "}
             <strong className="text-indigo-300">Starter+:</strong> history, backtests, news, premium APIs
+          </div>
+
+          <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center text-sm text-white/50">
+            <a href={mailtoSupport("Data Captain — pricing question")} className="text-indigo-400 hover:underline">
+              {SUPPORT_EMAIL}
+            </a>
+            <span className="hidden text-white/20 sm:inline">·</span>
+            <a href={mailtoSales("Enterprise / Ultra plan")} className="text-indigo-400 hover:underline">
+              {SALES_EMAIL}
+            </a>
+            <span className="hidden text-white/20 sm:inline">·</span>
+            <Link href={STATUS_PAGE_PATH} className="text-emerald-400/90 hover:underline">
+              API status
+            </Link>
           </div>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

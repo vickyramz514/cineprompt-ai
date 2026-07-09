@@ -10,6 +10,7 @@ import {
   getDataCaptainErrorMessage,
   type EtfScreenerResponse,
 } from "@/services/datacaptain/endpoints";
+import DataFreshnessLabel from "@/components/DataFreshnessLabel";
 
 const PRESETS = [
   { label: "High return (10%+)", returnMin: "10", dividendYieldMin: "" },
@@ -71,6 +72,7 @@ export default function EtfScreenerView() {
           Filter ETFs by return and dividend yield. Expense ratio filters coming when fundamentals
           data is loaded.
         </p>
+        <DataFreshnessLabel className="mt-2" />
       </motion.div>
 
       <div className="flex flex-wrap gap-2">

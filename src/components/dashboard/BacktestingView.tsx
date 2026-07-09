@@ -8,6 +8,7 @@ import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/dat
 import type { BacktestResult } from "@/services/datacaptain/endpoints";
 import type { EtfItem } from "@/services/datacaptain/endpoints";
 import DatePickerField from "@/components/dashboard/DatePickerField";
+import DataFreshnessLabel from "@/components/DataFreshnessLabel";
 import { getDefaultBacktestDates } from "@/lib/date-utils";
 
 function MetricCard({ label, value, accent }: { label: string; value: string; accent?: string }) {
@@ -224,6 +225,7 @@ export default function BacktestingView({ compact = false }: Props) {
           <p className="mt-2 max-w-2xl text-white/55">
             Run buy-and-hold simulations on your historical data. Same login, same database, same API key.
           </p>
+          <DataFreshnessLabel className="mt-2" />
         </motion.div>
       )}
 
