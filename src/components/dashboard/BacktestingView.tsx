@@ -111,6 +111,7 @@ export default function BacktestingView({ compact = false }: Props) {
         const res = await datacaptainEndpoints.etfList(apiKey, {
           limit: String(INITIAL_POOL_LIMIT),
           offset: "0",
+          hasPrice: "1",
         });
         setSymbolPool(res.data);
       } catch {
@@ -141,6 +142,7 @@ export default function BacktestingView({ compact = false }: Props) {
           limit: "40",
           offset: "0",
           search: q,
+          hasPrice: "1",
         });
         queryCacheRef.current.set(key, res.data);
         setRemoteMatches(res.data);

@@ -32,6 +32,7 @@ export default function EtfExplorerView() {
   const [error, setError] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [search, setSearch] = useState("");
+  const [withPricesOnly, setWithPricesOnly] = useState(true);
 
   useEffect(() => {
     const t = setTimeout(() => setSearch(query.trim()), 300);
@@ -57,6 +58,7 @@ export default function EtfExplorerView() {
           limit: String(PAGE_SIZE),
           offset: String(nextOffset),
           ...(search ? { search } : {}),
+          ...(withPricesOnly ? { hasPrice: "1" } : {}),
         });
         setTotal(res.total);
         setOffset(nextOffset + res.data.length);
@@ -70,7 +72,7 @@ export default function EtfExplorerView() {
         setRefreshing(false);
       }
     },
-    [apiKey, search]
+    [apiKey, search, withPricesOnly]
   );
 
   useEffect(() => {
@@ -122,7 +124,8 @@ export default function EtfExplorerView() {
           <p className="text-xs font-medium uppercase tracking-widest text-violet-300/80">Funds</p>
           <h1 className="mt-0.5 text-2xl font-semibold sm:text-3xl">ETF Explorer</h1>
           <p className="mt-1 max-w-xl text-sm text-white/50">
-            Browse ETFs from your database — search by symbol or name, paginated via the API
+            Browse ETFs with US price history. The full universe has ~29k listings; only symbols
+            imported into <code className="text-white/60">historical_prices</code> show a live price.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -157,7 +160,9 @@ export default function EtfExplorerView() {
       {!loading && etfs.length > 0 && (
         <div className="flex flex-wrap gap-3">
           <div className="rounded-xl border border-white/10 bg-[#0c0c14]/90 px-4 py-3">
-            <p className="text-xs uppercase tracking-wider text-white/35">In database</p>
+            <p className="text-xs uppercase tracking-wider text-white/35">
+              {withPricesOnly ? "With price history" : "In universe"}
+            </p>
             <p className="mt-0.5 text-xl font-semibold tabular-nums text-white">{total.toLocaleString()}</p>
           </div>
           <div className="rounded-xl border border-white/10 bg-[#0c0c14]/90 px-4 py-3">
@@ -171,7 +176,8 @@ export default function EtfExplorerView() {
         </div>
       )}
 
-      <div className="relative">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative flex-1">
         <svg
           className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-white/35"
           fill="none"
@@ -188,6 +194,16 @@ export default function EtfExplorerView() {
           onChange={(e) => setQuery(e.target.value)}
           className="w-full rounded-xl border border-white/10 bg-black/40 py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/35 focus:border-violet-500/50 focus:outline-none focus:ring-2 focus:ring-violet-500/20"
         />
+        </div>
+        <label className="flex shrink-0 cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white/70">
+          <input
+            type="checkbox"
+            checked={withPricesOnly}
+            onChange={(e) => setWithPricesOnly(e.target.checked)}
+            className="rounded border-white/20 bg-black/40 text-violet-500 focus:ring-violet-500/30"
+          />
+          With price only
+        </label>
       </div>
 
       {loading ? (

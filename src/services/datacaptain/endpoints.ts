@@ -270,7 +270,7 @@ export const datacaptainEndpoints = {
 
   etfList: (
     key: string | null,
-    params?: { limit?: string; offset?: string; search?: string }
+    params?: { limit?: string; offset?: string; search?: string; hasPrice?: string }
   ) => datacaptainFetch<EtfListResponse>("/etf/list", key, params as Record<string, string>),
 
   etfBySymbol: (key: string | null, symbol: string) =>
