@@ -173,12 +173,6 @@ export default function AdminUsersPage() {
                           Unblock
                         </button>
                       )}
-                      <a
-                        href={`/admin/jobs?userId=${u.id}`}
-                        className="rounded bg-white/10 px-2 py-1 text-xs text-white/80 hover:bg-white/20"
-                      >
-                        Jobs
-                      </a>
                     </div>
                   </td>
                 </tr>

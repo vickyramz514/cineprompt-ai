@@ -72,14 +72,14 @@ export default function AdminGrowthPage() {
                 <p className="text-xl font-bold">{data.funnel.signups}</p>
               </div>
               <div>
-                <p className="text-sm text-white/60">First Video</p>
-                <p className="text-xl font-bold">{data.funnel.firstVideo}</p>
-                <p className="text-xs text-green-400">Signup → Video: {data.funnel.signupToVideo}%</p>
+                <p className="text-sm text-white/60">Payments</p>
+                <p className="text-xl font-bold">{data.funnel.payments}</p>
+                <p className="text-xs text-green-400">Signup → Payment: {data.funnel.signupToPayment}%</p>
               </div>
               <div>
                 <p className="text-sm text-white/60">Subscriptions</p>
                 <p className="text-xl font-bold">{data.funnel.subscriptions}</p>
-                <p className="text-xs text-green-400">Video → Sub: {data.funnel.videoToSub}%</p>
+                <p className="text-xs text-green-400">Payment → Sub: {data.funnel.paymentToSub}%</p>
               </div>
             </div>
           </div>

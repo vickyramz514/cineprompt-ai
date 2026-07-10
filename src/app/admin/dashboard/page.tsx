@@ -43,19 +43,11 @@ export default function AdminDashboardPage() {
     { label: "Total Users", value: data?.totalUsers ?? 0 },
     { label: "Active Subscriptions", value: data?.activeSubscriptions ?? 0 },
     {
-      label: "Monthly Revenue",
+      label: "Total Revenue",
       value: `₹${((data?.totalRevenue ?? 0) / 100).toLocaleString()}`,
     },
-    {
-      label: "Monthly Cost",
-      value: `$${(data?.totalApiCost ?? 0).toFixed(2)}`,
-    },
-    {
-      label: "Profit",
-      value: `₹${(data?.totalProfit ?? 0).toFixed(0)}`,
-    },
-    { label: "Today's Jobs", value: data?.todayJobs ?? 0 },
-    { label: "Total Jobs", value: data?.totalJobs ?? 0 },
+    { label: "Today's API Requests", value: data?.todayApiRequests ?? 0 },
+    { label: "Total API Requests", value: data?.totalApiRequests ?? 0 },
   ];
 
   return (
@@ -76,14 +68,14 @@ export default function AdminDashboardPage() {
       </div>
 
       {charts && (
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        <div className="mt-8 grid gap-6 lg:grid-cols-2">
           <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <h3 className="font-semibold">Daily Jobs</h3>
+            <h3 className="font-semibold">Daily API Requests</h3>
             <div className="mt-4 max-h-48 space-y-2 overflow-y-auto">
-              {charts.dailyJobs?.slice(-14).map((d: { date: string; jobs: number }) => (
-                <div key={d.date} className="flex justify-between text-sm">
-                  <span className="text-white/60">{d.date}</span>
-                  <span>{d.jobs}</span>
+              {charts.dailyApiRequests?.slice(-14).map((d: { date: string; requests: number }) => (
+                <div key={String(d.date)} className="flex justify-between text-sm">
+                  <span className="text-white/60">{String(d.date)}</span>
+                  <span>{d.requests}</span>
                 </div>
               ))}
             </div>
@@ -92,20 +84,9 @@ export default function AdminDashboardPage() {
             <h3 className="font-semibold">Daily Revenue (₹)</h3>
             <div className="mt-4 max-h-48 space-y-2 overflow-y-auto">
               {charts.dailyRevenue?.slice(-14).map((d: { date: string; cents: number }) => (
-                <div key={d.date} className="flex justify-between text-sm">
-                  <span className="text-white/60">{d.date}</span>
+                <div key={String(d.date)} className="flex justify-between text-sm">
+                  <span className="text-white/60">{String(d.date)}</span>
                   <span>{(d.cents / 100).toFixed(0)}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-xl border border-white/5 bg-white/[0.02] p-6">
-            <h3 className="font-semibold">Daily Cost ($)</h3>
-            <div className="mt-4 max-h-48 space-y-2 overflow-y-auto">
-              {charts.dailyCost?.slice(-14).map((d: { date: string; cost_usd: number }) => (
-                <div key={d.date} className="flex justify-between text-sm">
-                  <span className="text-white/60">{d.date}</span>
-                  <span>{(d.cost_usd ?? 0).toFixed(2)}</span>
                 </div>
               ))}
             </div>

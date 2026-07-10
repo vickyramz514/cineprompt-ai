@@ -8,18 +8,15 @@ export type ApiResponse<T> = { success: boolean; data: T };
 
 export type DashboardData = {
   totalUsers: number;
-  totalJobs: number;
-  todayJobs: number;
+  totalApiRequests: number;
+  todayApiRequests: number;
   totalRevenue: number;
-  totalApiCost: number;
-  totalProfit: number;
   activeSubscriptions: number;
 };
 
 export type ChartData = {
-  dailyJobs: { date: string; jobs: number }[];
+  dailyApiRequests: { date: string; requests: number }[];
   dailyRevenue: { date: string; cents: number }[];
-  dailyCost: { date: string; cost_usd: number }[];
   days: number;
 };
 
@@ -115,44 +112,6 @@ export async function planOverride(
   return res.data.data;
 }
 
-export async function getJobs(params?: {
-  page?: number;
-  limit?: number;
-  status?: string;
-}): Promise<PaginatedResponse<AdminJob[]>> {
-  const res = await api.get<ApiResponse<PaginatedResponse<AdminJob[]>>>(
-    "/admin/jobs",
-    { params }
-  );
-  if (!res.data.success) throw new Error("Failed to fetch jobs");
-  return res.data.data;
-}
-
-export type AdminJob = {
-  id: string;
-  userId: string;
-  prompt: string;
-  status: string;
-  provider: string;
-  creditsUsed: number;
-  cost: number | null;
-  createdAt: string;
-  user: { id: string; name: string; email: string };
-};
-
-export async function getJobById(id: string) {
-  const res = await api.get<ApiResponse<AdminJob>>(`/admin/jobs/${id}`);
-  if (!res.data.success) throw new Error("Failed to fetch job");
-  return res.data.data;
-}
-
-export async function cancelJob(jobId: string): Promise<void> {
-  const res = await api.post<ApiResponse<{ message: string }>>(
-    `/admin/jobs/${jobId}/cancel`
-  );
-  if (!res.data.success) throw new Error("Failed to cancel job");
-}
-
 export async function getPayments(params?: {
   page?: number;
   limit?: number;
@@ -195,28 +154,6 @@ export type AdminSubscription = {
   currentPeriodEnd: string;
   user: { id: string; name: string; email: string };
   plan: { name: string; slug: string; priceCents: number };
-};
-
-export async function getAbuseLogs(params?: {
-  page?: number;
-  limit?: number;
-  type?: string;
-}): Promise<PaginatedResponse<AdminAbuseLog[]>> {
-  const res = await api.get<ApiResponse<PaginatedResponse<AdminAbuseLog[]>>>(
-    "/admin/abuse-logs",
-    { params }
-  );
-  if (!res.data.success) throw new Error("Failed to fetch abuse logs");
-  return res.data.data;
-}
-
-export type AdminAbuseLog = {
-  id: string;
-  userId: string;
-  type: string;
-  meta: unknown;
-  createdAt: string;
-  user: { id: string; name: string; email: string } | null;
 };
 
 export async function getSupportTickets(params?: {
@@ -283,10 +220,10 @@ export type GrowthOverview = {
   churn: { cancelled: number; total: number; churnRate: number };
   funnel: {
     signups: number;
-    firstVideo: number;
+    payments: number;
     subscriptions: number;
-    signupToVideo: number;
-    videoToSub: number;
+    signupToPayment: number;
+    paymentToSub: number;
   };
   days: number;
 };
