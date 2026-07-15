@@ -1,11 +1,21 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { MarketingShell } from "@/components/MarketingShell";
 import { BLOG_POSTS } from "@/lib/blog-posts";
+import { getSiteUrl } from "@/lib/site-url";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Blog | Data Captain — ETF APIs, backtests & market data",
   description:
     "Guides for developers and analysts: best ETF APIs, QQQ historical returns, SPY vs QQQ comparisons, and fintech integration tips.",
+  alternates: { canonical: `${getSiteUrl()}/blog` },
+  openGraph: {
+    title: "Data Captain Blog — ETF API Engineering Guides",
+    description:
+      "Practical guides for building ETF screeners, backtests, investment dashboards, and portfolio tools.",
+    url: `${getSiteUrl()}/blog`,
+    type: "website",
+  },
 };
 
 export default function BlogIndexPage() {
@@ -37,9 +47,13 @@ export default function BlogIndexPage() {
                 </div>
                 <h2 className="mt-3 text-xl font-semibold text-white">{post.title}</h2>
                 <p className="mt-2 text-sm leading-relaxed text-white/55">{post.description}</p>
-                <p className="mt-3 text-xs text-white/35">
-                  {post.publishedAt} · {post.readMinutes} min read
-                </p>
+                <div className="mt-3 flex flex-wrap gap-x-2 text-xs text-white/35">
+                  <span>{post.author}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{post.readMinutes} min read</span>
+                  <span aria-hidden="true">·</span>
+                  <time dateTime={post.updatedAt}>Updated {post.updatedAt}</time>
+                </div>
               </Link>
             </li>
           ))}

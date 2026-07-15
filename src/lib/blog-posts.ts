@@ -1,3 +1,5 @@
+import { SEO_BLOG_POSTS } from "@/lib/seo-blog-posts";
+
 export type BlogSection = {
   heading: string;
   paragraphs: string[];
@@ -9,11 +11,16 @@ export type BlogPost = {
   title: string;
   description: string;
   publishedAt: string;
+  updatedAt: string;
+  author: string;
   readMinutes: number;
   tags: string[];
   sections: BlogSection[];
+  relatedSlugs?: string[];
   cta?: { label: string; href: string };
 };
+
+export const BLOG_AUTHOR = "Data Captain Research Team";
 
 export const BLOG_POSTS: BlogPost[] = [
   {
@@ -22,6 +29,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Compare what developers need from an ETF data API — universe coverage, historical prices, backtesting, and pricing — and how Data Captain fits.",
     publishedAt: "2026-03-15",
+    updatedAt: "2026-07-15",
+    author: BLOG_AUTHOR,
     readMinutes: 8,
     tags: ["ETF API", "developers", "fintech"],
     sections: [
@@ -65,6 +74,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
+    relatedSlugs: ["historical-etf-data-api", "yahoo-finance-api-alternative", "etf-backtesting-api"],
     cta: { label: "Get your free API key", href: "/auth/signup" },
   },
   {
@@ -73,6 +83,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "How to analyze Invesco QQQ historical performance with real data — total return, drawdown, and a sample backtest using Data Captain.",
     publishedAt: "2026-03-15",
+    updatedAt: "2026-07-15",
+    author: BLOG_AUTHOR,
     readMinutes: 6,
     tags: ["QQQ", "historical returns", "backtesting"],
     sections: [
@@ -108,6 +120,7 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
+    relatedSlugs: ["spy-historical-data-api", "voo-historical-data-api", "spy-vs-qqq-vs-voo-comparison"],
     cta: { label: "Try the backtesting UI", href: "/backtesting" },
   },
   {
@@ -116,6 +129,8 @@ export const BLOG_POSTS: BlogPost[] = [
     description:
       "Compare three popular US equity ETFs over the same period using portfolio simulation — methodology and API approach with Data Captain.",
     publishedAt: "2026-03-15",
+    updatedAt: "2026-07-15",
+    author: BLOG_AUTHOR,
     readMinutes: 7,
     tags: ["SPY", "QQQ", "VOO", "portfolio"],
     sections: [
@@ -150,8 +165,10 @@ export const BLOG_POSTS: BlogPost[] = [
         ],
       },
     ],
+    relatedSlugs: ["qqq-historical-returns", "etf-backtesting-api", "calculate-etf-cagr"],
     cta: { label: "Open portfolio compare", href: "/portfolio" },
   },
+  ...SEO_BLOG_POSTS,
 ];
 
 export function getBlogPost(slug: string): BlogPost | undefined {
