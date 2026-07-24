@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
+import type { MarketingNavKey } from "@/components/MarketingHeaderActions";
 import { useAuth } from "@/hooks/useAuth";
 
 export function MarketingShell({
@@ -10,7 +11,7 @@ export function MarketingShell({
   active,
 }: {
   children: React.ReactNode;
-  active?: "home" | "apis" | "backtesting" | "portfolio" | "pricing" | "docs";
+  active?: MarketingNavKey;
 }) {
   const { isAuthenticated } = useAuth();
 
@@ -31,6 +32,7 @@ export function PlatformPillars() {
     { title: "Backtesting", desc: "Buy & hold on ETF history", href: "/backtesting" },
     { title: "Portfolio", desc: "Rebalance & compare ETFs", href: "/portfolio" },
     { title: "REST API", desc: "Universe, prices, Swagger docs", href: "/docs" },
+    { title: "SDK Docs", desc: "npm & Python client examples", href: "/sdk" },
   ];
 
   return (

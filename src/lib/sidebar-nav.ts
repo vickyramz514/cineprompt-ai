@@ -47,6 +47,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     title: "API",
     items: [
       { href: "/dashboard/api-docs", label: "API Docs", icon: "docs" },
+      { href: "/sdk", label: "SDK Docs", icon: "docs" },
       { href: "/dashboard/api-explorer", label: "API Explorer", icon: "terminal" },
       { href: "/dashboard/api-keys", label: "API Keys", icon: "key" },
       { href: "/dashboard/usage", label: "Usage", icon: "usage" },

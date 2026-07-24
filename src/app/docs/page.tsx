@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Footer from "@/components/Footer";
 import { SiteHeader } from "@/components/SiteHeader";
 import { API_BASE_URL, API_DOC_SECTIONS, SECTION_LABELS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
@@ -115,8 +116,13 @@ rankings = dc.etf_screener(return_min=10, period="1y")`}
                 </pre>
               </div>
             </div>
-            <p className="mt-4 text-xs text-white/45">
-              Official SDKs:{" "}
+            <p className="mt-4 text-sm">
+              <Link href="/sdk" className="font-medium text-indigo-400 hover:underline">
+                Full SDK docs with install + examples →
+              </Link>
+            </p>
+            <p className="mt-2 text-xs text-white/45">
+              Packages:{" "}
               <a
                 href="https://www.npmjs.com/package/datacaptain"
                 target="_blank"

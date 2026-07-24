@@ -17,7 +17,14 @@ const primaryCta =
 const dashboardBtn =
   "inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white sm:px-5";
 
-export type MarketingNavKey = "home" | "apis" | "backtesting" | "portfolio" | "pricing" | "docs";
+export type MarketingNavKey =
+  | "home"
+  | "apis"
+  | "sdk"
+  | "backtesting"
+  | "portfolio"
+  | "pricing"
+  | "docs";
 
 /** @deprecated use MarketingNavKey */
 export type MarketingHeaderVariant = "landing" | "docs" | "pricing";
@@ -25,6 +32,7 @@ export type MarketingHeaderVariant = "landing" | "docs" | "pricing";
 const NAV: { key: MarketingNavKey; label: string; href: string }[] = [
   { key: "home", label: "Home", href: "/" },
   { key: "apis", label: "APIs", href: "/docs" },
+  { key: "sdk", label: "SDK Docs", href: "/sdk" },
   { key: "backtesting", label: "Backtesting", href: "/backtesting" },
   { key: "portfolio", label: "Portfolio", href: "/portfolio" },
   { key: "pricing", label: "Pricing", href: "/pricing" },

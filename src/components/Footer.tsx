@@ -39,6 +39,9 @@ export default function Footer() {
                 <Link href="/docs" className="hover:text-white">Developer Guide</Link>
               </li>
               <li>
+                <Link href="/sdk" className="hover:text-white">SDK Docs</Link>
+              </li>
+              <li>
                 <Link href="/etf-api" className="hover:text-white">ETF API</Link>
               </li>
               <li>
