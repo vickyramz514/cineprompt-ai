@@ -166,6 +166,17 @@ export default function MarketStatusWidget({ data, isLoading, error }: MarketSta
       </div>
 
       <div className="relative mt-auto space-y-3 pt-6 text-sm">
+        {(data.holiday || data.earlyClose || data.session) && (
+          <p className="text-xs text-white/45">
+            {data.holiday
+              ? `Holiday: ${data.holiday}`
+              : data.earlyClose
+                ? `Early close: ${data.earlyClose}`
+                : data.session === "regular"
+                  ? "Regular session (09:30–16:00 ET)"
+                  : null}
+          </p>
+        )}
         <motion.div
           className="flex items-center justify-between rounded-lg border border-white/5 bg-black/30 px-3 py-2 backdrop-blur-sm"
           initial={{ opacity: 0, x: -8 }}

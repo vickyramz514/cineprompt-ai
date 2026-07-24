@@ -105,9 +105,10 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
       method: "GET",
       path: "/api/market/status",
       query: "",
-      description: "US market session status — open/closed and next session times.",
+      description:
+        "US market session status from NYSE calendar (holidays + early closes). Regular 09:30–16:00 ET.",
       params: [],
-      cache: "60s",
+      cache: "30s",
     },
   ],
 

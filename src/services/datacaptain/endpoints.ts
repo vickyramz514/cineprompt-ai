@@ -14,6 +14,11 @@ export type DeveloperUsage = {
 export type MarketStatus = {
   market: string;
   status: "OPEN" | "CLOSED";
+  session?: "regular" | "early_close" | "closed" | "holiday";
+  holiday?: string | null;
+  earlyClose?: string | null;
+  timezone?: string;
+  asOf?: string;
   nextOpen: string;
   nextClose: string;
 };
