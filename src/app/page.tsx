@@ -93,16 +93,25 @@ export default function LandingPage() {
             transition={{ duration: 0.5, delay: 0.12 }}
             className="mx-auto mt-4 max-w-xl text-sm text-white/50"
           >
-            TypeScript SDK on npm (
+            Official SDKs:{" "}
             <a
               href="https://www.npmjs.com/package/datacaptain"
               target="_blank"
               rel="noopener noreferrer"
               className="text-indigo-400 hover:underline"
             >
-              datacaptain
+              npm
             </a>
-            ) · see{" "}
+            {" · "}
+            <a
+              href="https://pypi.org/project/datacaptain/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-400 hover:underline"
+            >
+              PyPI
+            </a>
+            {" · "}see{" "}
             <Link href="/docs#sdks" className="text-indigo-400 hover:underline">
               docs
             </Link>
