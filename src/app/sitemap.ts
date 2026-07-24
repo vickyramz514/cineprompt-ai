@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSiteUrl } from "@/lib/site-url";
 import { BLOG_POSTS } from "@/lib/blog-posts";
+import { getAllSeoLandingSlugs } from "@/lib/seo-landing-pages";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = getSiteUrl();
@@ -24,6 +25,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: path === "" ? 1 : 0.8,
   }));
 
+  const landings = getAllSeoLandingSlugs().map((slug) => ({
+    url: `${base}/${slug}`,
+    lastModified: now,
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  }));
+
   const posts = BLOG_POSTS.map((post) => ({
     url: `${base}/blog/${post.slug}`,
     lastModified: new Date(`${post.updatedAt}T00:00:00Z`),
@@ -31,5 +39,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...posts];
+  return [...staticRoutes, ...landings, ...posts];
 }

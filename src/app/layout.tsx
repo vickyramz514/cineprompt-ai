@@ -8,11 +8,11 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Data Captain — US ETF Data API, Backtesting & Portfolio Tools",
+    default: "US ETF Data API & Backtesting — Free Tier | Data Captain",
     template: "%s | Data Captain",
   },
   description:
-    "US ETF historical data API, backtesting, and portfolio comparison for developers and fintech teams. Free tier with clear upgrade path.",
+    "Build with a US ETF API: historical prices, screener, heatmap, and backtesting. Free API key for developers — upgrade when you need higher limits.",
   icons: {
     icon: "/logo/logo.jpeg",
     apple: "/logo/logo.jpeg",
@@ -22,8 +22,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: siteUrl,
     siteName: "Data Captain",
-    title: "Data Captain — US ETF Data Platform",
-    description: "ETF APIs, backtesting, and portfolio tools for US market data.",
+    title: "US ETF Data API & Backtesting | Data Captain",
+    description:
+      "Historical ETF prices, screener, and backtesting API for developers. Start free.",
     images: [
       {
         url: "/logo/logo.jpeg",
@@ -35,8 +36,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Data Captain",
-    description: "US ETF data API with backtesting built in.",
+    title: "US ETF Data API — Free Tier | Data Captain",
+    description: "Historical prices, ETF screener, and backtesting for developers.",
   },
 };
 

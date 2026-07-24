@@ -39,7 +39,13 @@ export default function Footer() {
                 <Link href="/docs" className="hover:text-white">Developer Guide</Link>
               </li>
               <li>
-                <Link href="/docs" className="hover:text-white">API Reference</Link>
+                <Link href="/etf-api" className="hover:text-white">ETF API</Link>
+              </li>
+              <li>
+                <Link href="/stock-api" className="hover:text-white">Stock API</Link>
+              </li>
+              <li>
+                <Link href="/historical-stock-api" className="hover:text-white">Historical API</Link>
               </li>
               <li>
                 <Link href={STATUS_PAGE_PATH} className="hover:text-white">System status</Link>
