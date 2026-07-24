@@ -70,32 +70,44 @@ export default function PublicDocsPage() {
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
                 <p className="text-xs font-medium uppercase tracking-widest text-white/40">JavaScript / TypeScript</p>
+                <p className="mt-1 text-xs text-white/40">
+                  npm ·{" "}
+                  <a
+                    href="https://www.npmjs.com/package/datacaptain"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-400 hover:underline"
+                  >
+                    datacaptain@0.1.0
+                  </a>
+                </p>
                 <pre className="mt-2 overflow-x-auto text-sm">
-                  <code className="text-emerald-400">npm install ../packages/datacaptain</code>
+                  <code className="text-emerald-400">npm install datacaptain</code>
                 </pre>
                 <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-white/70">
 {`import { DataCaptain } from "datacaptain";
 
-const dc = new DataCaptain({ apiKey: process.env.DATACAPTAIN_KEY });
+const dc = new DataCaptain({ apiKey: process.env.DATACAPTAIN_API_KEY });
 const rankings = await dc.etf.rankings({ category: "return", period: "1y" });`}
                 </pre>
               </div>
               <div className="rounded-xl border border-white/10 bg-black/30 p-4">
                 <p className="text-xs font-medium uppercase tracking-widest text-white/40">Python</p>
+                <p className="mt-1 text-xs text-white/40">Coming soon on PyPI — use REST meanwhile</p>
                 <pre className="mt-2 overflow-x-auto text-sm">
-                  <code className="text-emerald-400">pip install -e ../packages/datacaptain-py</code>
+                  <code className="text-white/50"># pip install datacaptain  (after PyPI publish)</code>
                 </pre>
                 <pre className="mt-3 overflow-x-auto rounded-lg border border-white/10 bg-black/40 p-3 text-xs text-white/70">
 {`from datacaptain import DataCaptain
 
-dc = DataCaptain(api_key="sdata_...")
+dc = DataCaptain(api_key="YOUR_API_KEY")
 rankings = dc.etf_rankings(category="return", period="1y")`}
                 </pre>
               </div>
             </div>
             <p className="mt-4 text-xs text-white/45">
-              Packages live in this repo under <code className="rounded bg-white/10 px-1">packages/datacaptain</code> and{" "}
-              <code className="rounded bg-white/10 px-1">packages/datacaptain-py</code>. Publish to npm/PyPI when ready.
+              TypeScript SDK is published on npm. Source lives in this repo under{" "}
+              <code className="rounded bg-white/10 px-1">packages/datacaptain</code>.
             </p>
           </section>
 

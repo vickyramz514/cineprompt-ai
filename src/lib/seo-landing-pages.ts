@@ -48,7 +48,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       },
       {
         title: "Developer-first docs",
-        body: "REST JSON, rate limits by plan, status page for freshness, and TypeScript/Python SDKs in progress.",
+        body: "REST JSON, rate limits by plan, status page for freshness, and the official TypeScript SDK (npm install datacaptain).",
       },
     ],
     useCases: [

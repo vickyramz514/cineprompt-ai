@@ -15,7 +15,7 @@ const DATACAPTAIN_STARTER = [
   "ETF API — screener, rankings, heatmap, batch prices",
   "Backtesting & portfolio rebalance APIs",
   "1,000 requests/day for production apps",
-  "TypeScript & Python SDKs (see docs)",
+  "TypeScript SDK — npm install datacaptain",
   "Same data in dashboard + your code",
 ];
 
@@ -79,20 +79,29 @@ export default function WhyPaySection() {
             Client libraries
           </p>
           <p className="mt-2 text-sm text-white/55">
-            Official TypeScript and Python wrappers — install from the repo or copy from docs.
+            Official TypeScript SDK on npm — Python coming soon on PyPI.
           </p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <pre className="overflow-x-auto rounded-xl border border-white/10 bg-black/40 p-4 text-sm">
-              <code className="text-emerald-300">packages/datacaptain</code>
+              <code className="text-emerald-300">npm install datacaptain</code>
             </pre>
             <pre className="overflow-x-auto rounded-xl border border-white/10 bg-black/40 p-4 text-sm">
-              <code className="text-emerald-300">packages/datacaptain-py</code>
+              <code className="text-white/45"># pip install datacaptain</code>
             </pre>
           </div>
           <p className="mt-3 text-sm text-white/45">
             <Link href="/docs#sdks" className="text-indigo-400 hover:underline">
               SDK install & examples →
             </Link>
+            {" · "}
+            <a
+              href="https://www.npmjs.com/package/datacaptain"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-400 hover:underline"
+            >
+              npm package →
+            </a>
           </p>
         </div>
       </div>
