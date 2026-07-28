@@ -11,7 +11,7 @@ export default function DashboardLayout({
   return (
     <AuthGuard>
       <DashboardProvider>
-        <div className="min-h-screen bg-[#0a0a0f]">
+        <div className="min-h-screen bg-[var(--dc-bg)] text-[var(--dc-fg)]">
           <Suspense fallback={null}>
             <Sidebar />
           </Suspense>

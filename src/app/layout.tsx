@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import GoogleOAuthProviderWrapper from "@/components/GoogleOAuthProvider";
+import AppChrome from "@/components/AppChrome";
 import { getSiteUrl } from "@/lib/site-url";
+import { THEME_STORAGE_KEY } from "@/lib/theme-constants";
 
 const siteUrl = getSiteUrl();
+
+const themeBootScript = `try{var t=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)});if(t==="dark"||t==="light"||t==="ocean"){document.documentElement.setAttribute("data-theme",t)}else{document.documentElement.setAttribute("data-theme","dark")}}catch(e){document.documentElement.setAttribute("data-theme","dark")}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -47,10 +51,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootScript }} />
+      </head>
       <body className="antialiased">
         <GoogleOAuthProviderWrapper>
-          {children}
+          <AppChrome>{children}</AppChrome>
         </GoogleOAuthProviderWrapper>
       </body>
     </html>

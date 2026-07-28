@@ -16,7 +16,7 @@ export function MarketingShell({
   const { isAuthenticated } = useAuth();
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f] text-white">
+    <div className="dc-page min-h-screen text-[var(--dc-fg)]">
       <SiteHeader active={active} isAuthenticated={isAuthenticated} />
       <main className={`relative ${SITE_HEADER_OFFSET}`}>{children}</main>
       <Footer />

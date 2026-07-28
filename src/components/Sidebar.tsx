@@ -9,6 +9,7 @@ import { useApiUsage } from "@/hooks/useApiUsage";
 import { SIDEBAR_SECTIONS, type SidebarIcon } from "@/lib/sidebar-nav";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const ICON_PATHS: Record<SidebarIcon, string> = {
   dashboard:
@@ -207,16 +208,19 @@ export default function Sidebar() {
         <div className="relative border-b border-white/10 bg-gradient-to-b from-indigo-500/10 to-transparent px-4 py-3">
           <div className="flex items-center justify-between gap-2">
             <DataCaptainLogo variant="sidebar" href="/dashboard" />
-            <button
-              type="button"
-              onClick={closeMobile}
-              className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white md:hidden"
-              aria-label="Close menu"
-            >
-              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+            <div className="flex items-center gap-1">
+              <ThemeToggle compact />
+              <button
+                type="button"
+                onClick={closeMobile}
+                className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white md:hidden"
+                aria-label="Close menu"
+              >
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <Link

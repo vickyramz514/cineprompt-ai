@@ -14,13 +14,62 @@
   --animate-slide-up: slide-up 0.4s ease-out;
 }
 
-:root {
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
   --background: #0a0a0f;
   --foreground: #f8fafc;
+  --dc-bg: #0a0a0f;
+  --dc-elevated: #12121a;
+  --dc-fg: #f8fafc;
+  --dc-muted: rgba(248, 250, 252, 0.55);
+  --dc-border: rgba(255, 255, 255, 0.1);
+  --dc-accent: #6366f1;
+  --dc-accent-2: #7c3aed;
+  --dc-accent-soft: rgba(99, 102, 241, 0.16);
+  --dc-glow: rgba(99, 102, 241, 0.45);
   --gradient-hero: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #0f0f1a 100%);
   --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
   --glass: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --background: #eef1f7;
+  --foreground: #12141f;
+  --dc-bg: #eef1f7;
+  --dc-elevated: #ffffff;
+  --dc-fg: #12141f;
+  --dc-muted: rgba(18, 20, 31, 0.62);
+  --dc-border: rgba(18, 20, 31, 0.12);
+  --dc-accent: #4f46e5;
+  --dc-accent-2: #6366f1;
+  --dc-accent-soft: rgba(79, 70, 229, 0.12);
+  --dc-glow: rgba(79, 70, 229, 0.35);
+  --gradient-hero: linear-gradient(135deg, #eef1f7 0%, #e0e7ff 50%, #f8fafc 100%);
+  --gradient-card: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.95) 100%);
+  --glass: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(18, 20, 31, 0.1);
+}
+
+html[data-theme="ocean"] {
+  color-scheme: dark;
+  --background: #061016;
+  --foreground: #e8f7f6;
+  --dc-bg: #061016;
+  --dc-elevated: #0b1c24;
+  --dc-fg: #e8f7f6;
+  --dc-muted: rgba(232, 247, 246, 0.55);
+  --dc-border: rgba(45, 212, 191, 0.18);
+  --dc-accent: #14b8a6;
+  --dc-accent-2: #0ea5e9;
+  --dc-accent-soft: rgba(20, 184, 166, 0.16);
+  --dc-glow: rgba(20, 184, 166, 0.4);
+  --gradient-hero: linear-gradient(135deg, #061016 0%, #0c2a32 50%, #071820 100%);
+  --gradient-card: linear-gradient(135deg, rgba(20,184,166,0.08) 0%, rgba(255,255,255,0.02) 100%);
+  --glass: rgba(20, 184, 166, 0.05);
+  --glass-border: rgba(45, 212, 191, 0.16);
 }
 
 @keyframes fade-in {
@@ -39,8 +88,8 @@
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
-  50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.3); }
+  0%, 100% { box-shadow: 0 0 20px var(--dc-glow); }
+  50% { box-shadow: 0 0 40px var(--dc-glow); }
 }
 
 body {
@@ -48,6 +97,157 @@ body {
   color: var(--foreground);
   font-family: var(--font-sans);
   min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Themed page chrome — prefer these over hard-coded #0a0a0f where updated */
+.dc-page {
+  background: var(--dc-bg);
+  color: var(--dc-fg);
+  min-height: 100vh;
+}
+
+.dc-header {
+  background: color-mix(in srgb, var(--dc-bg) 80%, transparent);
+  border-color: var(--dc-border);
+  color: var(--dc-fg);
+}
+
+.dc-panel {
+  background: var(--dc-elevated);
+  border-color: var(--dc-border);
+  color: var(--dc-fg);
+}
+
+/* Soft remaps so existing dark-only screens stay readable in Light */
+html[data-theme="light"] .bg-\[\#0a0a0f\],
+html[data-theme="light"] .bg-\[\#0a0a0f\]\/80,
+html[data-theme="light"] .bg-\[\#0a0a0f\]\/85,
+html[data-theme="light"] .bg-\[\#0a0a0f\]\/65,
+html[data-theme="light"] .bg-\[\#0c0c14\],
+html[data-theme="light"] .bg-\[\#0c0c14\]\/80 {
+  background-color: var(--dc-bg) !important;
+}
+
+html[data-theme="light"] .supports-\[backdrop-filter\]\:bg-\[\#0a0a0f\]\/65 {
+  background-color: color-mix(in srgb, var(--dc-bg) 75%, transparent) !important;
+}
+
+html[data-theme="light"] .text-white {
+  color: var(--dc-fg);
+}
+
+html[data-theme="light"] .text-white\/90 {
+  color: color-mix(in srgb, var(--dc-fg) 90%, transparent);
+}
+
+html[data-theme="light"] .text-white\/80 {
+  color: color-mix(in srgb, var(--dc-fg) 80%, transparent);
+}
+
+html[data-theme="light"] .text-white\/75 {
+  color: color-mix(in srgb, var(--dc-fg) 75%, transparent);
+}
+
+html[data-theme="light"] .text-white\/70 {
+  color: color-mix(in srgb, var(--dc-fg) 70%, transparent);
+}
+
+html[data-theme="light"] .text-white\/65 {
+  color: color-mix(in srgb, var(--dc-fg) 65%, transparent);
+}
+
+html[data-theme="light"] .text-white\/60 {
+  color: color-mix(in srgb, var(--dc-fg) 60%, transparent);
+}
+
+html[data-theme="light"] .text-white\/55 {
+  color: color-mix(in srgb, var(--dc-fg) 55%, transparent);
+}
+
+html[data-theme="light"] .text-white\/50 {
+  color: color-mix(in srgb, var(--dc-fg) 50%, transparent);
+}
+
+html[data-theme="light"] .text-white\/45 {
+  color: color-mix(in srgb, var(--dc-fg) 45%, transparent);
+}
+
+html[data-theme="light"] .text-white\/40 {
+  color: color-mix(in srgb, var(--dc-fg) 40%, transparent);
+}
+
+html[data-theme="light"] .border-white\/5,
+html[data-theme="light"] .border-white\/\[0\.05\],
+html[data-theme="light"] .border-white\/\[0\.06\],
+html[data-theme="light"] .border-white\/\[0\.08\],
+html[data-theme="light"] .border-white\/10,
+html[data-theme="light"] .border-white\/15 {
+  border-color: var(--dc-border);
+}
+
+html[data-theme="light"] .bg-black\/20,
+html[data-theme="light"] .bg-black\/30,
+html[data-theme="light"] .bg-black\/40,
+html[data-theme="light"] .bg-black\/45,
+html[data-theme="light"] .bg-white\/5,
+html[data-theme="light"] .bg-white\/\[0\.02\],
+html[data-theme="light"] .bg-white\/\[0\.03\],
+html[data-theme="light"] .bg-white\/\[0\.04\],
+html[data-theme="light"] .bg-white\/\[0\.025\] {
+  background-color: color-mix(in srgb, var(--dc-elevated) 92%, var(--dc-fg) 8%) !important;
+}
+
+html[data-theme="light"] .bg-indigo-500,
+html[data-theme="light"] .bg-gradient-to-r.from-indigo-500,
+html[data-theme="light"] button.bg-indigo-500,
+html[data-theme="light"] a.bg-gradient-to-r {
+  color: #fff;
+}
+
+html[data-theme="light"] .bg-indigo-500 .text-white,
+html[data-theme="light"] .from-indigo-500,
+html[data-theme="light"] [class*="from-indigo-500"] {
+  /* keep CTA labels readable — child text-white remapped above; restore on accent chips */
+}
+
+html[data-theme="light"] .rounded-xl.bg-indigo-500,
+html[data-theme="light"] .rounded-full.bg-gradient-to-r,
+html[data-theme="light"] .rounded-xl.bg-gradient-to-r,
+html[data-theme="light"] button[class*="bg-indigo"],
+html[data-theme="light"] a[class*="from-indigo"] {
+  color: #fff !important;
+}
+
+/* Explicit white text on accent surfaces (chat FAB, primary chips) */
+html[data-theme="light"] .dc-on-accent,
+html[data-theme="light"] .dc-on-accent * {
+  color: #fff !important;
+}
+
+html[data-theme="ocean"] .bg-\[\#0a0a0f\],
+html[data-theme="ocean"] .bg-\[\#0c0c14\] {
+  background-color: var(--dc-bg) !important;
+}
+
+html[data-theme="ocean"] .text-indigo-300,
+html[data-theme="ocean"] .text-indigo-400,
+html[data-theme="ocean"] .text-indigo-200 {
+  color: #5eead4;
+}
+
+html[data-theme="ocean"] .bg-indigo-500,
+html[data-theme="ocean"] .from-indigo-500 {
+  --tw-gradient-from: #14b8a6;
+}
+
+html[data-theme="ocean"] .to-violet-600 {
+  --tw-gradient-to: #0ea5e9;
+}
+
+html[data-theme="ocean"] .bg-indigo-500\/20,
+html[data-theme="ocean"] .bg-indigo-500\/25 {
+  background-color: var(--dc-accent-soft) !important;
 }
 
 /* Custom scrollbar */
@@ -57,17 +257,17 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.02);
+  background: color-mix(in srgb, var(--dc-fg) 4%, transparent);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
+  background: color-mix(in srgb, var(--dc-fg) 14%, transparent);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: color-mix(in srgb, var(--dc-fg) 22%, transparent);
 }
 
 .scrollbar-hide {
@@ -83,10 +283,18 @@ input[type="date"].date-picker-field {
   min-height: 2.75rem;
 }
 
+html[data-theme="light"] input[type="date"].date-picker-field {
+  color-scheme: light;
+}
+
 input[type="date"].date-picker-field::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.75;
   filter: invert(0.85);
+}
+
+html[data-theme="light"] input[type="date"].date-picker-field::-webkit-calendar-picker-indicator {
+  filter: none;
 }
 
 .logo-brand-mark {

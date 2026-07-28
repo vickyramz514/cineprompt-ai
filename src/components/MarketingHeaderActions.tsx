@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ThemeToggle } from "@/components/theme/ThemeToggle";
 
 const pill =
   "inline-flex items-center justify-center rounded-full px-3 py-2 text-sm font-medium text-white/75 transition-all duration-200 hover:bg-white/[0.08] hover:text-white sm:px-4";
@@ -62,6 +63,8 @@ export function MarketingHeaderActions({
           </Link>
         ))}
       </div>
+
+      <ThemeToggle compact />
 
       {isAuthenticated ? (
         <Link href="/dashboard" className={dashboardBtn}>

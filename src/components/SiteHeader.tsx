@@ -24,7 +24,7 @@ export function SiteHeader({
 
   return (
     <header
-      className={`${position} top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-[#0a0a0f]/80 backdrop-blur-xl supports-[backdrop-filter]:bg-[#0a0a0f]/65`}
+      className={`${position} top-0 left-0 right-0 z-50 border-b border-[var(--dc-border)] bg-[color-mix(in_srgb,var(--dc-bg)_80%,transparent)] backdrop-blur-xl`}
     >
       <div
         className={`flex items-center justify-between gap-4 px-4 py-2.5 lg:px-8 ${
