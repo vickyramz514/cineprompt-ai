@@ -6,7 +6,7 @@ import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import { PRICING_PLANS } from "@/lib/mock-data";
-import { SUPPORT_EMAIL, SALES_EMAIL, STATUS_PAGE_PATH, mailtoSupport, mailtoSales } from "@/lib/site";
+import { SUPPORT_EMAIL, STATUS_PAGE_PATH, mailtoSupport } from "@/lib/site";
 
 export default function PricingPage() {
   const { isAuthenticated } = useAuth();
@@ -40,10 +40,6 @@ export default function PricingPage() {
           <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center text-sm text-white/50">
             <a href={mailtoSupport("Data Captain — pricing question")} className="text-indigo-400 hover:underline">
               {SUPPORT_EMAIL}
-            </a>
-            <span className="hidden text-white/20 sm:inline">·</span>
-            <a href={mailtoSales("Enterprise / Ultra plan")} className="text-indigo-400 hover:underline">
-              {SALES_EMAIL}
             </a>
             <span className="hidden text-white/20 sm:inline">·</span>
             <Link href={STATUS_PAGE_PATH} className="text-emerald-400/90 hover:underline">

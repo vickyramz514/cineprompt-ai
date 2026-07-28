@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import * as supportService from "@/services/support.service";
 import Loader from "@/components/Loader";
+import { mailtoSupport } from "@/lib/site";
 
 const inputClass =
   "w-full rounded-xl border border-white/10 bg-black/40 px-4 py-2.5 text-sm text-white placeholder:text-white/35 focus:border-indigo-500/50 focus:outline-none focus:ring-2 focus:ring-indigo-500/20";
@@ -215,10 +216,10 @@ export default function SupportView() {
           <p className="mt-0.5 text-xl font-semibold tabular-nums text-indigo-200">{total}</p>
         </div>
         <a
-          href="mailto:sales@datacaptain.com?subject=Support%20—%20Enterprise"
+          href={mailtoSupport("Support — Enterprise")}
           className="ml-auto flex items-center rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white/80"
         >
-          Email sales for enterprise →
+          Email support for enterprise →
         </a>
       </div>
 
