@@ -230,10 +230,10 @@ In India that session is roughly 7:00 PM – 1:30 AM IST (EDT), so daytime IST o
   {
     id: "theme",
     title: "Theme",
-    keywords: ["theme", "dark", "light", "ocean", "appearance", "mode", "color"],
+    keywords: ["theme", "dark", "ocean", "appearance", "mode", "color"],
     answer: `Use the theme control in the header (or sidebar on dashboard).
 
-Themes: Dark (default), Light, and Ocean (teal accents). Your choice is saved in this browser.`,
+Themes: Dark (default) and Ocean (teal accents). Your choice is saved in this browser.`,
   },
   {
     id: "support",

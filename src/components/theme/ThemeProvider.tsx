@@ -26,7 +26,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function isAppTheme(value: string | null): value is AppTheme {
-  return value === "dark" || value === "light" || value === "ocean";
+  return value === "dark" || value === "ocean";
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
@@ -39,7 +39,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         setThemeState(stored);
         document.documentElement.setAttribute("data-theme", stored);
       } else {
+        // Migrate removed "light" (or unknown) → dark
+        setThemeState("dark");
         document.documentElement.setAttribute("data-theme", "dark");
+        if (stored === "light") localStorage.setItem(THEME_STORAGE_KEY, "dark");
       }
     } catch {
       document.documentElement.setAttribute("data-theme", "dark");
@@ -57,7 +60,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const cycleTheme = useCallback(() => {
-    const order: AppTheme[] = ["dark", "light", "ocean"];
+    const order: AppTheme[] = ["dark", "ocean"];
     const idx = order.indexOf(theme);
     setTheme(order[(idx + 1) % order.length]);
   }, [setTheme, theme]);
