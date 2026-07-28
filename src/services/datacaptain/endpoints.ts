@@ -100,11 +100,26 @@ export type BacktestResult = {
   endDate: string;
   initialInvestment: number;
   finalValue: number;
+  totalProfit?: number;
   totalReturn: number;
+  /** CAGR (same as annualReturn from API) */
   annualReturn: number;
+  cagr?: number;
   maxDrawdown: number;
+  volatility?: number;
+  sharpe?: number | null;
+  sortino?: number | null;
   dividendYield: number | null;
   riskScore: number;
+  tradingDays?: number;
+  years?: number;
+  trades?: number;
+  strategyParams?: Record<string, number | string>;
+  reinvestDividends?: boolean;
+  adjustForInflation?: boolean;
+  inflationAdjustedFinalValue?: number | null;
+  inflationAdjustedReturn?: number | null;
+  inflationAdjustedCagr?: number | null;
   equityCurve: { date: string; value: number }[];
 };
 
@@ -115,7 +130,23 @@ export type CompareResult = {
   winner: string | null;
   ranked: string[];
   results: Array<
-    | (Pick<BacktestResult, "symbol" | "name" | "totalReturn" | "annualReturn" | "maxDrawdown" | "finalValue" | "dividendYield" | "riskScore">)
+    | (Pick<
+        BacktestResult,
+        | "symbol"
+        | "name"
+        | "totalReturn"
+        | "annualReturn"
+        | "cagr"
+        | "maxDrawdown"
+        | "finalValue"
+        | "totalProfit"
+        | "dividendYield"
+        | "riskScore"
+        | "sharpe"
+        | "sortino"
+        | "volatility"
+        | "equityCurve"
+      >)
     | { symbol: string; error: string }
   >;
 };
@@ -354,6 +385,16 @@ export const datacaptainEndpoints = {
       startDate: string;
       endDate: string;
       strategy?: string;
+      reinvestDividends?: boolean;
+      adjustForInflation?: boolean;
+      fastPeriod?: number;
+      slowPeriod?: number;
+      rsiPeriod?: number;
+      rsiBuyBelow?: number;
+      rsiSellAbove?: number;
+      macdFast?: number;
+      macdSlow?: number;
+      macdSignal?: number;
     }
   ) => datacaptainPost<BacktestResult>("/backtest/buy-and-hold", key, body),
 
@@ -364,6 +405,17 @@ export const datacaptainEndpoints = {
       investment?: number;
       startDate: string;
       endDate: string;
+      strategy?: string;
+      reinvestDividends?: boolean;
+      adjustForInflation?: boolean;
+      fastPeriod?: number;
+      slowPeriod?: number;
+      rsiPeriod?: number;
+      rsiBuyBelow?: number;
+      rsiSellAbove?: number;
+      macdFast?: number;
+      macdSlow?: number;
+      macdSignal?: number;
     }
   ) => datacaptainPost<CompareResult>("/backtest/compare", key, body),
 

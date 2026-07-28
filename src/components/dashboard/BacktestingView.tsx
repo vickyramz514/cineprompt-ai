@@ -1,82 +1,283 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
-import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
-import type { BacktestResult } from "@/services/datacaptain/endpoints";
-import type { EtfItem } from "@/services/datacaptain/endpoints";
+import {
+  datacaptainEndpoints,
+  getDataCaptainErrorMessage,
+  type BacktestResult,
+  type EtfItem,
+} from "@/services/datacaptain/endpoints";
 import DatePickerField from "@/components/dashboard/DatePickerField";
 import DataFreshnessLabel from "@/components/DataFreshnessLabel";
 import { getDefaultBacktestDates } from "@/lib/date-utils";
+import { MetricCard } from "@/components/backtesting/MetricCard";
+import { BacktestEmptyState, BacktestLoadingState } from "@/components/backtesting/BacktestStates";
+import AnnualReturnsTable from "@/components/backtesting/AnnualReturnsTable";
+import MonthlyReturnsHeatmap from "@/components/backtesting/MonthlyReturnsHeatmap";
+import ApiExamplePanel from "@/components/backtesting/ApiExamplePanel";
+import StrategySelector from "@/components/backtesting/StrategySelector";
+import type { BacktestStrategyId } from "@/lib/backtest/strategies";
+import { BACKTEST_STRATEGIES, defaultParamsFor } from "@/lib/backtest/strategies";
+import {
+  derivePortfolioStats,
+  formatPct,
+  formatUsd,
+  formatUsdPrecise,
+  computeBeta,
+} from "@/lib/backtest/metrics";
+import {
+  exportBacktestCsv,
+  exportBacktestJson,
+  exportBacktestPdf,
+  shareBacktestResult,
+} from "@/lib/backtest/export";
 
-function MetricCard({ label, value, accent }: { label: string; value: string; accent?: string }) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-      <p className="text-xs uppercase tracking-wider text-white/40">{label}</p>
-      <p className={`mt-1 text-2xl font-semibold tabular-nums ${accent ?? "text-white"}`}>{value}</p>
-    </div>
-  );
-}
-
-function EquityChart({ curve }: { curve: BacktestResult["equityCurve"] }) {
-  if (!curve.length) return null;
-  const values = curve.map((c) => c.value);
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-
-  return (
-    <div className="rounded-xl border border-white/10 bg-black/30 p-4">
-      <p className="text-xs uppercase tracking-wider text-white/40">Equity curve</p>
-      <div className="mt-4 flex h-32 items-end gap-px">
-        {curve.map((point, i) => {
-          const h = ((point.value - min) / range) * 100;
-          const show = i % Math.max(1, Math.floor(curve.length / 48)) === 0 || i === curve.length - 1;
-          if (!show) return null;
-          return (
-            <div
-              key={point.date}
-              className="min-w-[2px] flex-1 rounded-t bg-gradient-to-t from-indigo-600 to-violet-400"
-              style={{ height: `${Math.max(h, 4)}%` }}
-              title={`${point.date}: $${point.value.toLocaleString()}`}
-            />
-          );
-        })}
-      </div>
-      <div className="mt-2 flex justify-between text-[10px] text-white/35">
-        <span>{curve[0]?.date}</span>
-        <span>{curve[curve.length - 1]?.date}</span>
-      </div>
-    </div>
-  );
-}
-
-type Props = {
-  compact?: boolean;
-};
+const EquityCurveChart = dynamic(() => import("@/components/backtesting/EquityCurveChart"), {
+  ssr: false,
+  loading: () => <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] sm:h-80" />,
+});
 
 const RECENT_ETF_KEY = "dc_backtest_recent_etfs";
 const POPULAR_ETFS = ["SPY", "VOO", "QQQ", "VTI", "IWM", "DIA", "ARKK", "XLK"];
 const INITIAL_POOL_LIMIT = 250;
 
+function Toggle({
+  checked,
+  onChange,
+  label,
+  hint,
+}: {
+  checked: boolean;
+  onChange: (v: boolean) => void;
+  label: string;
+  hint?: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="flex w-full items-start justify-between gap-3 rounded-xl border border-white/10 bg-black/25 px-3 py-2.5 text-left transition hover:border-white/20"
+    >
+      <span>
+        <span className="block text-sm text-white/80">{label}</span>
+        {hint && <span className="mt-0.5 block text-[11px] text-white/40">{hint}</span>}
+      </span>
+      <span
+        className={`relative mt-0.5 h-6 w-11 shrink-0 rounded-full transition ${
+          checked ? "bg-emerald-500/80" : "bg-white/15"
+        }`}
+      >
+        <span
+          className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition ${
+            checked ? "left-5" : "left-0.5"
+          }`}
+        />
+      </span>
+    </button>
+  );
+}
+
+function SymbolField({
+  label,
+  value,
+  onChange,
+  apiKey,
+  symbolPool,
+  symbolLoading,
+  recentSymbols,
+  onSelect,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  apiKey: string | null;
+  symbolPool: EtfItem[];
+  symbolLoading: boolean;
+  recentSymbols: string[];
+  onSelect: (symbol: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [remote, setRemote] = useState<EtfItem[]>([]);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const cacheRef = useRef<Map<string, EtfItem[]>>(new Map());
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (!panelRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", onClickOutside);
+    return () => document.removeEventListener("mousedown", onClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (!apiKey) return;
+    const q = value.trim();
+    if (q.length < 2) {
+      setRemote([]);
+      return;
+    }
+    const key = q.toLowerCase();
+    const cached = cacheRef.current.get(key);
+    if (cached) {
+      setRemote(cached);
+      return;
+    }
+    const handle = setTimeout(async () => {
+      try {
+        const res = await datacaptainEndpoints.etfList(apiKey, {
+          limit: "40",
+          offset: "0",
+          search: q,
+          hasPrice: "1",
+        });
+        cacheRef.current.set(key, res.data);
+        setRemote(res.data);
+      } catch {
+        setRemote([]);
+      }
+    }, 180);
+    return () => clearTimeout(handle);
+  }, [apiKey, value]);
+
+  const localMatches = useMemo(() => {
+    const q = value.trim().toLowerCase();
+    if (!q) return symbolPool.slice(0, 16);
+    return symbolPool
+      .filter((etf) => etf.symbol.toLowerCase().includes(q) || etf.name.toLowerCase().includes(q))
+      .slice(0, 16);
+  }, [value, symbolPool]);
+
+  const merged = useMemo(() => {
+    const all = [...localMatches, ...remote];
+    const seen = new Set<string>();
+    return all.filter((etf) => {
+      if (seen.has(etf.symbol)) return false;
+      seen.add(etf.symbol);
+      return true;
+    });
+  }, [localMatches, remote]);
+
+  return (
+    <label className="block text-sm">
+      <span className="text-white/50">{label}</span>
+      <div className="relative mt-1.5" ref={panelRef}>
+        <input
+          value={value}
+          onFocus={() => setOpen(true)}
+          onChange={(e) => {
+            onChange(e.target.value);
+            setOpen(true);
+          }}
+          className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 pr-10 font-mono text-white focus:border-indigo-500/50 focus:outline-none"
+          placeholder="Search symbol or ETF name"
+        />
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          className="absolute inset-y-0 right-2 text-white/50 hover:text-white"
+          aria-label="Toggle ETF dropdown"
+        >
+          ▾
+        </button>
+        {open && (
+          <div className="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#0b0b14] p-2 shadow-2xl">
+            {!value.trim() && (
+              <div className="mb-2">
+                <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Popular</p>
+                <div className="flex flex-wrap gap-1 px-1">
+                  {POPULAR_ETFS.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        onSelect(tag);
+                        setOpen(false);
+                      }}
+                      className="rounded-md border border-white/15 bg-white/5 px-2 py-1 text-xs text-white/80 hover:bg-indigo-500/20"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {recentSymbols.length > 0 && !value.trim() && (
+              <div className="mb-2">
+                <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Recent</p>
+                <div className="flex flex-wrap gap-1 px-1">
+                  {recentSymbols.map((tag) => (
+                    <button
+                      key={tag}
+                      type="button"
+                      onClick={() => {
+                        onSelect(tag);
+                        setOpen(false);
+                      }}
+                      className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200 hover:bg-emerald-500/20"
+                    >
+                      {tag}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="space-y-1">
+              {merged.map((etf) => (
+                <button
+                  key={etf.symbol}
+                  type="button"
+                  onClick={() => {
+                    onSelect(etf.symbol);
+                    setOpen(false);
+                  }}
+                  className="w-full rounded-lg px-2 py-2 text-left hover:bg-white/10"
+                >
+                  <p className="font-mono text-sm text-white">{etf.symbol}</p>
+                  <p className="truncate text-xs text-white/55">{etf.name}</p>
+                </button>
+              ))}
+              {!symbolLoading && merged.length === 0 && value.trim().length >= 2 && (
+                <p className="px-2 py-2 text-xs text-white/45">No ETF matches found</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </label>
+  );
+}
+
+type Props = { compact?: boolean };
+
 export default function BacktestingView({ compact = false }: Props) {
   const { apiKey } = useDataCaptainKey();
   const [symbol, setSymbol] = useState("SPY");
-  const [pickerOpen, setPickerOpen] = useState(false);
+  const [compareSymbol, setCompareSymbol] = useState("");
+  const [enableCompare, setEnableCompare] = useState(false);
   const [symbolPool, setSymbolPool] = useState<EtfItem[]>([]);
-  const [remoteMatches, setRemoteMatches] = useState<EtfItem[]>([]);
   const [recentSymbols, setRecentSymbols] = useState<string[]>([]);
   const [symbolLoading, setSymbolLoading] = useState(false);
   const [investment, setInvestment] = useState("10000");
   const [startDate, setStartDate] = useState(() => getDefaultBacktestDates(5).startDate);
   const [endDate, setEndDate] = useState(() => getDefaultBacktestDates(5).endDate);
+  const [strategy, setStrategy] = useState<BacktestStrategyId>("buy_and_hold");
+  const [strategyParams, setStrategyParams] = useState<Record<string, number>>(() =>
+    defaultParamsFor("buy_and_hold")
+  );
+  const [reinvestDividends, setReinvestDividends] = useState(true);
+  const [adjustForInflation, setAdjustForInflation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<BacktestResult | null>(null);
-  const panelRef = useRef<HTMLDivElement | null>(null);
-  const queryCacheRef = useRef<Map<string, EtfItem[]>>(new Map());
+  const [compareResult, setCompareResult] = useState<BacktestResult | null>(null);
+  const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -86,21 +287,11 @@ export default function BacktestingView({ compact = false }: Props) {
       const parsed = JSON.parse(raw) as string[];
       if (Array.isArray(parsed)) setRecentSymbols(parsed.slice(0, 6));
     } catch {
-      // No-op: local cache is optional.
+      /* optional */
     }
   }, []);
 
   useEffect(() => {
-    const onClickOutside = (e: MouseEvent) => {
-      if (!panelRef.current) return;
-      if (!panelRef.current.contains(e.target as Node)) setPickerOpen(false);
-    };
-    document.addEventListener("mousedown", onClickOutside);
-    return () => document.removeEventListener("mousedown", onClickOutside);
-  }, []);
-
-  useEffect(() => {
-    queryCacheRef.current.clear();
     if (!apiKey) {
       setSymbolPool([]);
       return;
@@ -124,54 +315,16 @@ export default function BacktestingView({ compact = false }: Props) {
   }, [apiKey]);
 
   useEffect(() => {
-    if (!apiKey) return;
-    const q = symbol.trim();
-    if (q.length < 2) {
-      setRemoteMatches([]);
+    if (!loading) {
+      setProgress(0);
       return;
     }
-    const key = q.toLowerCase();
-    const cached = queryCacheRef.current.get(key);
-    if (cached) {
-      setRemoteMatches(cached);
-      return;
-    }
-    const handle = setTimeout(async () => {
-      try {
-        const res = await datacaptainEndpoints.etfList(apiKey, {
-          limit: "40",
-          offset: "0",
-          search: q,
-          hasPrice: "1",
-        });
-        queryCacheRef.current.set(key, res.data);
-        setRemoteMatches(res.data);
-      } catch {
-        setRemoteMatches([]);
-      }
-    }, 180);
-    return () => clearTimeout(handle);
-  }, [apiKey, symbol]);
-
-  const localMatches = useMemo(() => {
-    const q = symbol.trim().toLowerCase();
-    if (!q) return symbolPool.slice(0, 16);
-    return symbolPool
-      .filter(
-        (etf) => etf.symbol.toLowerCase().includes(q) || etf.name.toLowerCase().includes(q)
-      )
-      .slice(0, 16);
-  }, [symbol, symbolPool]);
-
-  const mergedMatches = useMemo(() => {
-    const merged = [...localMatches, ...remoteMatches];
-    const seen = new Set<string>();
-    return merged.filter((etf) => {
-      if (seen.has(etf.symbol)) return false;
-      seen.add(etf.symbol);
-      return true;
-    });
-  }, [localMatches, remoteMatches]);
+    setProgress(8);
+    const id = window.setInterval(() => {
+      setProgress((p) => (p >= 92 ? p : p + Math.random() * 10 + 4));
+    }, 280);
+    return () => window.clearInterval(id);
+  }, [loading]);
 
   const saveRecentSymbol = (nextSymbol: string) => {
     const normalized = nextSymbol.trim().toUpperCase();
@@ -183,11 +336,12 @@ export default function BacktestingView({ compact = false }: Props) {
     }
   };
 
-  const selectSymbol = (nextSymbol: string) => {
-    setSymbol(nextSymbol.trim().toUpperCase());
-    saveRecentSymbol(nextSymbol);
-    setPickerOpen(false);
-  };
+  const stats = useMemo(() => (result ? derivePortfolioStats(result) : null), [result]);
+  const cagr = result ? result.cagr ?? result.annualReturn : 0;
+  const beta = useMemo(() => {
+    if (!result?.equityCurve?.length || !compareResult?.equityCurve?.length) return null;
+    return computeBeta(result.equityCurve, compareResult.equityCurve);
+  }, [result, compareResult]);
 
   const runBacktest = async () => {
     if (!apiKey) {
@@ -198,155 +352,154 @@ export default function BacktestingView({ compact = false }: Props) {
       setError("Start date must be before end date.");
       return;
     }
+    const primary = symbol.trim().toUpperCase();
+    const secondary = compareSymbol.trim().toUpperCase();
+    if (enableCompare && secondary && secondary === primary) {
+      setError("Compare symbol must be different from the primary ETF.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
+    setShareNote(null);
     try {
-      const data = await datacaptainEndpoints.backtestBuyAndHold(apiKey, {
-        symbol: symbol.trim().toUpperCase(),
+      const bodyBase = {
         investment: Number(investment),
         startDate,
         endDate,
-        strategy: "buy_and_hold",
+        strategy,
+        reinvestDividends,
+        adjustForInflation,
+        ...strategyParams,
+      };
+
+      const primaryPromise = datacaptainEndpoints.backtestBuyAndHold(apiKey, {
+        ...bodyBase,
+        symbol: primary,
       });
-      setResult(data);
-      saveRecentSymbol(symbol);
+
+      const comparePromise =
+        enableCompare && secondary
+          ? datacaptainEndpoints.backtestBuyAndHold(apiKey, { ...bodyBase, symbol: secondary })
+          : Promise.resolve(null);
+
+      const [primaryData, compareData] = await Promise.all([primaryPromise, comparePromise]);
+      setResult(primaryData);
+      setCompareResult(compareData);
+      saveRecentSymbol(primary);
+      if (secondary) saveRecentSymbol(secondary);
+      setProgress(100);
     } catch (err) {
       setError(getDataCaptainErrorMessage(err));
       setResult(null);
+      setCompareResult(null);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className={compact ? "space-y-6" : "mx-auto max-w-5xl space-y-8 px-4 pb-20 sm:px-6 lg:px-8"}>
+    <div className={compact ? "space-y-6" : "mx-auto max-w-7xl space-y-8 px-4 pb-24 sm:px-6 lg:px-8"}>
       {!compact && (
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-          <p className="text-xs font-medium uppercase tracking-widest text-emerald-300/80">Platform</p>
+          <p className="text-xs font-medium uppercase tracking-widest text-emerald-300/80">Research</p>
           <h1 className="mt-1 text-3xl font-bold sm:text-4xl">ETF Backtesting</h1>
           <p className="mt-2 max-w-2xl text-white/55">
-            Run buy-and-hold simulations on your historical data. Same login, same database, same API key.
+            Institutional-style buy-and-hold research: CAGR, risk ratios, drawdowns, annual tables, and
+            interactive equity curves — powered by your Data Captain API key.
           </p>
           <DataFreshnessLabel className="mt-2" />
         </motion.div>
       )}
 
-      <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-        <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-6">
+      <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
+        <aside className="h-fit rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.7)] lg:sticky lg:top-6">
           <h2 className="text-lg font-semibold">Run backtest</h2>
-          <p className="mt-1 text-sm text-white/45">Strategy: Buy and hold</p>
+          <p className="mt-1 text-sm text-white/45">Configure universe, capital, and options</p>
 
-          <div className="mt-6 space-y-4">
-            <label className="block text-sm">
-              <span className="text-white/50">ETF / Symbol</span>
-              <div className="relative mt-1.5" ref={panelRef}>
-                <input
-                  value={symbol}
-                  onFocus={() => setPickerOpen(true)}
-                  onChange={(e) => {
-                    setSymbol(e.target.value);
-                    setPickerOpen(true);
-                  }}
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 pr-10 font-mono text-white focus:border-indigo-500/50 focus:outline-none"
-                  placeholder="Search symbol or ETF name"
-                />
-                <button
-                  type="button"
-                  onClick={() => setPickerOpen((v) => !v)}
-                  className="absolute inset-y-0 right-2 text-white/50 hover:text-white"
-                  aria-label="Toggle ETF dropdown"
-                >
-                  ▾
-                </button>
-                {pickerOpen && (
-                  <div className="absolute z-30 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#0b0b14] p-2 shadow-2xl">
-                    {!symbol.trim() && (
-                      <div className="mb-2">
-                        <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Popular</p>
-                        <div className="flex flex-wrap gap-1 px-1">
-                          {POPULAR_ETFS.map((tag) => (
-                            <button
-                              key={tag}
-                              type="button"
-                              onClick={() => selectSymbol(tag)}
-                              className="rounded-md border border-white/15 bg-white/5 px-2 py-1 text-xs text-white/80 hover:bg-indigo-500/20"
-                            >
-                              {tag}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {recentSymbols.length > 0 && !symbol.trim() && (
-                      <div className="mb-2">
-                        <p className="px-2 pb-1 text-[10px] uppercase tracking-wider text-white/35">Recent</p>
-                        <div className="flex flex-wrap gap-1 px-1">
-                          {recentSymbols.map((tag) => (
-                            <button
-                              key={tag}
-                              type="button"
-                              onClick={() => selectSymbol(tag)}
-                              className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-xs text-emerald-200 hover:bg-emerald-500/20"
-                            >
-                              {tag}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    <div className="space-y-1">
-                      {mergedMatches.map((etf) => (
-                        <button
-                          key={etf.symbol}
-                          type="button"
-                          onClick={() => selectSymbol(etf.symbol)}
-                          className="w-full rounded-lg px-2 py-2 text-left hover:bg-white/10"
-                        >
-                          <p className="font-mono text-sm text-white">{etf.symbol}</p>
-                          <p className="truncate text-xs text-white/55">{etf.name}</p>
-                        </button>
-                      ))}
-                      {!symbolLoading && mergedMatches.length === 0 && symbol.trim().length >= 2 && (
-                        <p className="px-2 py-2 text-xs text-white/45">No ETF matches found</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-              <p className="mt-1 text-xs text-white/40">
-                {symbolLoading ? "Loading ETF universe..." : "Instant suggestions with smart search"}
-              </p>
-            </label>
+          <div className="mt-5 space-y-4">
+            <StrategySelector
+              value={strategy}
+              onChange={(id) => {
+                setStrategy(id);
+                setStrategyParams(defaultParamsFor(id));
+              }}
+              params={strategyParams}
+              onParamsChange={setStrategyParams}
+            />
+
+            <SymbolField
+              label="Primary ETF"
+              value={symbol}
+              onChange={setSymbol}
+              apiKey={apiKey}
+              symbolPool={symbolPool}
+              symbolLoading={symbolLoading}
+              recentSymbols={recentSymbols}
+              onSelect={(s) => {
+                setSymbol(s);
+                saveRecentSymbol(s);
+              }}
+            />
+
+            <Toggle
+              checked={enableCompare}
+              onChange={setEnableCompare}
+              label="Compare with another ETF"
+              hint="Overlay equity curves and side-by-side metrics"
+            />
+
+            {enableCompare && (
+              <SymbolField
+                label="Compare with"
+                value={compareSymbol}
+                onChange={setCompareSymbol}
+                apiKey={apiKey}
+                symbolPool={symbolPool}
+                symbolLoading={symbolLoading}
+                recentSymbols={recentSymbols}
+                onSelect={(s) => {
+                  setCompareSymbol(s);
+                  saveRecentSymbol(s);
+                }}
+              />
+            )}
+
             <label className="block text-sm">
               <span className="text-white/50">Investment (USD)</span>
               <input
                 type="number"
+                min={1}
                 value={investment}
                 onChange={(e) => setInvestment(e.target.value)}
                 className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-white focus:border-indigo-500/50 focus:outline-none"
               />
             </label>
+
             <div className="grid grid-cols-2 gap-3">
-              <DatePickerField
-                label="Start"
-                value={startDate}
-                max={endDate}
-                onChange={setStartDate}
-              />
-              <DatePickerField
-                label="End"
-                value={endDate}
-                min={startDate}
-                onChange={setEndDate}
-              />
+              <DatePickerField label="Start" value={startDate} max={endDate} onChange={setStartDate} />
+              <DatePickerField label="End" value={endDate} min={startDate} onChange={setEndDate} />
             </div>
+
+            <Toggle
+              checked={reinvestDividends}
+              onChange={setReinvestDividends}
+              label="Reinvest Dividends"
+              hint="Default ON — dividends buy additional shares"
+            />
+            <Toggle
+              checked={adjustForInflation}
+              onChange={setAdjustForInflation}
+              label="Adjust for Inflation"
+              hint="Default OFF — approx. 2.5% annual deflator"
+            />
           </div>
 
           <button
             type="button"
             onClick={runBacktest}
             disabled={loading}
-            className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 py-3 text-sm font-semibold text-white hover:brightness-110 disabled:opacity-50"
+            className="mt-6 w-full rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_-12px_rgba(16,185,129,0.55)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Running…" : "Run backtest"}
           </button>
@@ -362,53 +515,233 @@ export default function BacktestingView({ compact = false }: Props) {
               </Link>
             </p>
           )}
-        </div>
+        </aside>
 
-        <div className="space-y-4">
+        <div className="min-w-0 space-y-4">
           {error && (
             <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
               {error}
             </div>
           )}
 
-          {!result && !loading && (
-            <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-center text-sm text-white/45">
-              Configure your ETF and date range, then run a backtest to see returns, drawdown, and risk metrics.
-            </div>
-          )}
+          {loading && <BacktestLoadingState progress={progress} />}
 
-          {result && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-              <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5">
-                <div className="flex flex-wrap items-baseline gap-2">
-                  <span className="font-mono text-xl font-bold text-emerald-300">{result.symbol}</span>
-                  <span className="text-sm text-white/50">{result.name}</span>
+          {!result && !loading && <BacktestEmptyState />}
+
+          {result && stats && !loading && (
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+              {/* Results header */}
+              <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5 sm:p-6">
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p className="font-mono text-2xl font-bold tracking-tight text-emerald-300 sm:text-3xl">
+                      {result.symbol}
+                    </p>
+                    <p className="mt-1 max-w-xl text-sm text-white/60 sm:text-base">
+                      {result.name || "Exchange-traded fund"}
+                    </p>
+                    <p className="mt-2 text-xs text-white/40">
+                      Strategy:{" "}
+                      <span className="text-white/70">
+                        {BACKTEST_STRATEGIES.find((s) => s.id === (result.strategy as BacktestStrategyId))
+                          ?.label || result.strategy}
+                      </span>
+                      {result.trades != null ? ` · ${result.trades} trades` : ""}
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => exportBacktestCsv(result, compareResult)}
+                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
+                    >
+                      Export CSV
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => exportBacktestJson(result, compareResult)}
+                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
+                    >
+                      Export JSON
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => exportBacktestPdf(result)}
+                      className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs font-medium text-white/80 hover:bg-white/10"
+                    >
+                      Export PDF
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        await shareBacktestResult(result);
+                        setShareNote("Summary copied / share sheet opened");
+                        setTimeout(() => setShareNote(null), 2000);
+                      }}
+                      className="rounded-lg border border-indigo-400/30 bg-indigo-500/15 px-3 py-1.5 text-xs font-medium text-indigo-200 hover:bg-indigo-500/25"
+                    >
+                      Share Result
+                    </button>
+                  </div>
                 </div>
-                <p className="mt-1 text-xs text-white/35">
-                  {result.startDate} → {result.endDate} · ${result.initialInvestment.toLocaleString()} invested
-                </p>
+                {shareNote && <p className="mt-2 text-xs text-emerald-300/80">{shareNote}</p>}
+
+                <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-xl border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[11px] uppercase tracking-wider text-white/40">Investment</p>
+                    <p className="mt-1 text-lg font-semibold tabular-nums">{formatUsd(result.initialInvestment)}</p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[11px] uppercase tracking-wider text-white/40">Period</p>
+                    <p className="mt-1 text-sm font-medium tabular-nums text-white/85">
+                      {result.startDate} → {result.endDate}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-white/10 bg-black/25 px-4 py-3">
+                    <p className="text-[11px] uppercase tracking-wider text-white/40">Duration</p>
+                    <p className="mt-1 text-lg font-semibold tabular-nums">
+                      {stats.durationYears.toFixed(1)} Years
+                    </p>
+                  </div>
+                </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {/* Performance metrics */}
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
                 <MetricCard
                   label="Total return"
-                  value={`${result.totalReturn >= 0 ? "+" : ""}${result.totalReturn}%`}
+                  value={formatPct(result.totalReturn)}
                   accent={result.totalReturn >= 0 ? "text-emerald-400" : "text-red-400"}
                 />
-                <MetricCard label="Annual return" value={`${result.annualReturn}%`} accent="text-indigo-300" />
+                <MetricCard label="CAGR (Annualized Return)" value={formatPct(cagr)} accent="text-indigo-300" />
+                <MetricCard
+                  label="Total Profit ($)"
+                  value={formatUsdPrecise(stats.totalProfit)}
+                  accent={stats.totalProfit >= 0 ? "text-emerald-400" : "text-red-400"}
+                />
                 <MetricCard label="Max drawdown" value={`${result.maxDrawdown}%`} accent="text-amber-300" />
                 <MetricCard
-                  label="Final value"
-                  value={`$${result.finalValue.toLocaleString()}`}
+                  label="Sharpe Ratio"
+                  value={result.sharpe != null ? String(result.sharpe) : "—"}
+                  hint="Excess return / volatility"
                 />
                 <MetricCard
-                  label="Dividend yield"
-                  value={result.dividendYield != null ? `${result.dividendYield}%` : "N/A"}
+                  label="Volatility"
+                  value={result.volatility != null ? `${result.volatility}%` : "—"}
+                  hint="Annualized"
                 />
-                <MetricCard label="Risk score" value={`${result.riskScore}/100`} accent="text-violet-300" />
+                <MetricCard
+                  label="Sortino Ratio"
+                  value={result.sortino != null ? String(result.sortino) : "—"}
+                  hint="Downside-risk adjusted"
+                />
+                <MetricCard
+                  label="Beta"
+                  value={beta != null ? String(beta) : enableCompare ? "—" : "Compare to compute"}
+                  hint={compareResult ? `vs ${compareResult.symbol}` : "Requires compare ETF"}
+                />
+                <MetricCard
+                  label="Final value"
+                  value={formatUsdPrecise(result.finalValue)}
+                  hint={
+                    result.adjustForInflation && result.inflationAdjustedFinalValue != null
+                      ? `Inflation-adj ${formatUsdPrecise(result.inflationAdjustedFinalValue)}`
+                      : result.reinvestDividends
+                        ? "Dividends reinvested"
+                        : "Dividends as cash"
+                  }
+                />
               </div>
 
-              <EquityChart curve={result.equityCurve} />
+              {/* Summary */}
+              <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-white/40">Backtest summary</p>
+                <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {[
+                    ["Initial Investment", formatUsdPrecise(result.initialInvestment)],
+                    ["Final Value", formatUsdPrecise(result.finalValue)],
+                    ["Total Profit", formatUsdPrecise(stats.totalProfit)],
+                    ["Total Return %", formatPct(result.totalReturn)],
+                    ["CAGR", formatPct(cagr)],
+                    ["Investment Period", `${result.startDate} → ${result.endDate}`],
+                    ["Trading Days", String(stats.tradingDays)],
+                    ["Dividend yield", result.dividendYield != null ? `${result.dividendYield}%` : "N/A"],
+                    ["Risk score", `${result.riskScore}/100`],
+                  ].map(([k, v]) => (
+                    <div key={k} className="rounded-lg border border-white/5 bg-black/20 px-3 py-2.5">
+                      <dt className="text-[11px] text-white/40">{k}</dt>
+                      <dd className="mt-0.5 text-sm font-medium tabular-nums text-white/85">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+
+              {/* Comparison */}
+              {compareResult && (
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-emerald-300/70">
+                    ETF comparison
+                  </p>
+                  <p className="mt-1 text-sm text-white/55">
+                    {result.symbol} vs {compareResult.symbol}
+                  </p>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <MetricCard
+                      label={`${result.symbol} Total Return`}
+                      value={formatPct(result.totalReturn)}
+                      accent="text-indigo-300"
+                    />
+                    <MetricCard
+                      label={`${compareResult.symbol} Total Return`}
+                      value={formatPct(compareResult.totalReturn)}
+                      accent="text-emerald-300"
+                    />
+                    <MetricCard label={`${result.symbol} CAGR`} value={formatPct(result.cagr ?? result.annualReturn)} />
+                    <MetricCard
+                      label={`${compareResult.symbol} CAGR`}
+                      value={formatPct(compareResult.cagr ?? compareResult.annualReturn)}
+                    />
+                    <MetricCard label={`${result.symbol} Max DD`} value={`${result.maxDrawdown}%`} accent="text-amber-300" />
+                    <MetricCard
+                      label={`${compareResult.symbol} Max DD`}
+                      value={`${compareResult.maxDrawdown}%`}
+                      accent="text-amber-300"
+                    />
+                    <MetricCard label={`${result.symbol} Final`} value={formatUsdPrecise(result.finalValue)} />
+                    <MetricCard
+                      label={`${compareResult.symbol} Final`}
+                      value={formatUsdPrecise(compareResult.finalValue)}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <EquityCurveChart
+                primarySymbol={result.symbol}
+                primaryCurve={result.equityCurve}
+                compareSymbol={compareResult?.symbol}
+                compareCurve={compareResult?.equityCurve}
+              />
+
+              {/* Portfolio growth */}
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                <MetricCard label="Highest Portfolio Value" value={formatUsdPrecise(stats.highestValue)} />
+                <MetricCard label="Lowest Portfolio Value" value={formatUsdPrecise(stats.lowestValue)} />
+                <MetricCard
+                  label="Best Year Return"
+                  value={stats.bestYearReturn != null ? formatPct(stats.bestYearReturn) : "—"}
+                  accent="text-emerald-400"
+                />
+                <MetricCard
+                  label="Worst Year Return"
+                  value={stats.worstYearReturn != null ? formatPct(stats.worstYearReturn) : "—"}
+                  accent="text-red-400"
+                />
+              </div>
+
+              <AnnualReturnsTable rows={stats.annualRows} />
+              <MonthlyReturnsHeatmap cells={stats.monthlyCells} />
+              <ApiExamplePanel result={result} />
             </motion.div>
           )}
         </div>
