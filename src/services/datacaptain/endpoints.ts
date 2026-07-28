@@ -41,6 +41,23 @@ export type EtfHeatmapCell = {
   latestPrice: number | null;
   dividendYieldTtm: number | null;
   assetClass: string | null;
+  returnYtd?: number | null;
+  return1y?: number | null;
+  return3y?: number | null;
+  return5y?: number | null;
+  return1d?: number | null;
+  return1w?: number | null;
+  return1m?: number | null;
+  return3m?: number | null;
+  return6m?: number | null;
+  return10y?: number | null;
+  returnMax?: number | null;
+  volatility1y?: number | null;
+  avgVolume30d?: number | null;
+  aumBillions?: number | null;
+  expenseRatio?: number | null;
+  sizeScore?: number;
+  sparkline?: number[];
 };
 
 export type EtfHeatmapResponse = {

@@ -8,40 +8,43 @@ import {
   datacaptainEndpoints,
   getDataCaptainErrorMessage,
   type EtfHeatmapBasket,
+  type EtfHeatmapCell,
   type EtfHeatmapResponse,
 } from "@/services/datacaptain/endpoints";
-
-const PERIODS = [
-  { id: "ytd", label: "YTD" },
-  { id: "1y", label: "1 Year" },
-  { id: "3y", label: "3 Year" },
-  { id: "5y", label: "5 Year" },
-] as const;
-
-function returnColor(pct: number | null): string {
-  if (pct == null) return "bg-white/5 border-white/10";
-  if (pct >= 15) return "bg-emerald-500/35 border-emerald-400/40";
-  if (pct >= 5) return "bg-emerald-500/20 border-emerald-500/30";
-  if (pct >= 0) return "bg-emerald-500/10 border-emerald-500/20";
-  if (pct >= -5) return "bg-rose-500/10 border-rose-500/20";
-  if (pct >= -15) return "bg-rose-500/20 border-rose-500/30";
-  return "bg-rose-500/35 border-rose-400/40";
-}
-
-function formatPct(pct: number | null) {
-  if (pct == null) return "—";
-  const sign = pct > 0 ? "+" : "";
-  return `${sign}${pct.toFixed(1)}%`;
-}
+import HeatmapTile from "@/components/heatmap/HeatmapTile";
+import HeatmapLegend from "@/components/heatmap/HeatmapLegend";
+import HeatmapToolbar from "@/components/heatmap/HeatmapToolbar";
+import HeatmapSummary, { MarketStatStrip } from "@/components/heatmap/HeatmapSummary";
+import EtfDrawer from "@/components/heatmap/EtfDrawer";
+import { HeatmapAnalytics, TopMoversTables } from "@/components/heatmap/HeatmapAnalytics";
+import HeatmapApiExample from "@/components/heatmap/HeatmapApiExample";
+import { tileSpan } from "@/lib/heatmap/colors";
+import {
+  computeHeatmapStats,
+  sortHeatmapCells,
+  type HeatmapSort,
+} from "@/lib/heatmap/stats";
+import {
+  exportHeatmapCsv,
+  exportHeatmapJson,
+  exportHeatmapPng,
+  shareHeatmap,
+} from "@/lib/heatmap/export";
 
 export default function EtfHeatmapView() {
   const { apiKey } = useDataCaptainKey();
   const [baskets, setBaskets] = useState<EtfHeatmapBasket[]>([]);
   const [basketId, setBasketId] = useState("broad");
   const [period, setPeriod] = useState("1y");
+  const [sort, setSort] = useState<HeatmapSort>("best");
+  const [search, setSearch] = useState("");
+  const [symbolFocus, setSymbolFocus] = useState<string | null>(null);
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [data, setData] = useState<EtfHeatmapResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selected, setSelected] = useState<EtfHeatmapCell | null>(null);
+  const [shareNote, setShareNote] = useState<string | null>(null);
 
   useEffect(() => {
     if (!apiKey) return;
@@ -60,7 +63,9 @@ export default function EtfHeatmapView() {
     setLoading(true);
     setError(null);
     try {
-      const res = await datacaptainEndpoints.etfHeatmap(apiKey, { basket: basketId, period });
+      const res = symbolFocus
+        ? await datacaptainEndpoints.etfHeatmap(apiKey, { symbols: symbolFocus, period })
+        : await datacaptainEndpoints.etfHeatmap(apiKey, { basket: basketId, period });
       setData(res);
     } catch (err) {
       setError(getDataCaptainErrorMessage(err));
@@ -68,64 +73,122 @@ export default function EtfHeatmapView() {
     } finally {
       setLoading(false);
     }
-  }, [apiKey, basketId, period]);
+  }, [apiKey, basketId, period, symbolFocus]);
 
   useEffect(() => {
     loadHeatmap();
   }, [loadHeatmap]);
 
-  const sortedCells = useMemo(() => {
-    if (!data?.cells) return [];
-    return [...data.cells].sort((a, b) => (b.returnPct ?? -999) - (a.returnPct ?? -999));
-  }, [data]);
+  const filtered = useMemo(() => {
+    const cells = data?.cells ?? [];
+    const q = search.trim().toLowerCase();
+    const matched = !q
+      ? cells
+      : cells.filter(
+          (c) => c.symbol.toLowerCase().includes(q) || c.name.toLowerCase().includes(q)
+        );
+    return sortHeatmapCells(matched, sort);
+  }, [data, search, sort]);
 
-  const best = sortedCells[0];
-  const worst = sortedCells[sortedCells.length - 1];
+  const stats = useMemo(() => computeHeatmapStats(filtered), [filtered]);
+  const maxSize = useMemo(
+    () => Math.max(...filtered.map((c) => c.sizeScore || 0), 1),
+    [filtered]
+  );
+
+  const resetFilters = () => {
+    setSearch("");
+    setSymbolFocus(null);
+    setBasketId("broad");
+    setPeriod("1y");
+    setSort("best");
+  };
+
+  const handleSelectSymbol = (symbol: string) => {
+    const upper = symbol.toUpperCase();
+    setSearch(upper);
+    const inView = data?.cells?.some((c) => c.symbol === upper);
+    if (inView) setSymbolFocus(null);
+    else setSymbolFocus(upper);
+  };
+
+  const handleBasket = (id: string) => {
+    setBasketId(id);
+    setSymbolFocus(null);
+  };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-7xl space-y-6 px-4 pb-24 sm:px-6 lg:px-8">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-xs font-medium uppercase tracking-widest text-violet-300/80">Platform</p>
+        <p className="text-xs font-medium uppercase tracking-widest text-violet-300/80">Markets</p>
         <h1 className="mt-1 text-3xl font-bold sm:text-4xl">ETF Heatmap</h1>
-        <p className="mt-2 max-w-2xl text-white/55">
-          Visualize ETF performance at a glance — green for gains, red for losses. Pick a basket and
-          time period.
+        <p className="mt-2 max-w-3xl text-white/55">
+          Finviz-style performance map sized by AUM/volume — green for gains, red for losses. Search,
+          filter, compare movers, and open any ETF for research actions.
         </p>
       </motion.div>
 
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-2">
-          {(baskets.length ? baskets : [{ id: "broad", label: "Broad Market", symbols: [] }]).map(
-            (b) => (
-              <button
-                key={b.id}
-                type="button"
-                onClick={() => setBasketId(b.id)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-                  basketId === b.id
-                    ? "border-violet-500/50 bg-violet-500/20 text-violet-200"
-                    : "border-white/10 bg-white/5 text-white/55 hover:border-white/20"
-                }`}
-              >
-                {b.label}
-              </button>
-            )
-          )}
-        </div>
-        <div className="ml-auto flex gap-1 rounded-xl border border-white/10 bg-black/30 p-1">
-          {PERIODS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              onClick={() => setPeriod(p.id)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium ${
-                period === p.id ? "bg-violet-600 text-white" : "text-white/50 hover:text-white/80"
-              }`}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
+      <HeatmapToolbar
+        apiKey={apiKey}
+        localCells={data?.cells ?? []}
+        baskets={baskets}
+        basketId={basketId}
+        onBasket={handleBasket}
+        period={period}
+        onPeriod={setPeriod}
+        sort={sort}
+        onSort={setSort}
+        search={search}
+        onSearch={(q) => {
+          setSearch(q);
+          if (!q.trim()) setSymbolFocus(null);
+        }}
+        onSelectSymbol={handleSelectSymbol}
+        filtersOpen={filtersOpen}
+        onToggleFilters={() => setFiltersOpen((v) => !v)}
+      />
+
+      <div className="flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => data && exportHeatmapCsv(filtered, period)}
+          className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/10"
+        >
+          Export CSV
+        </button>
+        <button
+          type="button"
+          onClick={() => data && exportHeatmapJson(filtered, period, basketId)}
+          className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/10"
+        >
+          Export JSON
+        </button>
+        <button
+          type="button"
+          onClick={() => exportHeatmapPng("heatmap-board")}
+          className="rounded-lg border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/75 hover:bg-white/10"
+        >
+          Export PNG
+        </button>
+        <button
+          type="button"
+          onClick={async () => {
+            await shareHeatmap(filtered, period);
+            setShareNote("Share ready / copied");
+            setTimeout(() => setShareNote(null), 1600);
+          }}
+          className="rounded-lg border border-violet-400/30 bg-violet-500/15 px-3 py-1.5 text-xs text-violet-200 hover:bg-violet-500/25"
+        >
+          Share Heatmap
+        </button>
+        {shareNote && <span className="text-xs text-emerald-300/80">{shareNote}</span>}
+        {data && (
+          <span className="ml-auto text-xs text-white/40">
+            As of {data.asOf} ·{" "}
+            {symbolFocus ? `Symbol ${symbolFocus}` : (data.basket?.label ?? "Custom")} · {filtered.length}{" "}
+            ETFs
+          </span>
+        )}
       </div>
 
       {error && (
@@ -134,64 +197,74 @@ export default function EtfHeatmapView() {
         </div>
       )}
 
-      {data && !loading && (
-        <p className="text-xs text-white/40">
-          As of {data.asOf} · {data.basket?.label ?? "Custom"} · {data.cells.length} ETFs
-        </p>
+      {!loading && filtered.length > 0 && (
+        <>
+          <HeatmapSummary stats={stats} />
+          <MarketStatStrip stats={stats} />
+        </>
       )}
 
-      {loading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-2xl bg-white/5" />
-          ))}
-        </div>
-      ) : (
-        <motion.div
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {sortedCells.map((cell) => (
-            <Link
-              key={cell.symbol}
-              href={`/dashboard/etf/${cell.symbol}`}
-              className={`group rounded-2xl border p-4 transition-transform hover:scale-[1.02] ${returnColor(cell.returnPct)}`}
+      <div id="heatmap-board">
+        {loading ? (
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-6 lg:auto-rows-[minmax(92px,auto)]">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-24 min-w-0 animate-pulse rounded-xl bg-white/5 ${i % 4 === 0 ? "col-span-2 lg:col-span-2" : "col-span-1"}`}
+              />
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex min-h-[280px] flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center">
+            <svg
+              width="72"
+              height="72"
+              viewBox="0 0 72 72"
+              className="mb-3 opacity-60"
+              aria-hidden
             >
-              <div className="flex items-start justify-between gap-2">
-                <span className="font-mono text-lg font-bold text-white">{cell.symbol}</span>
-                <span className="text-lg font-semibold tabular-nums text-white">
-                  {formatPct(cell.returnPct)}
-                </span>
-              </div>
-              <p className="mt-1 line-clamp-2 text-xs text-white/60">{cell.name}</p>
-              {cell.dividendYieldTtm != null && (
-                <p className="mt-2 text-[10px] uppercase tracking-wider text-white/45">
-                  Yield {cell.dividendYieldTtm.toFixed(1)}%
-                </p>
-              )}
-            </Link>
-          ))}
-        </motion.div>
-      )}
+              <rect x="8" y="28" width="16" height="28" rx="3" fill="#34d399" opacity="0.5" />
+              <rect x="28" y="16" width="16" height="40" rx="3" fill="#8b5cf6" opacity="0.45" />
+              <rect x="48" y="34" width="16" height="22" rx="3" fill="#f43f5e" opacity="0.5" />
+            </svg>
+            <p className="text-lg font-semibold text-white">No ETFs found</p>
+            <p className="mt-2 max-w-md text-sm text-white/45">
+              Try another category, period, or clear your search.
+            </p>
+            <button
+              type="button"
+              onClick={resetFilters}
+              className="mt-4 rounded-xl bg-violet-500/20 px-4 py-2 text-sm text-violet-200 hover:bg-violet-500/30"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3 lg:grid-cols-6 lg:auto-rows-[minmax(92px,auto)]"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {filtered.map((cell) => (
+              <HeatmapTile
+                key={cell.symbol}
+                cell={cell}
+                span={tileSpan(cell.sizeScore || 1, maxSize)}
+                onSelect={setSelected}
+                onKeyActivate={setSelected}
+              />
+            ))}
+          </motion.div>
+        )}
+      </div>
 
-      {sortedCells.length > 0 && !loading && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
-            <p className="text-xs uppercase tracking-wider text-emerald-300/70">Top performer</p>
-            <p className="mt-1 font-mono text-xl font-bold text-white">
-              {best.symbol}{" "}
-              <span className="text-emerald-300">{formatPct(best.returnPct)}</span>
-            </p>
-          </div>
-          <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-4">
-            <p className="text-xs uppercase tracking-wider text-rose-300/70">Weakest</p>
-            <p className="mt-1 font-mono text-xl font-bold text-white">
-              {worst.symbol}{" "}
-              <span className="text-rose-300">{formatPct(worst.returnPct)}</span>
-            </p>
-          </div>
-        </div>
+      {!loading && filtered.length > 0 && (
+        <>
+          <HeatmapLegend />
+          <HeatmapAnalytics cells={filtered} baskets={baskets} basketId={basketId} />
+          <TopMoversTables cells={filtered} />
+          <HeatmapApiExample period={period} basketId={basketId} />
+        </>
       )}
 
       <div className="flex flex-wrap gap-3 text-sm">
@@ -201,10 +274,15 @@ export default function EtfHeatmapView() {
         <Link href="/dashboard/etf/rankings" className="text-cyan-400 hover:underline">
           ETF Rankings →
         </Link>
+        <Link href="/dashboard/backtesting" className="text-emerald-400 hover:underline">
+          Run Backtest →
+        </Link>
         <Link href="/dashboard/etf" className="text-white/45 hover:text-white/70">
           ETF Explorer
         </Link>
       </div>
+
+      <EtfDrawer cell={selected} apiKey={apiKey} onClose={() => setSelected(null)} />
     </div>
   );
 }
