@@ -61,13 +61,84 @@ export type MarketStatus = {
 
 export type BatchPrice = { symbol: string; price: number };
 
-export type EtfItem = { symbol: string; name: string; price: number | null; exchange?: string | null };
+export type EtfItem = {
+  symbol: string;
+  name: string;
+  price: number | null;
+  exchange?: string | null;
+  returnYtd?: number | null;
+  return1y?: number | null;
+  return3y?: number | null;
+  return5y?: number | null;
+  dividendYieldTtm?: number | null;
+  volatility1y?: number | null;
+  avgVolume30d?: number | null;
+  assetClass?: string | null;
+  aumBillions?: number | null;
+  expenseRatio?: number | null;
+  sharpeRatio?: number | null;
+  cagr?: number | null;
+  issuer?: string | null;
+  category?: string | null;
+  badges?: string[];
+  leveraged?: boolean;
+  inverse?: boolean;
+  esg?: boolean;
+  country?: string | null;
+  currency?: string | null;
+  change1d?: number | null;
+  asOf?: string | null;
+};
+
+export type EtfListStats = {
+  totalEtfs: number;
+  withHistory: number;
+  categories: number;
+  avgVolume: number | null;
+  asOf: string | null;
+};
 
 export type EtfListResponse = {
   data: EtfItem[];
   total: number;
   limit: number;
   offset: number;
+  hasPrice?: boolean;
+  stats?: EtfListStats;
+};
+
+export type EtfDetail = EtfItem & {
+  type?: string;
+  date?: string | null;
+  open?: number | null;
+  high?: number | null;
+  low?: number | null;
+  volume?: number | null;
+  high52w?: number | null;
+  low52w?: number | null;
+  beta?: number | null;
+  maxDrawdown?: number | null;
+  performance?: Record<string, number | null>;
+  history?: Array<{
+    date: string;
+    open: number;
+    high: number;
+    low: number;
+    close: number;
+    volume: number;
+  }>;
+  sparkline?: number[];
+  dividends?: Array<{ exDate: string; amount: number | null }>;
+  similar?: EtfItem[];
+  aiSummary?: string;
+  holdingsNote?: string;
+  risk?: {
+    volatility1y: number | null;
+    sharpeRatio: number | null;
+    maxDrawdown: number | null;
+    beta: number | null;
+    rating: string;
+  };
 };
 
 export type EtfHeatmapCell = {
@@ -384,12 +455,32 @@ export const datacaptainEndpoints = {
 
   etfList: (
     key: string | null,
-    params?: { limit?: string; offset?: string; search?: string; hasPrice?: string }
-  ) => datacaptainFetch<EtfListResponse>("/etf/list", key, params as Record<string, string>),
+    params?: Record<string, string | undefined>
+  ) => {
+    const cleaned: Record<string, string> = {};
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        if (v != null && v !== "") cleaned[k] = v;
+      }
+    }
+    return datacaptainFetch<EtfListResponse>("/etf/list", key, cleaned);
+  },
 
   etfBySymbol: (key: string | null, symbol: string) =>
-    datacaptainFetch<EtfItem & { type?: string; date?: string }>(
-      `/etf/${encodeURIComponent(symbol)}`,
+    datacaptainFetch<EtfDetail>(`/etf/${encodeURIComponent(symbol)}`, key),
+
+  stockHistory: (
+    key: string | null,
+    symbol: string,
+    params?: { startDate?: string; endDate?: string; interval?: string }
+  ) =>
+    datacaptainFetch<
+      Array<{ date: string; open: number; high: number; low: number; close: number; volume: number }>
+    >(`/stocks/${encodeURIComponent(symbol)}/history`, key, params as Record<string, string>),
+
+  stockDividends: (key: string | null, symbol: string) =>
+    datacaptainFetch<Array<{ exDate?: string; ex_date?: string; amount: number }>>(
+      `/stocks/${encodeURIComponent(symbol)}/dividends`,
       key
     ),
 
