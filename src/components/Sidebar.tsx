@@ -5,7 +5,6 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUIStore, useAuthStore } from "@/store/useStore";
 import { useAuth } from "@/hooks/useAuth";
-import { useApiUsage } from "@/hooks/useApiUsage";
 import { SIDEBAR_SECTIONS, type SidebarIcon } from "@/lib/sidebar-nav";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
@@ -163,7 +162,6 @@ export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useUIStore();
   const user = useAuthStore((s) => s.user);
   const { logout } = useAuth();
-  const { stats } = useApiUsage();
   const { isFree } = usePlanAccess();
   const isAdmin = user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
   const pathname = usePathname();
@@ -222,19 +220,6 @@ export default function Sidebar() {
               </button>
             </div>
           </div>
-
-          <Link
-            href="/dashboard/usage"
-            onClick={closeMobile}
-            className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-2.5 transition-colors hover:bg-emerald-500/15"
-          >
-            <span className="relative flex h-2 w-2 shrink-0">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-50" />
-              <span className="relative h-2 w-2 rounded-full bg-emerald-400" />
-            </span>
-            <span className="text-sm font-medium tabular-nums">{stats?.requestsToday ?? 0}</span>
-            <span className="text-xs text-white/45">requests today</span>
-          </Link>
         </div>
 
         <nav className="relative flex-1 overflow-y-auto px-3 py-4">
