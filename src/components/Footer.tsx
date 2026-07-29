@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
-import { SUPPORT_EMAIL, STATUS_PAGE_PATH, mailtoSupport } from "@/lib/site";
+import { SUPPORT_EMAIL, SALES_EMAIL, STATUS_PAGE_PATH, mailtoSupport, mailtoSales } from "@/lib/site";
 
 export default function Footer() {
   return (
@@ -61,6 +61,11 @@ export default function Footer() {
               <li>
                 <a href={mailtoSupport()} className="hover:text-white">
                   {SUPPORT_EMAIL}
+                </a>
+              </li>
+              <li>
+                <a href={mailtoSales("Enterprise plan")} className="hover:text-white">
+                  {SALES_EMAIL} (sales)
                 </a>
               </li>
             </ul>

@@ -127,7 +127,7 @@ export const TERMS_OF_SERVICE: LegalDocument = {
       title: "12. Contact",
       paragraphs: [
         "Questions about these Terms: legal@datacaptain.com",
-        "Billing or account support: use the Support section in your dashboard or support@datacaptain.in.",
+        "Billing or account support: use the Support section in your dashboard or sales@datacaptain.com.",
       ],
     },
   ],

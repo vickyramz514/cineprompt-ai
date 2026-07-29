@@ -65,6 +65,7 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     items: [
       { href: "/dashboard/etf/heatmap", label: "ETF Heatmap", icon: "chart" },
       { href: "/dashboard/etf/screener", label: "ETF Screener", icon: "chart" },
+      { href: "/dashboard/etf/screener?favorites=1", label: "My Favorite ETFs", icon: "etf" },
       { href: "/dashboard/etf/rankings", label: "ETF Rankings", icon: "chart" },
       { href: "/dashboard/tools/prices", label: "Batch ETF Prices", icon: "prices" },
       { href: "/dashboard/etf", label: "ETF Explorer", icon: "etf" },

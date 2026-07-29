@@ -82,10 +82,26 @@ export type EtfScreenerRow = {
   return1y: number | null;
   return3y: number | null;
   return5y: number | null;
+  returnPct?: number | null;
+  return1d?: number | null;
+  return1m?: number | null;
+  cagr?: number | null;
   dividendYieldTtm: number | null;
   volatility1y: number | null;
   avgVolume30d: number | null;
   assetClass: string | null;
+  aumBillions?: number | null;
+  expenseRatio?: number | null;
+  sharpeRatio?: number | null;
+  issuer?: string | null;
+  category?: string | null;
+  badges?: string[];
+  leveraged?: boolean;
+  inverse?: boolean;
+  esg?: boolean;
+  country?: string | null;
+  currency?: string | null;
+  sparkline?: number[];
 };
 
 export type EtfScreenerResponse = {
@@ -342,16 +358,16 @@ export const datacaptainEndpoints = {
 
   etfScreener: (
     key: string | null,
-    params?: {
-      returnMin?: string;
-      dividendYieldMin?: string;
-      period?: string;
-      assetClass?: string;
-      sort?: string;
-      limit?: string;
-      offset?: string;
+    params?: Record<string, string | undefined>
+  ) => {
+    const cleaned: Record<string, string> = {};
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        if (v != null && v !== "") cleaned[k] = v;
+      }
     }
-  ) => datacaptainFetch<EtfScreenerResponse>("/etf/screener", key, params as Record<string, string>),
+    return datacaptainFetch<EtfScreenerResponse>("/etf/screener", key, cleaned);
+  },
 
   etfRankings: (
     key: string | null,
