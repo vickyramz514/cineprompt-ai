@@ -9,6 +9,42 @@ export type DeveloperUsage = {
   requestsToday: number;
   requestsRemaining: number;
   dailyLimit: number;
+  requestsThisMonth?: number;
+  monthlyLimit?: number;
+  series?: {
+    daily: Array<{ date: string; count: number }>;
+    weekly: Array<{ date: string; label?: string; count: number }>;
+    monthly: Array<{ date: string; label?: string; count: number }>;
+  };
+  endpoints?: Array<{
+    endpoint: string;
+    count: number;
+    avgMs: number | null;
+    errors: number;
+    success: number;
+  }>;
+  analytics?: {
+    avgLatencyMs: number | null;
+    successRate: number | null;
+    errorRate: number | null;
+    totalRequests30d: number;
+    errors7d: number;
+  };
+  recentActivity?: Array<{
+    endpoint: string;
+    method: string;
+    statusCode: number;
+    durationMs: number;
+    at: string;
+  }>;
+  health?: {
+    uptimePct: number;
+    avgLatencyMs: number;
+    errorCount: number;
+    database: string;
+    cache: string;
+  };
+  asOf?: string;
 };
 
 export type MarketStatus = {
