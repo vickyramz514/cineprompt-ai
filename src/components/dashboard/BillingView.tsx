@@ -59,12 +59,15 @@ const TX_ICONS: Record<string, string> = {
 
 export default function BillingView() {
   const searchParams = useSearchParams();
-  const { credits, fetchBalance } = useWallet();
-  const { refetch: refetchUsage } = useApiUsage();
+  const { fetchBalance } = useWallet();
+  const { stats: usageStats, isLoading: usageLoading, refetch: refetchUsage } = useApiUsage();
   const setUser = useAuthStore((s) => s.setUser);
   const user = useAuthStore((s) => s.user);
   const { plans, isLoading: plansLoading, error: plansError } = useSubscriptionPlans();
-  const { isLoading, error } = useCreditsStore();
+  const { error } = useCreditsStore();
+  const remainingToday = usageStats?.remainingToday ?? 0;
+  const dailyLimit = usageStats?.dailyLimit ?? 50;
+  const requestsToday = usageStats?.requestsToday ?? 0;
   const [paymentModalOpen, setPaymentModalOpen] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
@@ -221,7 +224,7 @@ export default function BillingView() {
   const pricingPlans = plans.map(mapPlanToPricing);
   const isActiveSub = subscription?.status === "ACTIVE";
 
-  if (isLoading && credits === 0 && plansLoading) {
+  if (usageLoading && !usageStats && plansLoading) {
     return (
       <div className="space-y-8">
         <div className="h-28 animate-pulse rounded-2xl bg-white/5" />
@@ -241,7 +244,7 @@ export default function BillingView() {
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-xs font-medium uppercase tracking-widest text-violet-300/80">Billing</p>
         <h1 className="mt-0.5 text-2xl font-semibold sm:text-3xl">Plans & billing</h1>
-        <p className="mt-1 text-sm text-white/50">Manage subscriptions, credits, and payment history</p>
+        <p className="mt-1 text-sm text-white/50">Manage subscriptions, API limits, and payment history</p>
       </motion.div>
 
       <AnimatePresence>
@@ -294,11 +297,17 @@ export default function BillingView() {
           />
           <div className="relative flex items-start justify-between gap-4">
             <div>
-              <p className="text-xs font-medium uppercase tracking-widest text-white/40">API balance</p>
+              <p className="text-xs font-medium uppercase tracking-widest text-white/40">API quota</p>
               <p className="mt-2 text-4xl font-bold tabular-nums">
-                <AnimatedCounter value={credits} />
+                {usageLoading && !usageStats ? (
+                  <span className="inline-block h-10 w-20 animate-pulse rounded bg-white/10" />
+                ) : (
+                  <AnimatedCounter value={remainingToday} />
+                )}
               </p>
-              <p className="mt-1 text-sm text-white/45">Request credits available</p>
+              <p className="mt-1 text-sm text-white/45">
+                Requests left today · {requestsToday.toLocaleString()} / {dailyLimit.toLocaleString()} used
+              </p>
               <Link href="/dashboard/usage" className="mt-3 inline-flex text-sm text-indigo-400 hover:underline">
                 View usage →
               </Link>
