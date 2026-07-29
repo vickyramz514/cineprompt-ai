@@ -17,7 +17,6 @@ import { getDefaultBacktestDates } from "@/lib/date-utils";
 import { MetricCard } from "@/components/backtesting/MetricCard";
 import { BacktestEmptyState, BacktestLoadingState } from "@/components/backtesting/BacktestStates";
 import AnnualReturnsTable from "@/components/backtesting/AnnualReturnsTable";
-import MonthlyReturnsHeatmap from "@/components/backtesting/MonthlyReturnsHeatmap";
 import ApiExamplePanel from "@/components/backtesting/ApiExamplePanel";
 import StrategySelector from "@/components/backtesting/StrategySelector";
 import type { BacktestStrategyId } from "@/lib/backtest/strategies";
@@ -36,10 +35,15 @@ import {
   shareBacktestResult,
 } from "@/lib/backtest/export";
 
-const EquityCurveChart = dynamic(() => import("@/components/backtesting/EquityCurveChart"), {
-  ssr: false,
-  loading: () => <div className="h-64 animate-pulse rounded-2xl border border-white/10 bg-white/[0.04] sm:h-80" />,
-});
+const BacktestTerminalCharts = dynamic(
+  () => import("@/components/backtesting/BacktestTerminalCharts"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[480px] animate-pulse rounded-2xl border border-white/10 bg-white/[0.04]" />
+    ),
+  }
+);
 
 const RECENT_ETF_KEY = "dc_backtest_recent_etfs";
 const POPULAR_ETFS = ["SPY", "VOO", "QQQ", "VTI", "IWM", "DIA", "ARKK", "XLK"];
@@ -716,11 +720,11 @@ export default function BacktestingView({ compact = false }: Props) {
                 </div>
               )}
 
-              <EquityCurveChart
-                primarySymbol={result.symbol}
-                primaryCurve={result.equityCurve}
-                compareSymbol={compareResult?.symbol}
-                compareCurve={compareResult?.equityCurve}
+              <BacktestTerminalCharts
+                result={result}
+                compareResult={compareResult}
+                beta={beta}
+                monthlyCells={stats.monthlyCells}
               />
 
               {/* Portfolio growth */}
@@ -740,7 +744,6 @@ export default function BacktestingView({ compact = false }: Props) {
               </div>
 
               <AnnualReturnsTable rows={stats.annualRows} />
-              <MonthlyReturnsHeatmap cells={stats.monthlyCells} />
               <ApiExamplePanel result={result} />
             </motion.div>
           )}

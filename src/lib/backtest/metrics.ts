@@ -12,6 +12,8 @@ export type MonthCell = {
   year: number;
   month: number; // 1-12
   returnPct: number | null;
+  profit: number | null;
+  endValue: number | null;
 };
 
 export type DerivedPortfolioStats = {
@@ -82,10 +84,12 @@ export function buildMonthlyReturns(curve: EquityPoint[]): MonthCell[] {
     const month = Number(ms);
     const value = monthEnd.get(key)!;
     let returnPct: number | null = null;
+    let profit: number | null = null;
     if (prev != null && prev > 0) {
       returnPct = Math.round(((value - prev) / prev) * 10000) / 100;
+      profit = Math.round((value - prev) * 100) / 100;
     }
-    cells.push({ year, month, returnPct });
+    cells.push({ year, month, returnPct, profit, endValue: value });
     prev = value;
   }
 

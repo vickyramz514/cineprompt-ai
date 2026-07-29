@@ -241,6 +241,41 @@ export type EtfRankingsResponse = {
   freeTierLimited?: boolean;
 };
 
+export type BacktestTradeEvent = {
+  date: string;
+  side: "BUY" | "SELL";
+  price: number;
+  shares: number;
+  amount: number;
+  portfolioValue: number;
+};
+
+export type BacktestDividendEvent = {
+  date: string;
+  amountPerShare: number;
+  amount: number;
+  reinvestedShares: number;
+  cashReceived: number;
+  sharesBefore?: number;
+  portfolioValue: number;
+};
+
+export type BacktestPriceBar = {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+};
+
+export type BacktestDrawdownPoint = {
+  date: string;
+  drawdown: number;
+  peak: number;
+  value: number;
+};
+
 export type BacktestResult = {
   strategy: string;
   symbol: string;
@@ -255,6 +290,7 @@ export type BacktestResult = {
   annualReturn: number;
   cagr?: number;
   maxDrawdown: number;
+  maxDrawdownRecoveryDays?: number | null;
   volatility?: number;
   sharpe?: number | null;
   sortino?: number | null;
@@ -263,6 +299,12 @@ export type BacktestResult = {
   tradingDays?: number;
   years?: number;
   trades?: number;
+  tradeEvents?: BacktestTradeEvent[];
+  dividendEvents?: BacktestDividendEvent[];
+  prices?: BacktestPriceBar[];
+  drawdownCurve?: BacktestDrawdownPoint[];
+  todayChange?: number | null;
+  todayChangePct?: number | null;
   strategyParams?: Record<string, number | string>;
   reinvestDividends?: boolean;
   adjustForInflation?: boolean;
