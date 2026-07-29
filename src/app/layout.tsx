@@ -18,8 +18,13 @@ export const metadata: Metadata = {
   description:
     "Build with a US ETF API: historical prices, screener, heatmap, and backtesting. Free API key for developers — upgrade when you need higher limits.",
   icons: {
-    icon: "/logo/logo.jpeg",
-    apple: "/logo/logo.jpeg",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: "/favicon.ico",
   },
   openGraph: {
     type: "website",
