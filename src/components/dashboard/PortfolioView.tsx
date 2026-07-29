@@ -4,9 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import { datacaptainEndpoints, getDataCaptainErrorMessage } from "@/services/datacaptain/endpoints";
 import type { CompareResult } from "@/services/datacaptain/endpoints";
 import PortfolioRebalancerView from "@/components/dashboard/PortfolioRebalancerView";
+import PortfolioFreePreview from "@/components/portfolio/PortfolioFreePreview";
+import PremiumBlurSection from "@/components/paywall/PremiumBlurSection";
+import LockedMetricGrid, { PORTFOLIO_PREVIEW_METRICS } from "@/components/paywall/LockedMetricGrid";
 import DatePickerField from "@/components/dashboard/DatePickerField";
 import { getDefaultBacktestDates } from "@/lib/date-utils";
 
@@ -16,10 +20,25 @@ const COMPARE_PRESETS = [
   { label: "Sector leaders", symbols: ["XLK", "XLF", "XLE"] },
 ];
 
+const PORTFOLIO_PREMIUM_FEATURES = [
+  "Portfolio optimization",
+  "Risk analysis",
+  "Monte Carlo simulation",
+  "Future projection",
+  "Sharpe & Sortino ratios",
+  "Correlation matrix",
+  "Rebalancing recommendations",
+  "Efficient Frontier",
+  "Dividend forecasting",
+  "CAGR analytics",
+];
+
 type Tab = "compare" | "rebalance";
 
 export default function PortfolioView() {
   const { apiKey } = useDataCaptainKey();
+  const { hasAccess, isLoading: planLoading } = usePlanAccess();
+  const canPortfolio = hasAccess("portfolio");
   const [tab, setTab] = useState<Tab>("rebalance");
   const [symbols, setSymbols] = useState("VOO,SPY,QQQ");
   const [investment, setInvestment] = useState("10000");
@@ -30,6 +49,10 @@ export default function PortfolioView() {
   const [result, setResult] = useState<CompareResult | null>(null);
 
   const runCompare = async () => {
+    if (!canPortfolio) {
+      setError("Upgrade to unlock portfolio comparison analytics.");
+      return;
+    }
     if (!apiKey) {
       setError("Sign in and set your API key to compare portfolios.");
       return;
@@ -58,176 +81,243 @@ export default function PortfolioView() {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl space-y-8 px-4 pb-20 sm:px-6 lg:px-8">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-xs font-medium uppercase tracking-widest text-sky-300/80">Platform</p>
         <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Portfolio Tools</h1>
         <p className="mt-2 max-w-2xl text-white/55">
-          Rebalance toward target allocations or compare historical ETF performance side-by-side.
+          Preview allocation and live market charts for free. Unlock Pro for rebalancing, risk labs, and
+          forward-looking analytics.
         </p>
       </motion.div>
 
-      <div className="inline-flex rounded-xl border border-white/10 bg-black/30 p-1">
-        {(
-          [
-            { id: "rebalance" as const, label: "Rebalancer" },
-            { id: "compare" as const, label: "Compare" },
-          ] as const
-        ).map((t) => (
-          <button
-            key={t.id}
-            type="button"
-            onClick={() => setTab(t.id)}
-            className={`rounded-lg px-5 py-2 text-sm font-medium transition-colors ${
-              tab === t.id ? "bg-sky-600 text-white" : "text-white/55 hover:text-white"
-            }`}
-          >
-            {t.label}
-          </button>
-        ))}
-      </div>
+      {/* Free section */}
+      <PortfolioFreePreview />
 
-      {tab === "rebalance" ? (
-        <PortfolioRebalancerView />
+      {/* Premium section */}
+      {planLoading ? (
+        <div className="h-64 animate-pulse rounded-2xl bg-white/5" />
+      ) : !canPortfolio ? (
+        <section className="space-y-3">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-amber-300/80">
+              Premium · Analytics
+            </p>
+            <h2 className="text-lg font-semibold text-white">Advanced portfolio intelligence</h2>
+          </div>
+          <PremiumBlurSection
+            title="Unlock Portfolio Analytics"
+            subtitle="Optimize allocations, stress-test risk, project outcomes, and rebalance with institutional-grade tools."
+            features={PORTFOLIO_PREMIUM_FEATURES}
+            primaryHref="/dashboard/wallet"
+            secondaryHref="/pricing"
+            primaryLabel="Unlock Portfolio Analytics"
+            secondaryLabel="Upgrade to Pro"
+            tertiaryHref="/docs"
+            tertiaryLabel="Learn More"
+          >
+            <div className="space-y-5 p-4 sm:p-6" aria-hidden>
+              <LockedMetricGrid items={PORTFOLIO_PREVIEW_METRICS} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Efficient frontier</p>
+                  <div className="mt-4 h-36 rounded-xl bg-gradient-to-tr from-sky-500/20 via-violet-500/10 to-emerald-500/20" />
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Correlation matrix</p>
+                  <div className="mt-3 grid grid-cols-4 gap-1">
+                    {Array.from({ length: 16 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="aspect-square rounded bg-sky-500/30"
+                        style={{ opacity: 0.25 + (i % 5) * 0.15 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Monte Carlo</p>
+                  <div className="mt-3 flex h-32 items-end gap-0.5">
+                    {Array.from({ length: 40 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className="flex-1 rounded-t bg-violet-400/50"
+                        style={{ height: `${30 + ((i * 17) % 60)}%` }}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-black/30 p-4">
+                  <p className="text-[11px] uppercase tracking-wider text-white/40">Rebalance tips</p>
+                  <ul className="mt-3 space-y-2 text-sm text-white/55">
+                    <li>Trim QQQ −2.4% drift</li>
+                    <li>Add VOO +1.8%</li>
+                    <li>Hold BND within band</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </PremiumBlurSection>
+        </section>
       ) : (
         <>
-          <div className="flex flex-wrap gap-2">
-            {COMPARE_PRESETS.map((p) => (
+          <div className="inline-flex rounded-xl border border-white/10 bg-black/30 p-1">
+            {(
+              [
+                { id: "rebalance" as const, label: "Rebalancer" },
+                { id: "compare" as const, label: "Compare" },
+              ] as const
+            ).map((t) => (
               <button
-                key={p.label}
+                key={t.id}
                 type="button"
-                onClick={() => setSymbols(p.symbols.join(","))}
-                className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 hover:border-sky-500/30 hover:text-white"
+                onClick={() => setTab(t.id)}
+                className={`rounded-lg px-5 py-2 text-sm font-medium transition-colors ${
+                  tab === t.id ? "bg-sky-600 text-white" : "text-white/55 hover:text-white"
+                }`}
               >
-                {p.label}
+                {t.label}
               </button>
             ))}
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
-            <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-6">
-              <h2 className="text-lg font-semibold">Compare symbols</h2>
-              <div className="mt-6 space-y-4">
-                <label className="block text-sm">
-                  <span className="text-white/50">Symbols (comma-separated)</span>
-                  <input
-                    value={symbols}
-                    onChange={(e) => setSymbols(e.target.value.toUpperCase())}
-                    className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 font-mono text-white focus:border-sky-500/50 focus:outline-none"
-                  />
-                </label>
-                <label className="block text-sm">
-                  <span className="text-white/50">Investment each (USD)</span>
-                  <input
-                    type="number"
-                    value={investment}
-                    onChange={(e) => setInvestment(e.target.value)}
-                    className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-white focus:border-sky-500/50 focus:outline-none"
-                  />
-                </label>
-                <div className="grid grid-cols-2 gap-3">
-                  <DatePickerField
-                    label="Start"
-                    value={startDate}
-                    max={endDate}
-                    onChange={setStartDate}
-                  />
-                  <DatePickerField
-                    label="End"
-                    value={endDate}
-                    min={startDate}
-                    onChange={setEndDate}
-                  />
-                </div>
+          {tab === "rebalance" ? (
+            <PortfolioRebalancerView />
+          ) : (
+            <>
+              <div className="flex flex-wrap gap-2">
+                {COMPARE_PRESETS.map((p) => (
+                  <button
+                    key={p.label}
+                    type="button"
+                    onClick={() => setSymbols(p.symbols.join(","))}
+                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60 hover:border-sky-500/30 hover:text-white"
+                  >
+                    {p.label}
+                  </button>
+                ))}
               </div>
-              <button
-                type="button"
-                onClick={runCompare}
-                disabled={loading}
-                className="mt-6 w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 py-3 text-sm font-semibold text-white disabled:opacity-50"
-              >
-                {loading ? "Comparing…" : "Compare"}
-              </button>
-            </div>
 
-            <div className="space-y-4">
-              {error && (
-                <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
-                  {error}
+              <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
+                <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-6">
+                  <h2 className="text-lg font-semibold">Compare symbols</h2>
+                  <div className="mt-6 space-y-4">
+                    <label className="block text-sm">
+                      <span className="text-white/50">Symbols (comma-separated)</span>
+                      <input
+                        value={symbols}
+                        onChange={(e) => setSymbols(e.target.value.toUpperCase())}
+                        className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 font-mono text-white focus:border-sky-500/50 focus:outline-none"
+                      />
+                    </label>
+                    <label className="block text-sm">
+                      <span className="text-white/50">Investment each (USD)</span>
+                      <input
+                        type="number"
+                        value={investment}
+                        onChange={(e) => setInvestment(e.target.value)}
+                        className="mt-1.5 w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-white focus:border-sky-500/50 focus:outline-none"
+                      />
+                    </label>
+                    <div className="grid grid-cols-2 gap-3">
+                      <DatePickerField
+                        label="Start"
+                        value={startDate}
+                        max={endDate}
+                        onChange={setStartDate}
+                      />
+                      <DatePickerField
+                        label="End"
+                        value={endDate}
+                        min={startDate}
+                        onChange={setEndDate}
+                      />
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={runCompare}
+                    disabled={loading}
+                    className="mt-6 w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-600 py-3 text-sm font-semibold text-white disabled:opacity-50"
+                  >
+                    {loading ? "Comparing…" : "Compare"}
+                  </button>
                 </div>
-              )}
 
-              {result && (
-                <div className="space-y-3">
-                  {result.winner && (
-                    <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                      Best performer: <strong className="font-mono">{result.winner}</strong>
+                <div className="space-y-4">
+                  {error && (
+                    <div className="rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+                      {error}
                     </div>
                   )}
-                  {result.results.map((row) =>
-                    "error" in row ? (
-                      <div
-                        key={row.symbol}
-                        className="rounded-xl border border-red-500/20 bg-black/30 p-4 text-sm text-red-300"
-                      >
-                        {row.symbol}: {row.error}
-                      </div>
-                    ) : (
-                      <div
-                        key={row.symbol}
-                        className={`rounded-xl border p-4 ${
-                          row.symbol === result.winner
-                            ? "border-emerald-500/30 bg-emerald-500/5"
-                            : "border-white/10 bg-black/30"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <div>
-                            <span className="font-mono font-bold text-white">{row.symbol}</span>
-                            <p className="text-xs text-white/45">{row.name}</p>
-                          </div>
-                          <span
-                            className={`text-lg font-semibold tabular-nums ${row.totalReturn >= 0 ? "text-emerald-400" : "text-red-400"}`}
+
+                  {result && (
+                    <div className="space-y-3">
+                      {result.winner && (
+                        <div className="rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+                          Best performer: <strong className="font-mono">{result.winner}</strong>
+                        </div>
+                      )}
+                      {result.results.map((row) =>
+                        "error" in row ? (
+                          <div
+                            key={row.symbol}
+                            className="rounded-xl border border-red-500/20 bg-black/30 p-4 text-sm text-red-300"
                           >
-                            {row.totalReturn >= 0 ? "+" : ""}
-                            {row.totalReturn}%
-                          </span>
-                        </div>
-                        <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-white/50">
-                          <span>Annual: {row.annualReturn}%</span>
-                          <span>Drawdown: {row.maxDrawdown}%</span>
-                          <span>Final: ${row.finalValue?.toLocaleString()}</span>
-                        </div>
-                      </div>
-                    )
+                            {row.symbol}: {row.error}
+                          </div>
+                        ) : (
+                          <div
+                            key={row.symbol}
+                            className={`rounded-xl border p-4 ${
+                              row.symbol === result.winner
+                                ? "border-emerald-500/30 bg-emerald-500/5"
+                                : "border-white/10 bg-black/30"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <div>
+                                <span className="font-mono font-bold text-white">{row.symbol}</span>
+                                <p className="text-xs text-white/45">{row.name}</p>
+                              </div>
+                              <span
+                                className={`text-lg font-semibold tabular-nums ${row.totalReturn >= 0 ? "text-emerald-400" : "text-red-400"}`}
+                              >
+                                {row.totalReturn >= 0 ? "+" : ""}
+                                {row.totalReturn}%
+                              </span>
+                            </div>
+                            <div className="mt-3 grid grid-cols-3 gap-2 text-xs text-white/50">
+                              <span>Annual: {row.annualReturn}%</span>
+                              <span>Drawdown: {row.maxDrawdown}%</span>
+                              <span>Final: ${row.finalValue?.toLocaleString()}</span>
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+
+                  {!result && !error && (
+                    <div className="rounded-2xl border border-dashed border-white/10 p-10 text-center text-sm text-white/45">
+                      Run a comparison to rank ETF performance over your date range.
+                    </div>
                   )}
                 </div>
-              )}
-
-              {!result && !loading && (
-                <div className="rounded-2xl border border-dashed border-white/10 bg-black/20 p-8 text-center text-sm text-white/45">
-                  Try VOO vs SPY vs QQQ to see which ETF performed best.
-                </div>
-              )}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </>
       )}
 
-      <section className="rounded-2xl border border-white/10 bg-[#0c0c14]/60 p-6">
-        <h2 className="text-lg font-semibold">Related tools</h2>
-        <div className="mt-4 flex flex-wrap gap-4 text-sm">
-          <Link href="/dashboard/etf/screener" className="text-cyan-400 hover:underline">
-            ETF Screener →
+      {!canPortfolio && !planLoading && (
+        <p className="text-center text-sm text-white/40">
+          Need billing help?{" "}
+          <Link href="/dashboard/wallet" className="text-sky-300 hover:underline">
+            Open Billing
           </Link>
-          <Link href="/dashboard/etf/heatmap" className="text-violet-400 hover:underline">
-            ETF Heatmap →
-          </Link>
-          <Link href="/dashboard/backtesting" className="text-indigo-400 hover:underline">
-            Backtesting →
-          </Link>
-        </div>
-      </section>
+        </p>
+      )}
     </div>
   );
 }

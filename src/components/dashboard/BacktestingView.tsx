@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useDataCaptainKey } from "@/hooks/useDataCaptain";
+import { usePlanAccess } from "@/hooks/usePlanAccess";
 import {
   datacaptainEndpoints,
   getDataCaptainErrorMessage,
@@ -19,6 +20,9 @@ import { BacktestEmptyState, BacktestLoadingState } from "@/components/backtesti
 import AnnualReturnsTable from "@/components/backtesting/AnnualReturnsTable";
 import ApiExamplePanel from "@/components/backtesting/ApiExamplePanel";
 import StrategySelector from "@/components/backtesting/StrategySelector";
+import BacktestPremiumPreviewBody from "@/components/backtesting/BacktestPremiumPreviewBody";
+import PremiumBlurSection from "@/components/paywall/PremiumBlurSection";
+import FreeMarketChart from "@/components/market/FreeMarketChart";
 import type { BacktestStrategyId } from "@/lib/backtest/strategies";
 import { BACKTEST_STRATEGIES, defaultParamsFor } from "@/lib/backtest/strategies";
 import {
@@ -34,6 +38,23 @@ import {
   exportBacktestPdf,
   shareBacktestResult,
 } from "@/lib/backtest/export";
+
+const BACKTEST_PREMIUM_FEATURES = [
+  "Buy & Hold Strategy",
+  "Dollar Cost Averaging",
+  "SMA Strategy",
+  "EMA Strategy",
+  "RSI Strategy",
+  "MACD Strategy",
+  "Strategy Comparison",
+  "Portfolio Growth",
+  "Drawdown Analysis",
+  "Monthly Returns",
+  "Dividend Reinvestment",
+  "Export CSV",
+  "Export PDF",
+  "API Access",
+];
 
 const BacktestTerminalCharts = dynamic(
   () => import("@/components/backtesting/BacktestTerminalCharts"),
@@ -261,6 +282,8 @@ type Props = { compact?: boolean };
 
 export default function BacktestingView({ compact = false }: Props) {
   const { apiKey } = useDataCaptainKey();
+  const { hasAccess, isLoading: planLoading } = usePlanAccess();
+  const canBacktest = hasAccess("backtesting");
   const [symbol, setSymbol] = useState("SPY");
   const [compareSymbol, setCompareSymbol] = useState("");
   const [enableCompare, setEnableCompare] = useState(false);
@@ -348,6 +371,10 @@ export default function BacktestingView({ compact = false }: Props) {
   }, [result, compareResult]);
 
   const runBacktest = async () => {
+    if (!canBacktest) {
+      setError("Upgrade to unlock strategy simulation.");
+      return;
+    }
     if (!apiKey) {
       setError("Sign in and set your API key to run backtests.");
       return;
@@ -409,13 +436,63 @@ export default function BacktestingView({ compact = false }: Props) {
           <p className="text-xs font-medium uppercase tracking-widest text-emerald-300/80">Research</p>
           <h1 className="mt-1 text-3xl font-bold sm:text-4xl">ETF Backtesting</h1>
           <p className="mt-2 max-w-2xl text-white/55">
-            Institutional-style buy-and-hold research: CAGR, risk ratios, drawdowns, annual tables, and
-            interactive equity curves — powered by your Data Captain API key.
+            Explore professional historical charts for free. Upgrade to simulate strategies, measure risk,
+            and export institutional-grade research.
           </p>
           <DataFreshnessLabel className="mt-2" />
         </motion.div>
       )}
 
+      {/* Section 1 — Free market chart for everyone */}
+      <section className="space-y-3">
+        <div className="flex flex-wrap items-end justify-between gap-2">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-violet-300/80">
+              Free · Market data
+            </p>
+            <h2 className="text-lg font-semibold text-white">Interactive price chart</h2>
+          </div>
+        </div>
+        <FreeMarketChart symbol={symbol || "SPY"} apiKey={apiKey} />
+      </section>
+
+      {/* Section 2 — Premium analytics */}
+      {planLoading ? (
+        <div className="h-64 animate-pulse rounded-2xl bg-white/5" />
+      ) : !canBacktest ? (
+        <section className="space-y-3">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wider text-amber-300/80">
+              Premium · Strategy lab
+            </p>
+            <h2 className="text-lg font-semibold text-white">Professional backtesting</h2>
+          </div>
+          <PremiumBlurSection
+            title="Unlock Professional Backtesting"
+            subtitle="Analyze historical strategies using Buy & Hold, DCA, SMA Crossovers, EMA Crossovers, RSI, MACD and more."
+            features={BACKTEST_PREMIUM_FEATURES}
+            primaryHref="/dashboard/wallet"
+            secondaryHref="/pricing"
+            primaryLabel="Upgrade Now"
+            secondaryLabel="View Pricing"
+            tertiaryHref="/docs"
+            tertiaryLabel="Learn More"
+          >
+            <BacktestPremiumPreviewBody />
+          </PremiumBlurSection>
+          <div className="flex flex-col items-center gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 px-4 py-4 sm:flex-row sm:justify-between">
+            <p className="text-sm text-white/60">
+              Upgrade to unlock strategy simulation — Run Backtest stays locked on Free.
+            </p>
+            <Link
+              href="/dashboard/wallet"
+              className="inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-r from-violet-600 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-violet-500/25 hover:brightness-110"
+            >
+              Upgrade Now
+            </Link>
+          </div>
+        </section>
+      ) : (
       <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
         <aside className="h-fit rounded-2xl border border-white/10 bg-[#0c0c14]/90 p-5 shadow-[0_12px_40px_-24px_rgba(0,0,0,0.7)] lg:sticky lg:top-6">
           <h2 className="text-lg font-semibold">Run backtest</h2>
@@ -749,6 +826,7 @@ export default function BacktestingView({ compact = false }: Props) {
           )}
         </div>
       </div>
+      )}
     </div>
   );
 }

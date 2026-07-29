@@ -20,6 +20,7 @@ export type PlanFeature =
 export const FREE_PLAN_FEATURES: PlanFeature[] = [
   "batch-prices",
   "etf-list",
+  "etf-detail",
   "etf-heatmap",
   "etf-screener",
   "etf-rankings",
@@ -37,8 +38,14 @@ export const FREE_API_PATHS = new Set([
   "/etf/rankings",
 ]);
 
-/** Mirrors backend FREE_API_PATH_PATTERNS */
-const FREE_API_PATH_PATTERNS: RegExp[] = [];
+/**
+ * Mirrors backend FREE_API_PATH_PATTERNS.
+ * Exact FREE_API_PATHS are checked first; patterns unlock /etf/:symbol and stock history.
+ */
+const FREE_API_PATH_PATTERNS: RegExp[] = [
+  /^\/etf\/[A-Za-z0-9.-]+$/,
+  /^\/stocks\/[A-Za-z0-9.-]+\/history$/,
+];
 
 export const PAID_PLAN_SLUGS = new Set([
   "starter",

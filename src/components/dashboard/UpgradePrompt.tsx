@@ -17,7 +17,7 @@ const FEATURE_COPY: Record<PlanFeature, { title: string; description: string }> 
   },
   "etf-detail": {
     title: "ETF details",
-    description: "Full ETF symbol data requires a paid plan.",
+    description: "Available on the Free plan for single-symbol ETF research.",
   },
   backtesting: {
     title: "Backtesting",
