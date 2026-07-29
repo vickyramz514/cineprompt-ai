@@ -39,6 +39,10 @@ import {
 } from "@/lib/explorer/chartUtils";
 import { formatPct } from "@/lib/explorer/helpers";
 import type { MarketStatus } from "@/services/datacaptain/endpoints";
+import ChartFullscreenShell, {
+  ChartFullscreenToggle,
+  useChartFullscreen,
+} from "@/components/charts/ChartFullscreenShell";
 
 type Dividend = { exDate: string; amount: number | null };
 
@@ -770,6 +774,7 @@ export default function EtfResearchChart({
   }, [drawTool]);
 
   return (
+    <ChartFullscreenShell title={`${symbol} research chart`} subtitle="ETF detail · DataCaptain">
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a12]">
       <div className="flex flex-wrap items-end justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
         <div>
@@ -929,11 +934,7 @@ export default function EtfResearchChart({
       </div>
 
       <div className="relative">
-        <div
-          ref={containerRef}
-          className="h-[380px] w-full sm:h-[460px] lg:h-[520px]"
-          onDoubleClick={() => chartRef.current?.timeScale().fitContent()}
-        />
+        <EtfResearchChartCanvas containerRef={containerRef} chartRef={chartRef} />
         {tooltip && (
           <div
             className="pointer-events-none absolute z-20 min-w-[148px] rounded-lg border border-white/15 bg-[#0b0b14]/95 px-3 py-2 text-xs shadow-xl backdrop-blur"
@@ -960,6 +961,7 @@ export default function EtfResearchChart({
             No price history available
           </div>
         )}
+        <ChartFullscreenToggle />
       </div>
 
       <div className="flex flex-wrap gap-1 border-t border-white/10 px-3 py-2 sm:px-4">
@@ -982,6 +984,28 @@ export default function EtfResearchChart({
         </span>
       </div>
     </div>
+    </ChartFullscreenShell>
+  );
+}
+
+function EtfResearchChartCanvas({
+  containerRef,
+  chartRef,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  chartRef: React.MutableRefObject<IChartApi | null>;
+}) {
+  const { open } = useChartFullscreen();
+  useEffect(() => {
+    const id = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+    return () => window.clearTimeout(id);
+  }, [open]);
+  return (
+    <div
+      ref={containerRef}
+      className={`w-full ${open ? "h-[min(70vh,720px)] min-h-[420px]" : "h-[380px] sm:h-[460px] lg:h-[520px]"}`}
+      onDoubleClick={() => chartRef.current?.timeScale().fitContent()}
+    />
   );
 }
 

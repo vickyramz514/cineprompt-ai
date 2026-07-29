@@ -23,6 +23,10 @@ import {
 } from "@/lib/explorer/chartIndicators";
 import { sampleSeries, vwapSeries } from "@/lib/backtest/chartHelpers";
 import { formatUsdPrecise } from "@/lib/backtest/metrics";
+import ChartFullscreenShell, {
+  ChartFullscreenToggle,
+  useChartFullscreen,
+} from "@/components/charts/ChartFullscreenShell";
 
 type Mode = "price" | "candle";
 type PriceStyle = "line" | "area";
@@ -381,6 +385,10 @@ export default function BacktestLwcPanel({ result, mode }: Props) {
   const height = mode === "candle" ? "h-[550px]" : "h-[420px] sm:h-[480px]";
 
   return (
+    <ChartFullscreenShell
+      title={`${result.symbol || "Backtest"} · ${mode === "candle" ? "Candlestick" : "Price"}`}
+      subtitle="Backtesting terminal"
+    >
     <div className="space-y-3">
       <div className="flex flex-wrap gap-3 text-[11px] text-white/60">
         {mode === "price" && (
@@ -450,11 +458,8 @@ export default function BacktestLwcPanel({ result, mode }: Props) {
       </div>
 
       <div className="relative">
-        <div
-          ref={containerRef}
-          className={`${height} w-full min-w-[640px] lg:min-w-0`}
-          onDoubleClick={() => chartRef.current?.timeScale().fitContent()}
-        />
+        <BacktestChartCanvas containerRef={containerRef} chartRef={chartRef} heightClass={height} />
+        <ChartFullscreenToggle />
         {tooltip && (
           <div
             className="pointer-events-none absolute z-20 max-w-xs rounded-lg border border-white/15 bg-[#0b0b14]/95 px-3 py-2 text-[11px] shadow-xl"
@@ -478,5 +483,29 @@ export default function BacktestLwcPanel({ result, mode }: Props) {
         )}
       </div>
     </div>
+    </ChartFullscreenShell>
+  );
+}
+
+function BacktestChartCanvas({
+  containerRef,
+  chartRef,
+  heightClass,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  chartRef: React.MutableRefObject<IChartApi | null>;
+  heightClass: string;
+}) {
+  const { open } = useChartFullscreen();
+  useEffect(() => {
+    const id = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+    return () => window.clearTimeout(id);
+  }, [open]);
+  return (
+    <div
+      ref={containerRef}
+      className={`${open ? "h-[min(70vh,640px)] min-h-[420px]" : heightClass} w-full min-w-[640px] lg:min-w-0`}
+      onDoubleClick={() => chartRef.current?.timeScale().fitContent()}
+    />
   );
 }

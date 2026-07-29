@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import type { IChartApi, ISeriesApi, MouseEventParams, Time } from "lightweight-charts";
 import { sampleBars } from "@/lib/explorer/chartUtils";
+import ChartFullscreenShell, {
+  ChartFullscreenToggle,
+  useChartFullscreenOptional,
+} from "@/components/charts/ChartFullscreenShell";
 
 export type CandleBar = {
   date: string;
@@ -18,6 +22,11 @@ type Props = {
   height?: number;
   className?: string;
   onCrosshair?: (bar: CandleBar | null) => void;
+  /** Chart title shown in fullscreen header */
+  title?: string;
+  subtitle?: string;
+  /** Wrap with fullscreen shell (default true) */
+  enableFullscreen?: boolean;
 };
 
 function toTime(date: string): Time {
@@ -32,18 +41,20 @@ function clearSeries(chart: IChartApi) {
   }
 }
 
-export default function CandlestickChart({
+function CandlestickChartCanvas({
   bars,
   height = 360,
   className = "",
   onCrosshair,
-}: Props) {
+}: Omit<Props, "title" | "subtitle" | "enableFullscreen">) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<IChartApi | null>(null);
   const candleRef = useRef<ISeriesApi<"Candlestick"> | null>(null);
   const barsRef = useRef<CandleBar[]>([]);
   const onCrosshairRef = useRef(onCrosshair);
   const [ready, setReady] = useState(false);
+  const fs = useChartFullscreenOptional();
+  const open = fs?.open ?? false;
 
   onCrosshairRef.current = onCrosshair;
 
@@ -174,13 +185,62 @@ export default function CandlestickChart({
     };
   }, [bars, ready]);
 
+  useEffect(() => {
+    // Force LWC resize when entering/leaving fullscreen
+    const id = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+    return () => window.clearTimeout(id);
+  }, [open]);
+
+  const chartHeight = open ? "100%" : height;
+
   return (
-    <div
-      ref={containerRef}
-      className={`w-full ${className}`}
-      style={{ height }}
-      role="img"
-      aria-label="Candlestick chart"
-    />
+    <div className={`relative w-full ${open ? "min-h-0 flex-1" : ""} ${className}`}>
+      <div
+        ref={containerRef}
+        className="w-full"
+        style={{ height: chartHeight, minHeight: open ? 420 : height }}
+        role="img"
+        aria-label="Candlestick chart"
+      />
+    </div>
+  );
+}
+
+export default function CandlestickChart({
+  bars,
+  height = 360,
+  className = "",
+  onCrosshair,
+  title = "Chart",
+  subtitle,
+  enableFullscreen = true,
+}: Props) {
+  const canvas = (
+    <div className="relative">
+      <CandlestickChartCanvas
+        bars={bars}
+        height={height}
+        className={className}
+        onCrosshair={onCrosshair}
+      />
+      {enableFullscreen ? <ChartFullscreenToggle /> : null}
+    </div>
+  );
+
+  if (!enableFullscreen) {
+    return (
+      <CandlestickChartCanvas
+        bars={bars}
+        height={height}
+        className={className}
+        onCrosshair={onCrosshair}
+      />
+    );
+  }
+
+  return (
+    <ChartFullscreenShell title={title} subtitle={subtitle}>
+      {canvas}
+    </ChartFullscreenShell>
   );
 }

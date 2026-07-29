@@ -11,6 +11,10 @@ import {
   type EtfDetail,
   type MarketStatus,
 } from "@/services/datacaptain/endpoints";
+import ChartFullscreenShell, {
+  ChartFullscreenToggle,
+  useChartFullscreen,
+} from "@/components/charts/ChartFullscreenShell";
 
 const POPULAR_ETFS = ["SPY", "VOO", "QQQ", "VTI", "IWM", "DIA", "ARKK", "XLK"] as const;
 
@@ -511,7 +515,12 @@ export default function FreeMarketChart({
   }, [ready, bars, chartType, overlays, overlaysKey, lowerPanels, lowerKey]);
 
   return (
-    <div className={`overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a12] ${className}`}>
+    <ChartFullscreenShell
+      title={`${symbol}${etf?.name ? ` — ${etf.name}` : ""}`}
+      subtitle="Market chart · DataCaptain"
+      className={className}
+    >
+      <FreeMarketChartFrame className="overflow-hidden rounded-2xl border border-white/10 bg-[#0a0a12]">
       {/* Symbol picker */}
       <div className="flex flex-wrap items-center gap-2 border-b border-white/10 px-3 py-3 sm:px-4">
         <span className="text-[10px] font-medium uppercase tracking-wider text-white/35">
@@ -707,12 +716,65 @@ export default function FreeMarketChart({
       </div>
 
       {/* Chart body — container always mounted so LWC can initialize */}
-      <div className="relative min-h-[320px]">
+      <FreeMarketChartCanvas
+        containerRef={containerRef}
+        chartRef={chartRef}
+        tooltip={tooltip}
+        loading={loading}
+        error={error}
+        fetchData={fetchData}
+      />
+      </FreeMarketChartFrame>
+    </ChartFullscreenShell>
+  );
+}
+
+function FreeMarketChartFrame({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const { open } = useChartFullscreen();
+  return (
+    <div className={`${className ?? ""} ${open ? "flex h-full min-h-0 flex-col border-0" : ""}`}>
+      {children}
+    </div>
+  );
+}
+
+function FreeMarketChartCanvas({
+  containerRef,
+  chartRef,
+  tooltip,
+  loading,
+  error,
+  fetchData,
+}: {
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  chartRef: React.MutableRefObject<IChartApi | null>;
+  tooltip: TooltipState;
+  loading: boolean;
+  error: string | null;
+  fetchData: () => void;
+}) {
+  const { open } = useChartFullscreen();
+  useEffect(() => {
+    const id = window.setTimeout(() => window.dispatchEvent(new Event("resize")), 60);
+    return () => window.clearTimeout(id);
+  }, [open]);
+
+  return (
+      <div className={`relative min-h-[320px] ${open ? "min-h-0 flex-1" : ""}`}>
         <div
           ref={containerRef}
-          className={`h-[380px] w-full sm:h-[460px] ${loading || error ? "opacity-0" : ""}`}
+          className={`w-full ${loading || error ? "opacity-0" : ""} ${
+            open ? "h-full min-h-[420px]" : "h-[380px] sm:h-[460px]"
+          }`}
           onDoubleClick={() => chartRef.current?.timeScale().fitContent()}
         />
+        <ChartFullscreenToggle />
         {tooltip && !loading && !error ? (
           <div
             className="pointer-events-none absolute z-20 min-w-[148px] rounded-lg border border-white/15 bg-[#0b0b14]/95 px-3 py-2 text-xs shadow-xl backdrop-blur"
@@ -752,6 +814,5 @@ export default function FreeMarketChart({
           </div>
         ) : null}
       </div>
-    </div>
   );
 }
