@@ -46,6 +46,7 @@ function EndpointCard({ ep, index }: { ep: ApiEndpoint; index: number }) {
   const fullUrl = `${API_BASE_URL}${examplePath}${ep.query || ""}`;
   const pathParams = ep.params.filter((p) => p.in === "path");
   const queryParams = ep.params.filter((p) => p.in === "query");
+  const bodyParams = ep.params.filter((p) => p.in === "body" || (!p.in && ep.method !== "GET"));
 
   const copyUrl = useCallback(() => {
     navigator.clipboard.writeText(fullUrl);
@@ -68,8 +69,17 @@ function EndpointCard({ ep, index }: { ep: ApiEndpoint; index: number }) {
           </span>
           <code className="truncate font-mono text-sm text-white/90">
             {ep.path}
-            {ep.query && <span className="text-amber-300/80">{ep.query}</span>}
+            {ep.query && <span className="text-amber-300/80">?{ep.query.replace(/^\?/, "")}</span>}
           </code>
+          {ep.plan === "paid" ? (
+            <span className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-300">
+              Paid
+            </span>
+          ) : ep.plan === "free" ? (
+            <span className="rounded-md border border-emerald-500/25 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide text-emerald-300/90">
+              Free
+            </span>
+          ) : null}
         </div>
         <div className="flex items-center gap-2">
           {ep.cache && (
@@ -90,13 +100,16 @@ function EndpointCard({ ep, index }: { ep: ApiEndpoint; index: number }) {
       <div className="p-4 space-y-4">
         <p className="text-sm leading-relaxed text-white/55">{ep.description}</p>
 
-        {(pathParams.length > 0 || queryParams.length > 0) && (
+        {(pathParams.length > 0 || queryParams.length > 0 || bodyParams.length > 0) && (
           <div className="grid gap-3 sm:grid-cols-2">
             {pathParams.length > 0 && (
               <ParamBlock title="Path" params={pathParams} />
             )}
             {queryParams.length > 0 && (
               <ParamBlock title="Query" params={queryParams} />
+            )}
+            {bodyParams.length > 0 && (
+              <ParamBlock title="Body" params={bodyParams} />
             )}
           </div>
         )}
@@ -202,7 +215,7 @@ export default function ApiDocsView() {
           <p className="text-xs font-medium uppercase tracking-widest text-indigo-300/80">DataCaptain API</p>
           <h1 className="mt-1 text-2xl font-semibold sm:text-3xl">API Documentation</h1>
           <p className="mt-2 max-w-2xl text-sm text-white/55 sm:text-base">
-            REST endpoints for US ETF data — universe, batch prices, market status, backtesting, and developer usage.
+            REST endpoints for US ETF data — universe, heatmap, screener, rankings, backtesting, portfolio, and developer usage.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <a

@@ -7,15 +7,21 @@ import { API_BASE_URL, API_DOC_SECTIONS, SECTION_LABELS, WEBSOCKET_DOC, type Api
 
 function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
   const pathForUrl = ep.path.replace(/:symbol/g, "SPY").replace(/:\w+/g, "VALUE");
-  const fullUrl = `${baseUrl}${pathForUrl}${ep.query || ""}`;
+  const qs = ep.query ? (ep.query.startsWith("?") ? ep.query : `?${ep.query}`) : "";
+  const fullUrl = `${baseUrl}${pathForUrl}${qs}`;
   return (
     <div className="rounded-xl border border-white/5 bg-black/20 p-4">
       <div className="flex flex-wrap items-center gap-2">
         <span className="rounded bg-emerald-500/20 px-2 py-0.5 text-xs font-medium text-emerald-400">{ep.method}</span>
         <code className="font-mono text-sm text-white/90">
           {ep.path}
-          {ep.query || ""}
+          {qs ? <span className="text-amber-300/80">{qs}</span> : null}
         </code>
+        {ep.plan === "paid" ? (
+          <span className="rounded bg-amber-500/15 px-2 py-0.5 text-xs text-amber-300">Paid</span>
+        ) : ep.plan === "free" ? (
+          <span className="rounded bg-emerald-500/15 px-2 py-0.5 text-xs text-emerald-300/90">Free</span>
+        ) : null}
         {ep.cache && (
           <span className="rounded bg-white/10 px-2 py-0.5 text-xs text-white/50">cache: {ep.cache}</span>
         )}
