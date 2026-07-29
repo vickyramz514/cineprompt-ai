@@ -93,9 +93,19 @@ export type EtfItem = {
 export type EtfListStats = {
   totalEtfs: number;
   withHistory: number;
+  priceBars?: number;
   categories: number;
   avgVolume: number | null;
   asOf: string | null;
+};
+
+export type MarketMover = {
+  symbol: string;
+  price: number;
+  change?: number;
+  change_percent?: number;
+  changePercent?: number;
+  total_volume?: number;
 };
 
 export type EtfListResponse = {
@@ -491,6 +501,15 @@ export const datacaptainEndpoints = {
 
   marketStatus: (key: string | null) =>
     datacaptainFetch<MarketStatus>("/market/status", key),
+
+  topGainers: (key: string | null, limit = 5) =>
+    datacaptainFetch<MarketMover[]>("/market/top-gainers", key, { limit: String(limit) }),
+
+  topLosers: (key: string | null, limit = 5) =>
+    datacaptainFetch<MarketMover[]>("/market/top-losers", key, { limit: String(limit) }),
+
+  mostActive: (key: string | null, limit = 5) =>
+    datacaptainFetch<MarketMover[]>("/market/most-active", key, { limit: String(limit) }),
 
   batchPrices: (key: string | null, symbols: string) =>
     datacaptainFetch<BatchPrice[]>("/stocks/prices", key, { symbols }),

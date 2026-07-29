@@ -30,6 +30,9 @@ export const FREE_PLAN_FEATURES: PlanFeature[] = [
 export const FREE_API_PATHS = new Set([
   "/developer/usage",
   "/market/status",
+  "/market/top-gainers",
+  "/market/top-losers",
+  "/market/most-active",
   "/stocks/prices",
   "/etf/list",
   "/etf/heatmap",

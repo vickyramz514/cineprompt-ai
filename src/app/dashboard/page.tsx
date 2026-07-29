@@ -7,36 +7,58 @@ import { useDataCaptainKey } from "@/hooks/useDataCaptain";
 import {
   datacaptainEndpoints,
   getDataCaptainErrorMessage,
-  type BatchPrice,
   type DeveloperUsage,
   type EtfHeatmapCell,
+  type EtfListStats,
   type EtfRankingsRow,
   type MarketStatus,
 } from "@/services/datacaptain/endpoints";
 import FreeTierUpgradeBanner from "@/components/dashboard/FreeTierUpgradeBanner";
 import CompactApiKeyCard from "@/components/dev-dashboard/CompactApiKeyCard";
 import HeroOverviewCards from "@/components/dev-dashboard/HeroOverviewCards";
+import FeaturedMarket from "@/components/dev-dashboard/FeaturedMarket";
+import type { SnapshotCard } from "@/components/dev-dashboard/MarketSnapshot";
+import PopularEtfs, { type PopularEtfCard } from "@/components/dev-dashboard/PopularEtfs";
+import HeatmapPreview from "@/components/dev-dashboard/HeatmapPreview";
+import FeatureDiscovery from "@/components/dev-dashboard/FeatureDiscovery";
 import UsageChartPanel from "@/components/dev-dashboard/UsageChartPanel";
 import EndpointAnalytics from "@/components/dev-dashboard/EndpointAnalytics";
-import MarketOverview from "@/components/dev-dashboard/MarketOverview";
-import HeatmapPreview from "@/components/dev-dashboard/HeatmapPreview";
-import TrendingEtfs from "@/components/dev-dashboard/TrendingEtfs";
-import RecentApiActivity from "@/components/dev-dashboard/RecentApiActivity";
+import RecentlyUpdatedEtfs, {
+  type RecentEtfRow,
+} from "@/components/dev-dashboard/RecentlyUpdatedEtfs";
+import PlatformTimeline from "@/components/dev-dashboard/PlatformTimeline";
 import QuickActionsGrid from "@/components/dev-dashboard/QuickActionsGrid";
-import ApiHealthCards from "@/components/dev-dashboard/ApiHealthCards";
-import GettingStartedChecklist from "@/components/dev-dashboard/GettingStartedChecklist";
-import DeveloperUpdates from "@/components/dev-dashboard/DeveloperUpdates";
 import FavoriteEtfsStrip from "@/components/dev-dashboard/FavoriteEtfsStrip";
+import { formatCompact } from "@/lib/heatmap/colors";
 
-const BENCHMARKS = "SPY,QQQ,DIA,VTI";
+const POPULAR = ["SPY", "QQQ", "DIA", "VTI", "VOO", "XLK", "XLE", "ARKK"] as const;
+
+function relativeUpdated(iso?: string | null) {
+  if (!iso) return "—";
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return String(iso).slice(0, 16);
+  const mins = Math.max(0, Math.round((Date.now() - t) / 60000));
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 48) return `${hrs}h ago`;
+  return new Date(t).toLocaleDateString();
+}
+
+function moverPct(m: { change_percent?: number; changePercent?: number }) {
+  const v = m.change_percent ?? m.changePercent;
+  return typeof v === "number" ? v : null;
+}
 
 export default function DashboardPage() {
   const { apiKey, saveKey } = useDataCaptainKey();
   const [usage, setUsage] = useState<DeveloperUsage | null>(null);
   const [marketStatus, setMarketStatus] = useState<MarketStatus | null>(null);
-  const [prices, setPrices] = useState<BatchPrice[]>([]);
+  const [stats, setStats] = useState<EtfListStats | null>(null);
   const [heatmap, setHeatmap] = useState<EtfHeatmapCell[]>([]);
-  const [trending, setTrending] = useState<EtfRankingsRow[]>([]);
+  const [snapshot, setSnapshot] = useState<SnapshotCard[]>([]);
+  const [popular, setPopular] = useState<PopularEtfCard[]>([]);
+  const [recent, setRecent] = useState<RecentEtfRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [marketLoading, setMarketLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -47,44 +69,170 @@ export default function DashboardPage() {
       setMarketLoading(false);
       setUsage(null);
       setMarketStatus(null);
-      setPrices([]);
+      setStats(null);
       setHeatmap([]);
-      setTrending([]);
+      setSnapshot([]);
+      setPopular([]);
+      setRecent([]);
       return;
     }
+
     setLoading(true);
     setMarketLoading(true);
     setError(null);
+
     try {
-      const [usageRes, marketRes] = await Promise.all([
+      const [usageRes, marketRes, listRes] = await Promise.all([
         datacaptainEndpoints.developerUsage(apiKey),
         datacaptainEndpoints.marketStatus(apiKey),
+        datacaptainEndpoints.etfList(apiKey, { limit: "12", sort: "volume", sortDir: "desc" }),
       ]);
       setUsage(usageRes);
       setMarketStatus(marketRes);
+      setStats(listRes.stats ?? null);
+
+      const recentRows: RecentEtfRow[] = (listRes.data ?? []).slice(0, 10).map((e) => ({
+        symbol: e.symbol,
+        name: e.name,
+        updated: listRes.stats?.asOf ?? null,
+        price: e.price,
+        changePct: e.change1d ?? e.returnYtd ?? null,
+      }));
+      setRecent(recentRows);
     } catch (err) {
       setError(getDataCaptainErrorMessage(err));
     } finally {
       setLoading(false);
-      setMarketLoading(false);
     }
 
-    // Secondary widgets — fail soft
     try {
-      const [priceRes, heatRes, rankRes] = await Promise.all([
-        datacaptainEndpoints.batchPrices(apiKey, BENCHMARKS).catch(() => [] as BatchPrice[]),
-        datacaptainEndpoints
-          .etfHeatmap(apiKey, { basket: "broad", period: "1y" })
-          .catch(() => null),
-        datacaptainEndpoints
-          .etfRankings(apiKey, { metric: "return", period: "1y", limit: "6" })
-          .catch(() => null),
-      ]);
-      setPrices(Array.isArray(priceRes) ? priceRes : []);
+      const [heatRes, gainers, losers, active, volRank, yieldRank, aumRank, popHeat] =
+        await Promise.all([
+          datacaptainEndpoints
+            .etfHeatmap(apiKey, { basket: "broad", period: "1d" })
+            .catch(() => null),
+          datacaptainEndpoints.topGainers(apiKey, 1).catch(() => [] as Awaited<ReturnType<typeof datacaptainEndpoints.topGainers>>),
+          datacaptainEndpoints.topLosers(apiKey, 1).catch(() => [] as Awaited<ReturnType<typeof datacaptainEndpoints.topLosers>>),
+          datacaptainEndpoints.mostActive(apiKey, 1).catch(() => [] as Awaited<ReturnType<typeof datacaptainEndpoints.mostActive>>),
+          datacaptainEndpoints
+            .etfRankings(apiKey, { metric: "volatility", period: "1y", limit: "1" })
+            .catch(() => null),
+          datacaptainEndpoints
+            .etfRankings(apiKey, { metric: "yield", period: "1y", limit: "1" })
+            .catch(() => null),
+          datacaptainEndpoints
+            .etfRankings(apiKey, { metric: "aum", period: "1y", limit: "1" })
+            .catch(() => null),
+          datacaptainEndpoints
+            .etfHeatmap(apiKey, {
+              symbols: POPULAR.join(","),
+              period: "1d",
+            })
+            .catch(() => null),
+        ]);
+
       setHeatmap(heatRes?.cells ?? []);
-      setTrending(rankRes?.data ?? []);
+
+      const pickRank = (
+        rows: EtfRankingsRow[] | null | undefined,
+        pctPick: (r: EtfRankingsRow) => number | null | undefined
+      ): SnapshotCard | null => {
+        const r = rows?.[0];
+        if (!r) return null;
+        return {
+          label: "",
+          symbol: r.symbol,
+          price: r.latestPrice,
+          changePct: pctPick(r) ?? null,
+          sparkline: r.sparkline,
+        };
+      };
+
+      const g = Array.isArray(gainers) ? gainers[0] : null;
+      const l = Array.isArray(losers) ? losers[0] : null;
+      const a = Array.isArray(active) ? active[0] : null;
+      const vol = pickRank(volRank?.data, (r) => r.volatility1y);
+      const yld = pickRank(yieldRank?.data, (r) => r.dividendYieldTtm);
+      const held = pickRank(aumRank?.data, (r) => r.return1d ?? r.return1y);
+
+      const cards: SnapshotCard[] = [
+        g
+          ? {
+              label: "Top Gainer",
+              symbol: g.symbol,
+              price: g.price,
+              changePct: moverPct(g),
+              sparkline: heatRes?.cells?.find((c) => c.symbol === g.symbol)?.sparkline,
+            }
+          : null,
+        l
+          ? {
+              label: "Top Loser",
+              symbol: l.symbol,
+              price: l.price,
+              changePct: moverPct(l),
+              sparkline: heatRes?.cells?.find((c) => c.symbol === l.symbol)?.sparkline,
+            }
+          : null,
+        a
+          ? {
+              label: "Highest Volume",
+              symbol: a.symbol,
+              price: a.price,
+              changePct: moverPct(a),
+              sparkline: heatRes?.cells?.find((c) => c.symbol === a.symbol)?.sparkline,
+            }
+          : null,
+        vol ? { ...vol, label: "Most Volatile", changePct: vol.changePct } : null,
+        yld ? { ...yld, label: "Best Dividend", changePct: yld.changePct } : null,
+        held ? { ...held, label: "Most Held (AUM)", changePct: held.changePct } : null,
+      ].filter(Boolean) as SnapshotCard[];
+
+      // Fallback from heatmap if movers empty
+      if (!cards.length && heatRes?.cells?.length) {
+        const sorted = [...heatRes.cells].sort(
+          (x, y) => (y.returnPct ?? -999) - (x.returnPct ?? -999)
+        );
+        const top = sorted[0];
+        const bot = sorted[sorted.length - 1];
+        if (top) {
+          cards.push({
+            label: "Top Gainer",
+            symbol: top.symbol,
+            price: top.latestPrice,
+            changePct: top.returnPct,
+            sparkline: top.sparkline,
+          });
+        }
+        if (bot && bot.symbol !== top?.symbol) {
+          cards.push({
+            label: "Top Loser",
+            symbol: bot.symbol,
+            price: bot.latestPrice,
+            changePct: bot.returnPct,
+            sparkline: bot.sparkline,
+          });
+        }
+      }
+
+      setSnapshot(cards);
+
+      const popCells = popHeat?.cells ?? [];
+      const popItems: PopularEtfCard[] = POPULAR.map((sym) => {
+        const cell = popCells.find((c) => c.symbol === sym);
+        return {
+          symbol: sym,
+          name: cell?.name,
+          price: cell?.latestPrice ?? null,
+          changePct: cell?.returnPct ?? cell?.return1d ?? null,
+          sparkline: cell?.sparkline,
+        };
+      });
+      setPopular(popItems);
     } catch {
       /* optional widgets */
+    } finally {
+      setMarketLoading(false);
     }
   }, [apiKey]);
 
@@ -100,55 +248,64 @@ export default function DashboardPage() {
   );
 
   const heroCards = useMemo(() => {
-    const asOf =
-      marketStatus?.asOf ||
-      (usage?.asOf ? new Date(usage.asOf).toLocaleString() : "—");
+    const open = marketStatus?.status === "OPEN";
+    const bars = stats?.priceBars ?? 0;
     return [
       {
-        label: "API Requests Today",
+        label: "Requests Today",
         value: usage?.requestsToday ?? 0,
         numeric: true,
-        sub: `of ${usage?.dailyLimit ?? "—"} daily`,
+        sub: `of ${usage?.dailyLimit?.toLocaleString() ?? "—"} daily`,
         accent: "text-indigo-300",
+        icon: "requests",
       },
       {
-        label: "Monthly Requests",
+        label: "Monthly",
         value: usage?.requestsThisMonth ?? 0,
         numeric: true,
-        sub: usage?.monthlyLimit ? `limit ~${usage.monthlyLimit}` : undefined,
+        sub: usage?.monthlyLimit ? `limit ~${formatCompact(usage.monthlyLimit)}` : "this month",
         accent: "text-cyan-300",
+        icon: "monthly",
       },
       {
-        label: "Active API Key",
-        value: apiKey ? "Connected" : "None",
-        accent: apiKey ? "text-emerald-300" : "text-amber-300",
-      },
-      {
-        label: "Current Plan",
-        value: usage?.plan ? String(usage.plan) : "—",
+        label: "Available ETFs",
+        value: stats?.totalEtfs ?? 0,
+        numeric: true,
+        sub: stats?.withHistory ? `${stats.withHistory.toLocaleString()} with history` : "universe",
         accent: "text-violet-300",
+        icon: "etfs",
       },
       {
-        label: "Market Status",
+        label: "Price History",
+        value: bars > 0 ? formatCompact(bars) : "—",
+        sub: bars > 0 ? "OHLCV records" : "loading…",
+        accent: "text-amber-200",
+        icon: "history",
+      },
+      {
+        label: "Market",
         value: marketStatus?.status ?? "—",
         sub: marketStatus?.session ?? undefined,
-        accent: marketStatus?.status === "OPEN" ? "text-emerald-300" : "text-white",
+        accent: open ? "text-emerald-300" : "text-white/80",
+        icon: "market",
       },
       {
-        label: "Data Last Updated",
-        value: typeof asOf === "string" ? asOf.slice(0, 16) : "—",
-        accent: "text-white/80",
+        label: "Updated",
+        value: relativeUpdated(marketStatus?.asOf || stats?.asOf),
+        sub: "market data",
+        accent: "text-white/85",
+        icon: "updated",
       },
     ];
-  }, [usage, apiKey, marketStatus]);
+  }, [usage, stats, marketStatus]);
 
   return (
-    <div className="mx-auto max-w-[1400px] space-y-8 pb-16">
+    <div className="mx-auto max-w-[1440px] space-y-8 pb-16">
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-xs font-medium uppercase tracking-widest text-indigo-300/80">Overview</p>
-        <h1 className="mt-1 text-3xl font-bold sm:text-4xl">Developer Dashboard</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">Developer Dashboard</h1>
         <p className="mt-2 max-w-2xl text-white/55">
-          Analytics, market pulse, and shortcuts — built for shipping with the Data Captain ETF API.
+          Live ETF markets, charts, and API tools — open this every day to explore DataCaptain data.
         </p>
       </motion.div>
 
@@ -167,29 +324,24 @@ export default function DashboardPage() {
 
       <HeroOverviewCards cards={heroCards} loading={loading && !!apiKey} />
 
+      <FeaturedMarket apiKey={apiKey} snapshot={snapshot} snapshotLoading={marketLoading} />
+
+      <PopularEtfs items={popular} loading={marketLoading} />
+
+      <HeatmapPreview cells={heatmap} loading={marketLoading} />
+
+      <FeatureDiscovery />
+
       <div className="grid gap-6 lg:grid-cols-2">
         <UsageChartPanel usage={usage} />
         <EndpointAnalytics usage={usage} />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <MarketOverview prices={prices} status={marketStatus} loading={marketLoading} />
-        <HeatmapPreview cells={heatmap} loading={loading} />
-      </div>
+      <RecentlyUpdatedEtfs rows={recent} loading={loading} />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        <TrendingEtfs rows={trending} loading={loading} />
-        <RecentApiActivity usage={usage} />
-      </div>
+      <PlatformTimeline />
 
       <QuickActionsGrid />
-
-      <ApiHealthCards usage={usage} />
-
-      <div className="grid gap-6 lg:grid-cols-2">
-        <GettingStartedChecklist hasKey={!!apiKey} />
-        <DeveloperUpdates />
-      </div>
 
       <FavoriteEtfsStrip />
     </div>
