@@ -8,13 +8,14 @@ import {
   datacaptainEndpoints,
   getDataCaptainErrorMessage,
   type EtfDetail,
+  type MarketStatus,
   type StockNewsArticle,
   type StockSentiment,
 } from "@/services/datacaptain/endpoints";
 import { getPublicApiOrigin } from "@/lib/public-env";
 import { formatCompact, formatPct, pushRecentEtf } from "@/lib/explorer/helpers";
 import { loadFavorites, toggleFavorite } from "@/lib/screener/storage";
-import ExplorerPriceChart from "@/components/explorer/ExplorerPriceChart";
+import EtfResearchChart from "@/components/explorer/EtfResearchChart";
 import ExplorerDividendChart from "@/components/explorer/ExplorerDividendChart";
 import SentimentMeter from "@/components/SentimentMeter";
 import ScreenerCompareModal from "@/components/screener/ScreenerCompareModal";
@@ -28,6 +29,7 @@ export default function EtfDetailView({ symbol }: EtfDetailViewProps) {
   const [etf, setEtf] = useState<EtfDetail | null>(null);
   const [sentiment, setSentiment] = useState<StockSentiment | null>(null);
   const [news, setNews] = useState<StockNewsArticle[]>([]);
+  const [marketStatus, setMarketStatus] = useState<MarketStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [favorited, setFavorited] = useState(false);
@@ -43,14 +45,16 @@ export default function EtfDetailView({ symbol }: EtfDetailViewProps) {
     setLoading(true);
     setError(null);
     try {
-      const [etfData, sentimentData, newsData] = await Promise.all([
+      const [etfData, sentimentData, newsData, statusData] = await Promise.all([
         datacaptainEndpoints.etfBySymbol(apiKey, symbol),
         datacaptainEndpoints.sentiment(apiKey, symbol).catch(() => null),
         datacaptainEndpoints.stockNews(apiKey, symbol, { limit: "8" }).catch(() => null),
+        datacaptainEndpoints.marketStatus(apiKey).catch(() => null),
       ]);
       setEtf(etfData);
       setSentiment(sentimentData);
       setNews(newsData?.articles ?? []);
+      setMarketStatus(statusData);
       pushRecentEtf(symbol);
     } catch (err) {
       setError(getDataCaptainErrorMessage(err));
@@ -216,7 +220,14 @@ export default function EtfDetailView({ symbol }: EtfDetailViewProps) {
             </div>
           </motion.section>
 
-          <ExplorerPriceChart history={etf.history ?? []} symbol={etf.symbol} />
+          <EtfResearchChart
+            symbol={etf.symbol}
+            history={etf.history ?? []}
+            dividends={etf.dividends}
+            performance={etf.performance}
+            marketStatus={marketStatus}
+            asOf={etf.asOf ?? etf.date}
+          />
 
           <section>
             <h2 className="text-sm font-medium uppercase tracking-wider text-white/40">Key metrics</h2>
