@@ -75,13 +75,10 @@ export const SIDEBAR_SECTIONS: SidebarSection[] = [
     title: "Account",
     items: [
       { href: "/dashboard/wallet", label: "Billing", icon: "billing" },
-      { href: "/dashboard/referral", label: "Referrals", icon: "referral" },
       { href: "/dashboard/support", label: "Support", icon: "support" },
-      { href: "/dashboard/notifications", label: "Notifications", icon: "bell" },
       { href: "/dashboard/profile", label: "Profile", icon: "profile" },
     ],
   },
 ];
-
 /** @deprecated Use SIDEBAR_SECTIONS */
 export const SIDEBAR_NAV = SIDEBAR_SECTIONS.flatMap((s) => s.items);

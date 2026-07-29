@@ -9,6 +9,7 @@ import { SIDEBAR_SECTIONS, type SidebarIcon } from "@/lib/sidebar-nav";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import { APP_VERSION } from "@/lib/brand";
 
 const ICON_PATHS: Record<SidebarIcon, string> = {
   dashboard:
@@ -54,8 +55,8 @@ function NavIcon({ name, active }: { name: SidebarIcon; active: boolean }) {
     <span
       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
         active
-          ? "bg-indigo-500/25 text-indigo-300"
-          : "bg-white/5 text-white/50 group-hover:bg-white/10 group-hover:text-white/80"
+          ? "bg-cyan-500/20 text-cyan-300 ring-1 ring-cyan-400/25"
+          : "bg-white/[0.04] text-white/45 group-hover:bg-white/[0.08] group-hover:text-white/80"
       }`}
     >
       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
@@ -102,19 +103,23 @@ function NavLink({
     <Link
       href={href}
       onClick={onNavigate}
-      className={`group relative flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium transition-colors ${
-        isActive ? "text-white" : locked ? "text-white/40 hover:text-white/65" : "text-white/55 hover:text-white/90"
+      className={`group relative flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition-all duration-200 ${
+        isActive
+          ? "text-white"
+          : locked
+            ? "text-white/35 hover:text-white/60"
+            : "text-white/55 hover:text-white/90"
       }`}
     >
       {isActive && (
         <motion.span
           layoutId="sidebar-active"
-          className="absolute inset-0 rounded-xl border border-indigo-500/25 bg-gradient-to-r from-indigo-500/20 to-indigo-500/5 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
+          className="absolute inset-0 rounded-xl border border-cyan-500/20 bg-gradient-to-r from-indigo-500/25 via-violet-500/10 to-transparent shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)]"
           transition={{ type: "spring", stiffness: 380, damping: 32 }}
         />
       )}
       {isActive && (
-        <span className="absolute left-0 top-1/2 h-6 w-0.5 -translate-y-1/2 rounded-full bg-indigo-400" />
+        <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-gradient-to-b from-cyan-300 to-indigo-400" />
       )}
       <span className="relative">
         <NavIcon name={icon} active={isActive} />
@@ -122,18 +127,9 @@ function NavLink({
       <span className="relative flex min-w-0 flex-1 items-center justify-between gap-2 truncate">
         <span className="truncate">{label}</span>
         {premium && locked && (
-          <svg
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            className="h-3.5 w-3.5 shrink-0 text-amber-400/80"
-            aria-label="Paid plan required"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 1a4.5 4.5 0 0 0-2.45 8.26v2.07a1 1 0 0 0 .55.9l3.5 1.75a1 1 0 0 0 .9 0l3.5-1.75a1 1 0 0 0 .55-.9v-2.07A4.5 4.5 0 0 0 10 1Zm2.45 6.76a2.45 2.45 0 1 0-4.9 0 2.45 2.45 0 0 0 4.9 0ZM8.26 12.74v1.52l1.74.87 1.74-.87v-1.52H8.26Z"
-              clipRule="evenodd"
-            />
-          </svg>
+          <span className="rounded-md border border-amber-500/20 bg-amber-500/10 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-amber-300/90">
+            Pro
+          </span>
         )}
       </span>
     </Link>
@@ -189,32 +185,59 @@ export default function Sidebar() {
       </AnimatePresence>
 
       <aside
-        className={`fixed left-0 top-0 z-50 flex h-screen w-[17.5rem] flex-col border-r border-white/10 bg-[#08080e]/98 backdrop-blur-xl transition-transform duration-300 ease-out ${
+        className={`fixed left-0 top-0 z-50 flex h-screen w-[17.5rem] flex-col border-r border-white/[0.08] bg-[#07070c]/95 backdrop-blur-2xl transition-transform duration-300 ease-out ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0`}
       >
         <div
-          className="pointer-events-none absolute inset-0 opacity-40"
+          className="pointer-events-none absolute inset-0 opacity-30"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)",
-            backgroundSize: "20px 20px",
+              "radial-gradient(ellipse 80% 40% at 0% 0%, rgba(99,102,241,0.18), transparent 55%), linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+            backgroundSize: "auto, 22px 22px, 22px 22px",
           }}
         />
 
-        {/* Header: logo + close (mobile) */}
-        <div className="relative border-b border-white/10 bg-gradient-to-b from-indigo-500/10 to-transparent px-4 py-3">
+        {/* Header: logo left · version + logout top-right */}
+        <div className="relative border-b border-white/[0.08] px-3 py-3">
           <div className="flex items-center justify-between gap-2">
             <DataCaptainLogo variant="sidebar" href="/dashboard" />
+
             <div className="flex items-center gap-1">
+              <span
+                className="rounded-md border border-white/10 bg-white/[0.04] px-1.5 py-0.5 font-mono text-[10px] font-medium tabular-nums text-white/45"
+                title={`DataCaptain v${APP_VERSION}`}
+              >
+                v{APP_VERSION}
+              </span>
+
               <ThemeToggle compact />
+
+              {user && (
+                <button
+                  type="button"
+                  onClick={() => logout()}
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] text-white/55 transition hover:border-rose-500/35 hover:bg-rose-500/15 hover:text-rose-300"
+                  aria-label="Sign out"
+                  title="Sign out"
+                >
+                  <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.9}>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                    />
+                  </svg>
+                </button>
+              )}
+
               <button
                 type="button"
                 onClick={closeMobile}
-                className="rounded-lg p-2 text-white/60 hover:bg-white/10 hover:text-white md:hidden"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white md:hidden"
                 aria-label="Close menu"
               >
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -222,10 +245,10 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <nav className="relative flex-1 overflow-y-auto px-3 py-4">
+        <nav className="relative flex-1 overflow-y-auto px-2.5 py-4 [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.12)_transparent]">
           {SIDEBAR_SECTIONS.map((section, si) => (
-            <div key={section.title} className={si > 0 ? "mt-6" : ""}>
-              <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+            <div key={section.title} className={si > 0 ? "mt-5" : ""}>
+              <p className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/30">
                 {section.title}
               </p>
               <ul className="flex flex-col gap-0.5">
@@ -243,14 +266,14 @@ export default function Sidebar() {
           ))}
 
           {isAdmin && (
-            <div className="mt-6 border-t border-white/5 pt-4">
-              <p className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-widest text-white/35">
+            <div className="mt-5 border-t border-white/[0.06] pt-4">
+              <p className="mb-1.5 px-2.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/30">
                 Admin
               </p>
               <Link
                 href="/admin/dashboard"
                 onClick={closeMobile}
-                className={`group relative flex items-center gap-3 rounded-xl px-2 py-2 text-sm font-medium transition-colors ${
+                className={`group relative flex items-center gap-3 rounded-xl px-2.5 py-2 text-sm font-medium transition-colors ${
                   pathname.startsWith("/admin")
                     ? "text-amber-200"
                     : "text-white/55 hover:text-white/90"
@@ -266,8 +289,8 @@ export default function Sidebar() {
                 <span
                   className={`relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
                     pathname.startsWith("/admin")
-                      ? "bg-amber-500/20 text-amber-300"
-                      : "bg-white/5 text-white/50 group-hover:bg-white/10"
+                      ? "bg-amber-500/20 text-amber-300 ring-1 ring-amber-400/25"
+                      : "bg-white/[0.04] text-white/45 group-hover:bg-white/[0.08]"
                   }`}
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
@@ -281,50 +304,25 @@ export default function Sidebar() {
         </nav>
 
         {user && (
-          <div className="relative shrink-0 border-t border-white/10 bg-gradient-to-t from-black/50 to-transparent p-3">
+          <div className="relative shrink-0 border-t border-white/[0.08] bg-gradient-to-t from-black/40 to-transparent p-3">
             <Link
               href="/dashboard/profile"
               onClick={closeMobile}
-              className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.03] p-3 transition-colors hover:border-white/10 hover:bg-white/[0.05]"
+              className="group flex items-center gap-3 rounded-xl border border-white/[0.07] bg-gradient-to-br from-white/[0.06] to-transparent p-2.5 transition hover:border-indigo-500/25 hover:from-indigo-500/10"
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/35 to-violet-600/20 text-sm font-semibold text-indigo-100 ring-1 ring-indigo-500/20">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500/40 to-cyan-500/20 text-xs font-semibold text-indigo-50 ring-1 ring-white/10">
                 {(user.name?.[0] || user.email?.[0] || "?").toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-medium text-white">{user.name || "Developer"}</p>
-                <p className="truncate text-xs text-white/45">{user.email}</p>
-                {user.plan && (
-                  <span className="mt-1 inline-block rounded-md bg-indigo-500/15 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-indigo-300/90">
-                    {user.plan}
-                  </span>
-                )}
+                <p className="truncate text-[11px] text-white/40">{user.email}</p>
               </div>
-              <svg
-                className="h-4 w-4 shrink-0 text-white/30"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-                aria-hidden
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
+              {user.plan && (
+                <span className="shrink-0 rounded-md border border-indigo-400/20 bg-indigo-500/15 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-indigo-200">
+                  {user.plan}
+                </span>
+              )}
             </Link>
-
-            <button
-              type="button"
-              onClick={() => logout()}
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white/75 transition-colors hover:border-red-500/30 hover:bg-red-500/10 hover:text-red-300"
-            >
-              <svg className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.75}>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
-                />
-              </svg>
-              Sign out
-            </button>
           </div>
         )}
       </aside>

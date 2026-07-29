@@ -31,3 +31,6 @@ export const LOGO_TEXT_CLASS: Record<LogoVariant, string> = {
 };
 
 export const SITE_HEADER_OFFSET = "pt-[4.25rem]";
+
+/** App version shown in dashboard chrome */
+export const APP_VERSION = "0.1.0";
