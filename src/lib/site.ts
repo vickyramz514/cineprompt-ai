@@ -6,7 +6,7 @@ export const SUPPORT_EMAIL =
   process.env.NEXT_PUBLIC_SUPPORT_EMAIL?.trim() || "support@datacaptain.in";
 
 export const SALES_EMAIL =
-  process.env.NEXT_PUBLIC_SALES_EMAIL?.trim() || "sales@datacaptain.com";
+  process.env.NEXT_PUBLIC_SALES_EMAIL?.trim() || "support@datacaptain.in";
 
 export const STATUS_PAGE_PATH = "/status";
 

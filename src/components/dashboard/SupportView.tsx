@@ -215,7 +215,7 @@ export default function SupportView() {
           <p className="mt-0.5 text-xl font-semibold tabular-nums text-indigo-200">{total}</p>
         </div>
         <a
-          href="mailto:sales@datacaptain.com?subject=Support%20—%20Enterprise"
+          href="mailto:support@datacaptain.in?subject=Support%20—%20Enterprise"
           className="ml-auto flex items-center rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-white/60 transition-colors hover:border-white/20 hover:text-white/80"
         >
           Email sales for enterprise →
