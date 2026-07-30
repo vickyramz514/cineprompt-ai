@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
+import SupportDataCaptain from "@/components/support/SupportDataCaptain";
 import { SUPPORT_EMAIL, SALES_EMAIL, STATUS_PAGE_PATH, mailtoSupport, mailtoSales } from "@/lib/site";
 
 export default function Footer() {
@@ -57,6 +58,9 @@ export default function Footer() {
           </div>
           <div>
             <h3 className="mb-3 text-sm font-semibold text-white/80">Support</h3>
+            <div className="mb-4">
+              <SupportDataCaptain variant="footer" />
+            </div>
             <ul className="space-y-2 text-sm text-white/60">
               <li>
                 <a href={mailtoSupport()} className="hover:text-white">

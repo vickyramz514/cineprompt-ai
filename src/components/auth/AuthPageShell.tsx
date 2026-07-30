@@ -5,6 +5,7 @@ import Link from "next/link";
 import AuthMarketChartBackdrop from "@/components/landing/AuthMarketChartBackdrop";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
+import SupportDataCaptain from "@/components/support/SupportDataCaptain";
 
 const AUTH_LINKS = [
   { href: "/", label: "Home" },
@@ -33,6 +34,7 @@ export default function AuthPageShell({ children }: { children: ReactNode }) {
                 {item.label}
               </Link>
             ))}
+            <SupportDataCaptain variant="header" />
             <ThemeToggle compact />
           </nav>
         </div>

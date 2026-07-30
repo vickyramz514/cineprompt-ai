@@ -126,6 +126,25 @@ html[data-theme="ocean"] .bg-indigo-500\/25 {
   background-color: var(--dc-accent-soft) !important;
 }
 
+html[data-theme="light"] {
+  color-scheme: light;
+  --background: #f3f5fa;
+  --foreground: #0f172a;
+  --dc-bg: #f3f5fa;
+  --dc-elevated: #ffffff;
+  --dc-fg: #0f172a;
+  --dc-muted: rgba(15, 23, 42, 0.58);
+  --dc-border: rgba(15, 23, 42, 0.12);
+  --dc-accent: #4f46e5;
+  --dc-accent-2: #7c3aed;
+  --dc-accent-soft: rgba(79, 70, 229, 0.12);
+  --dc-glow: rgba(79, 70, 229, 0.22);
+  --gradient-hero: linear-gradient(135deg, #f3f5fa 0%, #eef2ff 48%, #f8fafc 100%);
+  --gradient-card: linear-gradient(135deg, rgba(79,70,229,0.05) 0%, rgba(255,255,255,0.95) 100%);
+  --glass: rgba(255, 255, 255, 0.78);
+  --glass-border: rgba(15, 23, 42, 0.1);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
