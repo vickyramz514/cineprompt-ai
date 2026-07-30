@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Sidebar from "@/components/Sidebar";
 import AuthGuard from "@/components/AuthGuard";
 import DashboardProvider from "@/components/DashboardProvider";
+import DashboardSupportBar from "@/components/support/DashboardSupportBar";
 
 export default function DashboardLayout({
   children,
@@ -16,7 +17,10 @@ export default function DashboardLayout({
             <Sidebar />
           </Suspense>
           <main className="min-h-screen md:pl-[17.5rem]">
-            <div className="p-4 pt-16 md:p-6 md:pt-6 lg:p-8">{children}</div>
+            <div className="p-4 pt-16 md:p-6 md:pt-6 lg:p-8">
+              <DashboardSupportBar />
+              {children}
+            </div>
           </main>
         </div>
       </DashboardProvider>

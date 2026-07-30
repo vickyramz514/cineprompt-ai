@@ -9,7 +9,6 @@ import { SIDEBAR_SECTIONS, type SidebarIcon } from "@/lib/sidebar-nav";
 import { usePlanAccess } from "@/hooks/usePlanAccess";
 import DataCaptainLogo from "@/components/DataCaptainLogo";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
-import SupportDataCaptain from "@/components/support/SupportDataCaptain";
 import { APP_VERSION } from "@/lib/brand";
 
 const ICON_PATHS: Record<SidebarIcon, string> = {
@@ -211,8 +210,6 @@ export default function Sidebar() {
               >
                 v{APP_VERSION}
               </span>
-
-              <SupportDataCaptain variant="compact" />
 
               <ThemeToggle compact />
 
