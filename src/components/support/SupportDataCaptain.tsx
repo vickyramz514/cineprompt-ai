@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import SupportDialog from "@/components/support/SupportDialog";
 import { DONATION_CONFIG, DONATION_INFO_COPY } from "@/lib/donation-config";
@@ -51,16 +52,24 @@ export default function SupportDataCaptain({ variant = "header" }: { variant?: V
   return (
     <>
       <div className={styles.wrap}>
-        <button
+        <motion.button
           type="button"
           onClick={() => setDonateOpen(true)}
-          className={styles.button}
+          className={`${styles.button} relative overflow-hidden`}
           aria-haspopup="dialog"
+          animate={{ scale: [1, 1.025, 1] }}
+          transition={{ duration: 1.9, repeat: Infinity, ease: "easeInOut" }}
         >
+          <motion.span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-white/35 to-transparent"
+            animate={{ x: ["0%", "280%"] }}
+            transition={{ duration: 2.4, repeat: Infinity, repeatDelay: 0.7, ease: "easeInOut" }}
+          />
           <span aria-hidden>❤️</span>
           <span className={styles.label}>Support DataCaptain</span>
           {variant === "compact" ? <span className="lg:hidden">Support</span> : null}
-        </button>
+        </motion.button>
         <button
           type="button"
           onClick={() => setInfoOpen(true)}
@@ -109,9 +118,16 @@ export default function SupportDataCaptain({ variant = "header" }: { variant?: V
           </div>
 
           <p className="mt-5 text-sm font-medium text-[var(--dc-fg)]">{DONATION_INFO_COPY.thankYou}</p>
-          <p className="mt-1 text-xs font-medium text-[var(--dc-muted)]">
-            100+ developers already donated.
-          </p>
+          <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-[var(--dc-border)] bg-[color-mix(in_srgb,var(--dc-fg)_4%,transparent)] px-3 py-1.5">
+            <motion.span
+              className="h-2 w-2 rounded-full bg-emerald-400"
+              animate={{ opacity: [0.4, 1, 0.4], scale: [0.9, 1.15, 0.9] }}
+              transition={{ duration: 1.3, repeat: Infinity, ease: "easeInOut" }}
+            />
+            <p className="text-xs font-semibold text-[var(--dc-fg)]">
+              100+ generous developers have supported DataCaptain
+            </p>
+          </div>
         </div>
       </SupportDialog>
     </>
