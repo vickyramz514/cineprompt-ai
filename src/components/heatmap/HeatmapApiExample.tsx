@@ -14,7 +14,7 @@ export default function HeatmapApiExample({
   const origin = getPublicApiOrigin();
 
   const request = useMemo(
-    () => `GET ${origin}/api/etf/heatmap?period=${encodeURIComponent(period)}&basket=${encodeURIComponent(basketId)}`,
+    () => `GET ${origin}/v1/etf/heatmap?period=${encodeURIComponent(period)}&basket=${encodeURIComponent(basketId)}`,
     [origin, period, basketId]
   );
 

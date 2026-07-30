@@ -73,7 +73,7 @@ export default function EtfDetailView({ symbol }: EtfDetailViewProps) {
   }, [symbol]);
 
   const origin = getPublicApiOrigin();
-  const apiExample = `GET ${origin}/api/etf/${symbol.toUpperCase()}\nx-api-key: YOUR_API_KEY`;
+  const apiExample = `GET ${origin}/v1/etf/${symbol.toUpperCase()}\nx-api-key: YOUR_API_KEY`;
 
   const metrics = useMemo(() => {
     if (!etf) return [];

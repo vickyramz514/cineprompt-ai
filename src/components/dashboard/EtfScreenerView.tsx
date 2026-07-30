@@ -275,7 +275,7 @@ export default function EtfScreenerView() {
     for (const [k, v] of Object.entries(params)) {
       if (v) qs.set(k, v);
     }
-    await navigator.clipboard?.writeText(`${origin}/api/etf/screener?${qs.toString()}`);
+    await navigator.clipboard?.writeText(`${origin}/v1/etf/screener?${qs.toString()}`);
     flash("API request copied");
   };
 

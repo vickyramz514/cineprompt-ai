@@ -26,7 +26,7 @@ export function clearApiKey(): void {
 
 function createClient(apiKey: string | null) {
   const client = axios.create({
-    baseURL: `${BASE_URL}/api`,
+    baseURL: `${BASE_URL}/v1`,
     headers: {
       "Content-Type": "application/json",
       ...(apiKey && { "x-api-key": apiKey }),

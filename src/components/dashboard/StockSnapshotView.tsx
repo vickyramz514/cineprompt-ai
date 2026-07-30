@@ -409,7 +409,7 @@ export default function StockSnapshotView({ initialSymbol }: Props) {
             <div className="rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-4 py-3">
               <p className="text-xs font-medium uppercase tracking-wider text-indigo-300/80">API endpoint</p>
               <code className="mt-1 block break-all text-sm text-white/70">
-                GET {baseUrl}/api/stocks/{data.symbol}/snapshot
+                GET {baseUrl}/v1/stocks/{data.symbol}/snapshot
               </code>
               <Link
                 href="/dashboard/api-explorer"

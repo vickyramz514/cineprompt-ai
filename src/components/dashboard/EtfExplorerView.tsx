@@ -531,7 +531,7 @@ export default function EtfExplorerView() {
             type="button"
             onClick={() =>
               navigator.clipboard?.writeText(
-                `GET ${origin}/api/etf/list?limit=48&search=SPY\nx-api-key: YOUR_API_KEY`
+                `GET ${origin}/v1/etf/list?limit=48&search=SPY\nx-api-key: YOUR_API_KEY`
               )
             }
             className="rounded-lg border border-white/15 px-3 py-1 text-xs text-white/70"
@@ -540,7 +540,7 @@ export default function EtfExplorerView() {
           </button>
         </div>
         <pre className="mt-3 overflow-x-auto rounded-xl border border-white/10 bg-black/40 p-4 text-xs text-violet-300/90">
-          {`GET ${origin}/api/etf/list?limit=48&category=technology&sort=return&sortDir=desc`}
+          {`GET ${origin}/v1/etf/list?limit=48&category=technology&sort=return&sortDir=desc`}
         </pre>
       </div>
 

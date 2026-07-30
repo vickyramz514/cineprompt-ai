@@ -175,7 +175,7 @@ export default function ProductShowcaseSection() {
                 <span className="text-emerald-400/90">&quot;x-api-key: YOUR_KEY&quot;</span> \
                 {"\n"}
                 {`  `}
-                <span className="text-indigo-300/90">{API_BASE_URL}/api/etf/list?search=SPY&limit=10</span>
+                <span className="text-indigo-300/90">{API_BASE_URL}/v1/etf/list?search=SPY&limit=10</span>
               </code>
             </pre>
           </div>

@@ -32,10 +32,10 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     primaryCta: { label: "Get free API key", href: "/auth/signup" },
     secondaryCta: { label: "Open API docs", href: "/docs" },
     endpoints: [
-      { method: "GET", path: "/api/etf/list", note: "Paginated ETF universe" },
-      { method: "GET", path: "/api/etf/screener", note: "Filter by performance" },
-      { method: "POST", path: "/api/backtest/buy-and-hold", note: "Simulate returns" },
-      { method: "GET", path: "/api/etf/heatmap", note: "Basket performance" },
+      { method: "GET", path: "/v1/etf/list", note: "Paginated ETF universe" },
+      { method: "GET", path: "/v1/etf/screener", note: "Filter by performance" },
+      { method: "POST", path: "/v1/backtest/buy-and-hold", note: "Simulate returns" },
+      { method: "GET", path: "/v1/etf/heatmap", note: "Basket performance" },
     ],
     features: [
       {
@@ -82,10 +82,10 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     primaryCta: { label: "Get free API key", href: "/auth/signup" },
     secondaryCta: { label: "Read API docs", href: "/docs" },
     endpoints: [
-      { method: "GET", path: "/api/etf/list", note: "Searchable ETF universe" },
-      { method: "GET", path: "/api/stocks/prices", note: "Batch latest prices" },
-      { method: "GET", path: "/api/market/status", note: "US market open/closed" },
-      { method: "GET", path: "/api/stocks/:symbol/price", note: "Single-symbol quote" },
+      { method: "GET", path: "/v1/etf/list", note: "Searchable ETF universe" },
+      { method: "GET", path: "/v1/stocks/prices", note: "Batch latest prices" },
+      { method: "GET", path: "/v1/market/status", note: "US market open/closed" },
+      { method: "GET", path: "/v1/stocks/:symbol/price", note: "Single-symbol quote" },
     ],
     features: [
       {
@@ -114,7 +114,7 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
       },
       {
         q: "How do I start?",
-        a: "Sign up, copy your API key from the dashboard, then call GET /api/etf/list?search=SPY with the x-api-key header.",
+        a: "Sign up, copy your API key from the dashboard, then call GET /v1/etf/list?search=SPY with the x-api-key header.",
       },
     ],
     related: [
@@ -136,10 +136,10 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     primaryCta: { label: "Try backtesting", href: "/backtesting" },
     secondaryCta: { label: "API documentation", href: "/docs" },
     endpoints: [
-      { method: "GET", path: "/api/stocks/:symbol/history", note: "Date-range OHLCV" },
-      { method: "GET", path: "/api/stocks/:symbol/candles", note: "Chart-ready candles" },
-      { method: "POST", path: "/api/backtest/buy-and-hold", note: "Simulate returns from history" },
-      { method: "GET", path: "/api/etf/SPY", note: "Latest price + metadata" },
+      { method: "GET", path: "/v1/stocks/:symbol/history", note: "Date-range OHLCV" },
+      { method: "GET", path: "/v1/stocks/:symbol/candles", note: "Chart-ready candles" },
+      { method: "POST", path: "/v1/backtest/buy-and-hold", note: "Simulate returns from history" },
+      { method: "GET", path: "/v1/etf/SPY", note: "Latest price + metadata" },
     ],
     features: [
       {
@@ -190,9 +190,9 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     primaryCta: { label: "Get API key", href: "/auth/signup" },
     secondaryCta: { label: "Read the docs", href: "/docs" },
     endpoints: [
-      { method: "GET", path: "/api/indicators/:symbol", note: "RSI / SMA / EMA snapshot" },
-      { method: "GET", path: "/api/stocks/:symbol/history", note: "Raw series for custom indicators" },
-      { method: "GET", path: "/api/stocks/:symbol/snapshot", note: "Quote + indicators bundle" },
+      { method: "GET", path: "/v1/indicators/:symbol", note: "RSI / SMA / EMA snapshot" },
+      { method: "GET", path: "/v1/stocks/:symbol/history", note: "Raw series for custom indicators" },
+      { method: "GET", path: "/v1/stocks/:symbol/snapshot", note: "Quote + indicators bundle" },
     ],
     features: [
       {
@@ -245,9 +245,9 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     coverageNote:
       "News coverage is available via API routes and demo data. Depth varies by symbol — verify responses in the API Explorer before relying on news in production.",
     endpoints: [
-      { method: "GET", path: "/api/stocks/:symbol/news", note: "Recent headlines" },
-      { method: "GET", path: "/api/stocks/:symbol/snapshot", note: "Price + news bundle" },
-      { method: "GET", path: "/api/etf/:symbol", note: "Fund metadata" },
+      { method: "GET", path: "/v1/stocks/:symbol/news", note: "Recent headlines" },
+      { method: "GET", path: "/v1/stocks/:symbol/snapshot", note: "Price + news bundle" },
+      { method: "GET", path: "/v1/etf/:symbol", note: "Fund metadata" },
     ],
     features: [
       {
@@ -294,10 +294,10 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     primaryCta: { label: "Get free API key", href: "/auth/signup" },
     secondaryCta: { label: "ETF screener blog", href: "/blog/build-etf-screener-react" },
     endpoints: [
-      { method: "GET", path: "/api/etf/screener", note: "Return / yield / volatility filters" },
-      { method: "GET", path: "/api/etf/rankings", note: "Top performers by category" },
-      { method: "GET", path: "/api/etf/heatmap", note: "Basket performance grid" },
-      { method: "GET", path: "/api/screener", note: "Sector / price / volume filters" },
+      { method: "GET", path: "/v1/etf/screener", note: "Return / yield / volatility filters" },
+      { method: "GET", path: "/v1/etf/rankings", note: "Top performers by category" },
+      { method: "GET", path: "/v1/etf/heatmap", note: "Basket performance grid" },
+      { method: "GET", path: "/v1/screener", note: "Sector / price / volume filters" },
     ],
     features: [
       {
@@ -346,10 +346,10 @@ export const SEO_LANDING_PAGES: SeoLandingPage[] = [
     coverageNote:
       "Data Captain specializes in US ETF prices, backtests, and screeners. Earnings calendar and profile endpoints exist for product enrichment. If you need 10-K style income statements and balance sheets, pair us with a fundamentals vendor — or contact sales for roadmap timing.",
     endpoints: [
-      { method: "GET", path: "/api/stocks/:symbol/profile", note: "Name, sector, exchange" },
-      { method: "GET", path: "/api/stocks/:symbol/earnings", note: "Earnings history / events" },
-      { method: "GET", path: "/api/etf/:symbol", note: "ETF detail" },
-      { method: "GET", path: "/api/stocks/:symbol/snapshot", note: "Combined research card" },
+      { method: "GET", path: "/v1/stocks/:symbol/profile", note: "Name, sector, exchange" },
+      { method: "GET", path: "/v1/stocks/:symbol/earnings", note: "Earnings history / events" },
+      { method: "GET", path: "/v1/etf/:symbol", note: "ETF detail" },
+      { method: "GET", path: "/v1/stocks/:symbol/snapshot", note: "Combined research card" },
     ],
     features: [
       {

@@ -112,12 +112,12 @@ export default function ApiKeysView() {
   };
 
   const baseUrl = getPublicApiOrigin();
-  const curlExample = `curl "${baseUrl}/api/developer/usage" \\
+  const curlExample = `curl "${baseUrl}/v1/developer/usage" \\
   -H "x-api-key: ${hasFullKey && revealed ? rawKey : "YOUR_API_KEY"}"`;
 
   const copyCurl = () => {
     navigator.clipboard.writeText(
-      `curl "${baseUrl}/api/developer/usage" -H "x-api-key: ${hasFullKey ? rawKey : "YOUR_API_KEY"}"`
+      `curl "${baseUrl}/v1/developer/usage" -H "x-api-key: ${hasFullKey ? rawKey : "YOUR_API_KEY"}"`
     );
     setCopiedCurl(true);
     setTimeout(() => setCopiedCurl(false), 2000);

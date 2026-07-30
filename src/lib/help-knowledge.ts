@@ -100,7 +100,7 @@ Official SDKs (package name datacaptain):
 
 Full examples: /sdk
 
-Default API origin is the Railway host until api.datacaptain.in is wired. You can pass baseUrl / base_url to override.`,
+Default API origin is https://api.datacaptain.in. You can pass baseUrl / base_url to override.`,
     links: [
       { label: "REST docs", href: "/docs" },
       { label: "SDK docs", href: "/sdk" },
@@ -159,7 +159,7 @@ Most of these are available on the free plan.`,
 - Marketing page: /backtesting
 - Dashboard (paid): /dashboard/backtesting
 
-API: POST /api/backtest/buy-and-hold and /api/backtest/compare
+API: POST /v1/backtest/buy-and-hold and /api/backtest/compare
 
 Requires a paid plan (Starter+). Free users see an upgrade prompt.`,
     links: [
@@ -177,7 +177,7 @@ Requires a paid plan (Starter+). Free users see an upgrade prompt.`,
 - Marketing: /portfolio
 - Dashboard (paid): /dashboard/portfolio
 
-API: POST /api/portfolio/rebalance
+API: POST /v1/portfolio/rebalance
 
 Paid feature — upgrade from Billing or Pricing.`,
     links: [
@@ -220,7 +220,7 @@ Issues with a charge? Open Support (/dashboard/support) or email the support add
     id: "market-status",
     title: "Market open / closed",
     keywords: ["market", "open", "closed", "hours", "nyse", "status", "holiday", "trading hours"],
-    answer: `GET /api/market/status returns US regular session OPEN/CLOSED.
+    answer: `GET /v1/market/status returns US regular session OPEN/CLOSED.
 
 Hours: Mon–Fri 09:30–16:00 America/New_York, with NYSE holidays and early closes (13:00 ET).
 

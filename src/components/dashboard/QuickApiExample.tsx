@@ -16,7 +16,7 @@ const EXAMPLE_RESPONSE = {
   offset: 0,
 };
 
-const API_PATH = "/api/etf/list?search=SPY&limit=10";
+const API_PATH = "/v1/etf/list?search=SPY&limit=10";
 
 type TabId = "request" | "response" | "curl";
 
@@ -187,7 +187,7 @@ export default function QuickApiExample({ apiKey }: QuickApiExampleProps) {
                     <LineNumbers lines={1} />
                     <pre className="flex-1 overflow-x-auto p-4 font-mono text-sm leading-relaxed">
                       <span className="text-violet-400">GET</span>{" "}
-                      <span className="text-emerald-400">/api/etf/list</span>
+                      <span className="text-emerald-400">/v1/etf/list</span>
                       <span className="text-amber-300/90">?search=SPY&limit=10</span>
                     </pre>
                   </div>

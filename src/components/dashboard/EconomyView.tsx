@@ -251,7 +251,7 @@ export default function EconomyView() {
   };
 
   const baseUrl = getPublicApiOrigin();
-  const apiPath = "/api/economy/indicators";
+  const apiPath = "/v1/economy/indicators";
   const exampleJson = data
     ? JSON.stringify(data, null, 2)
     : JSON.stringify(

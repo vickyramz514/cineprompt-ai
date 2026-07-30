@@ -70,7 +70,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         heading: "Quick start",
         paragraphs: [
-          "Sign up free, copy your API key, and call GET /api/etf/list?search=SPY. Upgrade to Starter when you need full history, backtests, and 1,000 requests/day.",
+          "Sign up free, copy your API key, and call GET /v1/etf/list?search=SPY. Upgrade to Starter when you need full history, backtests, and 1,000 requests/day.",
         ],
       },
     ],
@@ -109,8 +109,8 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         heading: "Run a QQQ backtest via API",
         paragraphs: [
-          "On Data Captain, POST /api/backtest/buy-and-hold with symbol QQQ, investment 10000, startDate 2015-01-01, endDate 2025-01-01. You get an equity curve plus all headline metrics — ideal for embedding in your own app or validating content.",
-          "Compare QQQ vs SPY vs VOO with POST /api/backtest/compare when you want ranked results for portfolio education pages.",
+          "On Data Captain, POST /v1/backtest/buy-and-hold with symbol QQQ, investment 10000, startDate 2015-01-01, endDate 2025-01-01. You get an equity curve plus all headline metrics — ideal for embedding in your own app or validating content.",
+          "Compare QQQ vs SPY vs VOO with POST /v1/backtest/compare when you want ranked results for portfolio education pages.",
         ],
       },
       {
@@ -154,7 +154,7 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         heading: "Example API request",
         paragraphs: [
-          "GET /api/backtest/compare?symbols=VOO,SPY,QQQ&investment=10000&startDate=2015-01-01&endDate=2025-01-01",
+          "GET /v1/backtest/compare?symbols=VOO,SPY,QQQ&investment=10000&startDate=2015-01-01&endDate=2025-01-01",
           "Use this in fintech apps, research newsletters, or internal tools — no spreadsheet exports required.",
         ],
       },

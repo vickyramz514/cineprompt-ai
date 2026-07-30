@@ -18,7 +18,7 @@ export default function RankingsApiExample({
   const request = useMemo(() => {
     const qs = new URLSearchParams({ metric, period, limit: "25" });
     if (basket) qs.set("basket", basket);
-    return `GET ${origin}/api/etf/rankings?${qs.toString()}`;
+    return `GET ${origin}/v1/etf/rankings?${qs.toString()}`;
   }, [origin, metric, period, basket]);
 
   const response = useMemo(

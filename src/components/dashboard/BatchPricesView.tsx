@@ -75,7 +75,7 @@ export default function BatchPricesView() {
   );
 
   const baseUrl = getPublicApiOrigin();
-  const apiPath = `/api/stocks/prices?symbols=${symbolList.slice(0, 3).join(",") || "SPY,QQQ"}`;
+  const apiPath = `/v1/stocks/prices?symbols=${symbolList.slice(0, 3).join(",") || "SPY,QQQ"}`;
   const exampleJson = prices
     ? JSON.stringify(prices, null, 2)
     : JSON.stringify(
@@ -273,7 +273,7 @@ export default function BatchPricesView() {
         <div className="border-b border-white/10 bg-white/[0.03] px-5 py-4">
           <h2 className="text-lg font-semibold">API endpoint</h2>
           <p className="mt-1 text-sm text-white/45">
-            <code className="text-emerald-300/90">GET /api/stocks/prices</code> — cached ~60s, max 50 symbols
+            <code className="text-emerald-300/90">GET /v1/stocks/prices</code> — cached ~60s, max 50 symbols
           </p>
         </div>
         <div className="grid gap-0 lg:grid-cols-2">

@@ -206,7 +206,7 @@ export default function ApiExplorerView() {
     const path = buildPath();
     const q = buildQueryParams();
     const qs = new URLSearchParams(q).toString();
-    return `${baseUrl}/api${path}${qs ? `?${qs}` : ""}`;
+    return `${baseUrl}/v1${path}${qs ? `?${qs}` : ""}`;
   }, [baseUrl, buildPath, buildQueryParams]);
 
   const curlCommand = useMemo(() => {

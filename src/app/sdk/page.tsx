@@ -117,9 +117,9 @@ export default function SdkDocsPage() {
               Dashboard → API Keys
             </Link>
             . The SDK sends it as the <code className="rounded bg-white/10 px-1">x-api-key</code> header. Default
-            API origin is <code className="rounded bg-white/10 px-1">https://datacaptain.up.railway.app</code>{" "}
+            API origin is <code className="rounded bg-white/10 px-1">https://api.datacaptain.in</code>{" "}
             (override with <code className="rounded bg-white/10 px-1">baseUrl</code> / <code className="rounded bg-white/10 px-1">base_url</code> — origin only, no{" "}
-            <code className="rounded bg-white/10 px-1">/api</code> suffix).
+            <code className="rounded bg-white/10 px-1">/v1</code> suffix).
           </p>
         </section>
 
@@ -133,7 +133,7 @@ export default function SdkDocsPage() {
 
 const dc = new DataCaptain({
   apiKey: process.env.DATACAPTAIN_API_KEY!,
-  // baseUrl: "https://datacaptain.up.railway.app", // optional
+  // baseUrl: "https://api.datacaptain.in", // optional (paths use /v1)
 });
 
 try {
@@ -227,7 +227,7 @@ from datacaptain import DataCaptain, DataCaptainError
 
 dc = DataCaptain(
     api_key=os.environ["DATACAPTAIN_API_KEY"],
-    # base_url="https://datacaptain.up.railway.app",  # optional
+    # base_url="https://api.datacaptain.in",  # optional
 )
 
 try:

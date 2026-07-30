@@ -15,7 +15,7 @@ export default function ApiExamplePanel({ result }: { result: BacktestResult }) 
       startDate: result.startDate,
       endDate: result.endDate,
     });
-    return `GET ${origin}/api/backtest/buy-and-hold?${q.toString()}`;
+    return `GET ${origin}/v1/backtest/buy-and-hold?${q.toString()}`;
   }, [origin, result]);
 
   const responseExample = useMemo(

@@ -30,7 +30,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   etf: [
     {
       method: "GET",
-      path: "/api/etf/list",
+      path: "/v1/etf/list",
       query: "limit=48&category=technology&sort=return&sortDir=desc",
       description:
         "Paginated US ETF universe with filters, sorting, enrichment (issuer, category, expense, AUM), and optional stats. Returns { data, total, limit, offset, stats? }.",
@@ -62,7 +62,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/etf/:symbol",
+      path: "/v1/etf/:symbol",
       query: "",
       description:
         "ETF research profile — price, metrics, performance periods, OHLCV history, dividends, similar ETFs, AI summary, and risk block.",
@@ -74,7 +74,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/etf/heatmap",
+      path: "/v1/etf/heatmap",
       query: "basket=broad&period=1y",
       description: "ETF performance heatmap cells by return % for a preset basket or custom symbols.",
       plan: "free",
@@ -93,7 +93,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/etf/heatmap/baskets",
+      path: "/v1/etf/heatmap/baskets",
       query: "",
       description: "List heatmap basket presets — { baskets: [{ id, label, symbols }] }.",
       plan: "free",
@@ -102,7 +102,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/etf/screener",
+      path: "/v1/etf/screener",
       query: "returnMin=10&expenseMax=0.2&period=1y&sort=return",
       description:
         "Screen ETFs by return, yield, volatility, expense, AUM, Sharpe, issuer/category flags. Free plan: top 10.",
@@ -146,7 +146,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/etf/rankings",
+      path: "/v1/etf/rankings",
       query: "metric=return&period=1y&limit=20",
       description:
         "ETF leaderboards by return, yield, volatility, CAGR, Sharpe, expense, AUM, or drawdown. Free plan: top 10.",
@@ -171,7 +171,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/stocks/prices",
+      path: "/v1/stocks/prices",
       query: "symbols=SPY,QQQ,VOO",
       description: "Batch ETF prices — latest close for up to 50 tickers. Cached 60s.",
       plan: "free",
@@ -183,7 +183,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "GET",
-      path: "/api/stocks/:symbol/history",
+      path: "/v1/stocks/:symbol/history",
       query: "startDate=2020-01-01&endDate=2024-12-31",
       description: "Historical OHLCV bars for charts and research. Free plan.",
       plan: "free",
@@ -200,7 +200,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   market: [
     {
       method: "GET",
-      path: "/api/market/status",
+      path: "/v1/market/status",
       query: "",
       description:
         "US market session status from NYSE calendar (holidays + early closes). Regular 09:30–16:00 ET.",
@@ -213,7 +213,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   platform: [
     {
       method: "POST",
-      path: "/api/backtest/buy-and-hold",
+      path: "/v1/backtest/buy-and-hold",
       query: "",
       description:
         "Multi-strategy ETF backtest (also accepts GET). Returns equity curve, tradeEvents, dividendEvents, OHLCV prices, drawdownCurve, Sharpe/Sortino, and more. Paid plan.",
@@ -246,7 +246,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "POST",
-      path: "/api/backtest/compare",
+      path: "/v1/backtest/compare",
       query: "",
       description: "Compare multiple ETFs with the same strategy settings. Returns winner, ranked list, and per-symbol results. Paid plan.",
       plan: "paid",
@@ -262,7 +262,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
     },
     {
       method: "POST",
-      path: "/api/portfolio/rebalance",
+      path: "/v1/portfolio/rebalance",
       query: "",
       description:
         "Compare current holdings to target weights and get buy/sell suggestions. Paid plan. Also accepts GET with JSON query strings.",
@@ -279,7 +279,7 @@ export const API_DOC_SECTIONS: Record<string, ApiEndpoint[]> = {
   developer: [
     {
       method: "GET",
-      path: "/api/developer/usage",
+      path: "/v1/developer/usage",
       query: "",
       description: "Usage stats — plan, requests today, remaining, daily limit, series, endpoint analytics.",
       plan: "free",

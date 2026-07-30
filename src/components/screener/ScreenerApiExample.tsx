@@ -15,7 +15,7 @@ export default function ScreenerApiExample({ filters }: { filters: ScreenerFilte
     for (const [k, v] of Object.entries(params)) {
       if (v) qs.set(k, v);
     }
-    return `GET ${origin}/api/etf/screener?${qs.toString()}`;
+    return `GET ${origin}/v1/etf/screener?${qs.toString()}`;
   }, [origin, filters]);
 
   const response = useMemo(
