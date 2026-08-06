@@ -10,8 +10,9 @@ const pill =
 const pillActive =
   "inline-flex items-center justify-center rounded-full bg-indigo-500/20 px-3 py-2 text-sm font-medium text-indigo-200 sm:px-4";
 
-const loginBtn =
-  "inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-sm font-medium text-white transition-all hover:border-indigo-400/40 hover:bg-indigo-500/10 sm:px-5";
+/** Secondary action — does not compete with Get API Key */
+const loginLink =
+  "inline-flex items-center justify-center px-2 py-2 text-sm font-medium text-white/55 transition-colors hover:text-white sm:px-3";
 
 const primaryCta =
   "inline-flex items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-violet-600 px-4 py-2.5 text-sm font-semibold text-white shadow-[0_4px_24px_-4px_rgba(99,102,241,0.55)] transition-all hover:brightness-110 sm:px-5";
@@ -75,11 +76,11 @@ export function MarketingHeaderActions({
         </Link>
       ) : (
         <>
-          <Link href="/auth/login" className={loginBtn}>
-            Login
+          <Link href="/auth/login" className={loginLink}>
+            Log in
           </Link>
           <Link href="/auth/signup" className={primaryCta}>
-            Get Started
+            Get API Key
           </Link>
         </>
       )}

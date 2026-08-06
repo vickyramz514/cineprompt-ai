@@ -3,7 +3,11 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { PRICING_PLANS } from "@/lib/mock-data";
+import {
+  FREE_TIER_SUMMARY,
+  PRICING_PLANS,
+  STARTER_UNLOCKS_SUMMARY,
+} from "@/lib/mock-data";
 import PricingCard from "@/components/PricingCard";
 import Footer from "@/components/Footer";
 import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
@@ -115,25 +119,33 @@ export default function LandingPage() {
             <Link href="/docs#sdks" className="text-indigo-400 hover:underline">
               docs
             </Link>
-            {" · "}Starter from ₹1,500/mo when you ship to production
+          </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.16 }}
+            className="mx-auto mt-4 max-w-2xl rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-xs leading-relaxed text-white/60 sm:text-sm"
+          >
+            <span className="font-medium text-white/85">{FREE_TIER_SUMMARY}</span>
+            <span className="mt-1 block text-white/45">{STARTER_UNLOCKS_SUMMARY}</span>
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-10"
+            className="mt-10 flex flex-wrap items-center justify-center gap-3"
           >
             <Link
               href="/auth/signup"
               className="inline-flex rounded-xl bg-indigo-500 px-8 py-3 font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all hover:bg-indigo-600 hover:shadow-indigo-500/30"
             >
-              Get API Key
+              Get API Key — free
             </Link>
             <Link
-              href="/backtesting"
-              className="ml-3 inline-flex rounded-xl border border-white/15 bg-white/5 px-8 py-3 font-semibold text-white/80 transition-all hover:bg-white/10"
+              href="/pricing"
+              className="inline-flex rounded-xl border border-white/15 bg-white/5 px-8 py-3 font-semibold text-white/80 transition-all hover:bg-white/10"
             >
-              Try Backtesting
+              Compare plans
             </Link>
           </motion.div>
         </div>
@@ -219,9 +231,12 @@ export default function LandingPage() {
       {/* Pricing */}
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
-          <h2 className="text-center text-2xl font-semibold sm:text-3xl">Simple pricing</h2>
-          <p className="mx-auto mt-2 max-w-xl text-center text-white/60">
-            Start free. Scale as you grow.
+          <h2 className="text-center text-2xl font-semibold sm:text-3xl">
+            Free / Starter / Pro / Scale
+          </h2>
+          <p className="mx-auto mt-2 max-w-2xl text-center text-white/60">
+            Exact limits on every card. Free has no card required — upgrade when you need history
+            and backtests.
           </p>
           <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PRICING_PLANS.map((plan) => (
@@ -229,11 +244,16 @@ export default function LandingPage() {
                 key={plan.id}
                 plan={{
                   id: plan.id,
+                  slug: plan.slug,
                   name: plan.name,
                   price: plan.price,
                   currency: plan.currency,
                   credits: plan.requestsPerDay,
                   features: plan.features,
+                  tagline: plan.tagline,
+                  unlocksAtPaid: plan.unlocksAtPaid,
+                  overage: plan.overage,
+                  cta: plan.cta,
                 }}
                 popular={plan.id === "starter"}
                 onSelect={() => (window.location.href = "/pricing")}

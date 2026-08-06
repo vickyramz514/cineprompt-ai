@@ -9,6 +9,11 @@ export interface Plan {
   slug?: string;
   /** ISO currency code, e.g. USD, INR. Used only for billing UI. */
   currency?: string;
+  tagline?: string;
+  limits?: string[];
+  unlocksAtPaid?: string[];
+  overage?: string;
+  cta?: string;
 }
 
 interface PricingCardProps {
@@ -52,44 +57,78 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
       )}
       {popular && !isCurrent && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-3 py-0.5 text-xs font-medium shadow-lg shadow-indigo-500/30">
-          Popular
+          Most popular
         </div>
       )}
       <h3 className="text-lg font-semibold">{plan.name}</h3>
-      <div className="mt-2">
+      {plan.tagline && (
+        <p className="mt-1 text-xs leading-snug text-white/45">{plan.tagline}</p>
+      )}
+      <div className="mt-3">
         {isEnterprise ? (
           <span className="text-2xl font-bold">Custom</span>
         ) : (
           <>
             <span className="text-3xl font-bold">
-              {isFree ? "Free" : formatMonthlyPrice(plan.price)}
+              {isFree ? "₹0" : formatMonthlyPrice(plan.price)}
             </span>
             {!isFree && <span className="text-white/50">/month</span>}
           </>
         )}
       </div>
-      <p className="mt-1 text-sm text-white/60">
-        {isEnterprise ? "High volume access" : `${plan.credits.toLocaleString()} requests/day`}
+      <p className="mt-2 inline-flex w-fit rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs font-medium text-indigo-200/90">
+        {isEnterprise
+          ? "Custom volume"
+          : `${plan.credits.toLocaleString()} requests/day`}
       </p>
+
       <ul className="mt-4 flex-1 space-y-2">
         {plan.features.map((f) => (
           <li key={f} className="flex items-start gap-2 text-sm text-white/75">
-            <svg className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <svg
+              className="mt-0.5 h-4 w-4 shrink-0 text-indigo-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden
+            >
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
             </svg>
             {f}
           </li>
         ))}
       </ul>
+
+      {isFree && plan.unlocksAtPaid && plan.unlocksAtPaid.length > 0 && (
+        <div className="mt-4 rounded-xl border border-white/10 bg-black/30 p-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40">
+            Unlocks at ₹1,500/mo
+          </p>
+          <ul className="mt-2 space-y-1.5">
+            {plan.unlocksAtPaid.map((item) => (
+              <li key={item} className="flex gap-2 text-xs text-white/55">
+                <span className="text-indigo-400/80">→</span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {plan.overage && (
+        <p className="mt-3 text-[11px] leading-relaxed text-white/40">{plan.overage}</p>
+      )}
+
       <button
         type="button"
         onClick={() => onSelect(plan.slug || plan.id)}
         disabled={isCurrent && !isEnterprise}
-        className={`mt-6 w-full rounded-xl py-2.5 text-sm font-medium transition-colors ${
+        className={`mt-5 w-full rounded-xl py-2.5 text-sm font-medium transition-colors ${
           isCurrent && !isEnterprise
             ? "cursor-default border border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
             : popular
-              ? "bg-indigo-600 text-white hover:bg-indigo-500 shadow-md shadow-indigo-500/20"
+              ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-500"
               : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
         }`}
       >
@@ -97,9 +136,7 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
           ? "Current plan"
           : isEnterprise
             ? "Contact sales"
-            : isFree
-              ? "Get started"
-              : "Subscribe"}
+            : plan.cta || (isFree ? "Get API Key" : "Subscribe")}
       </button>
     </div>
   );

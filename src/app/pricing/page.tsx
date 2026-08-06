@@ -12,11 +12,14 @@ export default function PricingPage() {
   const { isAuthenticated } = useAuth();
 
   const handleSelectPlan = (idOrSlug: string) => {
-    if (!isAuthenticated) {
-      window.location.href = `/auth/login?redirect=/pricing`;
+    if (idOrSlug === "free") {
+      window.location.href = isAuthenticated ? "/dashboard" : "/auth/signup";
       return;
     }
-    if (idOrSlug === "free") return;
+    if (!isAuthenticated) {
+      window.location.href = `/auth/signup?redirect=/pricing`;
+      return;
+    }
     window.location.href = `/dashboard/wallet?subscribe=${idOrSlug}`;
   };
 
@@ -26,15 +29,18 @@ export default function PricingPage() {
 
       <section className={`px-4 pb-20 sm:px-6 lg:px-8 ${SITE_HEADER_OFFSET}`}>
         <div className="mx-auto max-w-6xl">
-          <h1 className="text-center text-3xl font-bold sm:text-4xl">Simple pricing</h1>
+          <h1 className="text-center text-3xl font-bold sm:text-4xl">
+            Free / Starter / Pro / Scale
+          </h1>
           <p className="mx-auto mt-2 max-w-2xl text-center text-white/60">
-            Start free with 50 requests/day. Upgrade to Starter for historical data, backtesting, and 1,000
-            requests/day — no credit card required on the free tier.
+            Free: <strong className="text-white/80">50 requests/day</strong> — ETF list, screener,
+            rankings, heatmap, batch prices, market status. No historical data, no backtests, no
+            card required.
           </p>
 
-          <div className="mx-auto mt-8 max-w-3xl rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center text-sm text-white/55">
-            <strong className="text-white/80">Free:</strong> ETF list, batch prices, market status ·{" "}
-            <strong className="text-indigo-300">Starter+:</strong> history, backtests, news, premium APIs
+          <div className="mx-auto mt-8 max-w-3xl rounded-xl border border-indigo-500/25 bg-indigo-500/10 p-4 text-center text-sm text-white/70">
+            <strong className="text-indigo-200">Starter ₹1,500/mo unlocks:</strong> 1,000
+            requests/day · historical OHLCV · backtesting · portfolio tools · email support
           </div>
 
           <div className="mx-auto mt-4 flex max-w-3xl flex-wrap items-center justify-center gap-x-6 gap-y-2 text-center text-sm text-white/50">
@@ -42,7 +48,7 @@ export default function PricingPage() {
               {SUPPORT_EMAIL}
             </a>
             <span className="hidden text-white/20 sm:inline">·</span>
-            <a href={mailtoSales("Enterprise / Ultra plan")} className="text-indigo-400 hover:underline">
+            <a href={mailtoSales("Enterprise / Scale plan")} className="text-indigo-400 hover:underline">
               {SALES_EMAIL}
             </a>
             <span className="hidden text-white/20 sm:inline">·</span>
@@ -57,11 +63,16 @@ export default function PricingPage() {
                 key={plan.id}
                 plan={{
                   id: plan.id,
+                  slug: plan.slug,
                   name: plan.name,
                   price: plan.price,
                   currency: plan.currency,
                   credits: plan.requestsPerDay,
                   features: plan.features,
+                  tagline: plan.tagline,
+                  unlocksAtPaid: plan.unlocksAtPaid,
+                  overage: plan.overage,
+                  cta: plan.id === "free" ? "Get API Key" : plan.cta,
                 }}
                 popular={plan.id === "starter"}
                 onSelect={(id) => handleSelectPlan(id)}

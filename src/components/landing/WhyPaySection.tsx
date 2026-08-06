@@ -11,12 +11,20 @@ const FREE_SITE_LIMITS = [
   "Scattered tools, no single workflow",
 ];
 
+const FREE_TIER = [
+  "50 requests/day",
+  "ETF list, screener, rankings, heatmap",
+  "Batch latest prices + market status",
+  "No historical OHLCV or backtests",
+  "No credit card",
+];
+
 const DATACAPTAIN_STARTER = [
-  "ETF API — screener, rankings, heatmap, batch prices",
+  "Everything in Free, plus…",
+  "Historical ETF OHLCV",
   "Backtesting & portfolio rebalance APIs",
   "1,000 requests/day for production apps",
-  "TypeScript & Python SDKs (npm / pip install datacaptain)",
-  "Same data in dashboard + your code",
+  "TypeScript & Python SDKs",
 ];
 
 export default function WhyPaySection() {
@@ -43,7 +51,7 @@ export default function WhyPaySection() {
           </p>
         </motion.div>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-2">
+        <div className="mt-12 grid gap-6 lg:grid-cols-3">
           <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
             <h3 className="font-semibold text-white/60">Free ETF websites</h3>
             <ul className="mt-4 space-y-3">
@@ -55,8 +63,19 @@ export default function WhyPaySection() {
               ))}
             </ul>
           </div>
+          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+            <h3 className="font-semibold text-white/80">DataCaptain Free — ₹0</h3>
+            <ul className="mt-4 space-y-3">
+              {FREE_TIER.map((item) => (
+                <li key={item} className="flex gap-2 text-sm text-white/65">
+                  <span className="text-white/35">·</span>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
           <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-transparent p-6 ring-1 ring-indigo-500/20">
-            <h3 className="font-semibold text-indigo-200">DataCaptain Starter — ₹1,500/mo</h3>
+            <h3 className="font-semibold text-indigo-200">Starter — ₹1,500/mo</h3>
             <ul className="mt-4 space-y-3">
               {DATACAPTAIN_STARTER.map((item) => (
                 <li key={item} className="flex gap-2 text-sm text-white/80">
@@ -69,7 +88,7 @@ export default function WhyPaySection() {
               href="/auth/signup"
               className="mt-6 inline-flex rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500"
             >
-              Start free, upgrade when you ship
+              Get API Key — start free
             </Link>
           </div>
         </div>

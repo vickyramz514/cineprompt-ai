@@ -189,11 +189,18 @@ Paid feature — upgrade from Billing or Pricing.`,
     id: "plans",
     title: "Free vs paid",
     keywords: ["free", "paid", "plan", "pricing", "upgrade", "limit", "quota", "tier", "starter", "pro"],
-    answer: `Free plan typically includes:
-- Market status, developer usage
-- Batch prices, ETF list / screener / rankings / heatmap
+    answer: `Free plan:
+- 50 requests/day (hard daily cap)
+- ETF list, screener, rankings, heatmap, batch prices, market status
+- No historical OHLCV, backtesting, or portfolio APIs
+- No credit card required
 
-Paid plans unlock higher daily limits plus backtesting, portfolio, and advanced market tools (options, insiders, etc. where enabled).
+Starter (₹1,500/mo) unlocks:
+- 1,000 requests/day
+- Historical ETF data, backtesting, portfolio tools
+- Email support
+
+Pro: 10,000/day · Scale: 100,000/day
 
 See /pricing and Dashboard → Billing (/dashboard/wallet). Payments currently run through Razorpay (INR).`,
     links: [

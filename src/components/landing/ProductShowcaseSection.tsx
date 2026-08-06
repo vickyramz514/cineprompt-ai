@@ -7,7 +7,7 @@ import { API_BASE_URL } from "@/lib/api-docs-data";
 const stats = [
   { value: "ETF", label: "Focused data", detail: "US exchange-traded funds" },
   { value: "REST + WS", label: "One platform", detail: "HTTP & WebSocket" },
-  { value: "Free tier", label: "Start at ₹0", detail: "No card required" },
+  { value: "50/day", label: "Free tier", detail: "No card · no history" },
   { value: "Swagger", label: "Live docs", detail: "Try requests in-browser" },
 ];
 
