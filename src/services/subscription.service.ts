@@ -16,6 +16,7 @@ export type SubscriptionPlan = {
   creditsPerMonth?: number | null;
   billingCycle?: string | null;
   features?: unknown;
+  adminOnly?: boolean;
 };
 
 export type UserSubscription = {

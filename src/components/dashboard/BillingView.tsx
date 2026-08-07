@@ -25,17 +25,24 @@ function mapPlanToPricing(plan: {
   credits: number;
   currency: string;
   features?: unknown;
+  adminOnly?: boolean;
 }): Plan {
   const price = plan.priceCents < 0 ? -1 : Math.round(plan.priceCents / 100);
   const credits = plan.credits < 0 ? 0 : plan.credits;
+  const features = Array.isArray(plan.features) ? [...(plan.features as string[])] : [];
+  if (plan.adminOnly) {
+    features.unshift("Admin-only plan");
+  }
   return {
     id: plan.id,
     name: plan.name,
     price,
     credits,
-    features: Array.isArray(plan.features) ? (plan.features as string[]) : [],
+    features,
     slug: plan.slug,
     currency: plan.currency,
+    tagline: plan.adminOnly ? "Visible to admins only" : undefined,
+    cta: plan.adminOnly ? "Subscribe (admin)" : undefined,
   };
 }
 
@@ -221,7 +228,12 @@ export default function BillingView() {
     }
   };
 
-  const pricingPlans = plans.map(mapPlanToPricing);
+  const pricingPlans = plans
+    .filter((p) => {
+      if (!p.adminOnly) return true;
+      return user?.role === "ADMIN" || user?.role === "SUPER_ADMIN";
+    })
+    .map(mapPlanToPricing);
   const isActiveSub = subscription?.status === "ACTIVE";
 
   if (usageLoading && !usageStats && plansLoading) {

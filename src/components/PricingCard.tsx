@@ -33,7 +33,7 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
       return new Intl.NumberFormat(undefined, {
         style: "currency",
         currency: code,
-        maximumFractionDigits: 0,
+        maximumFractionDigits: amount % 1 === 0 ? 0 : 2,
       }).format(amount);
     } catch {
       return `${code} ${amount}`;
