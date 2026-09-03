@@ -3,6 +3,8 @@
  * Place your QR image at `public/donation/upi-qr.png` (or update `qrImagePath`).
  */
 export const DONATION_CONFIG = {
+  /** Hide Support DataCaptain CTAs site-wide when false */
+  enabled: false,
   /** Public path to the UPI QR image (under /public) */
   qrImagePath: "/donation/paytm-qr.jpeg",
   /** Alt text for the QR image */

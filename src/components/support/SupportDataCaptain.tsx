@@ -49,6 +49,8 @@ export default function SupportDataCaptain({ variant = "header" }: { variant?: V
   const [donateOpen, setDonateOpen] = useState(false);
   const styles = variantStyles[variant];
 
+  if (!DONATION_CONFIG.enabled) return null;
+
   return (
     <>
       <div className={styles.wrap}>
