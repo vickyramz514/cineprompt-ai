@@ -1,11 +1,16 @@
+import type { Metadata } from "next";
 import { MarketingShell } from "@/components/MarketingShell";
 import BacktestingView from "@/components/dashboard/BacktestingView";
 import Link from "next/link";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-export const metadata = {
-  title: "ETF Backtesting | Data Captain",
-  description: "Run buy-and-hold backtests on US ETFs using Data Captain historical data.",
-};
+export const metadata: Metadata = buildPageMetadata({
+  title: "ETF Backtesting API & Tools",
+  description:
+    "Run buy-and-hold and strategy backtests on US ETFs with Data Captain historical prices. Same API key as screener and portfolio tools.",
+  path: "/backtesting",
+  keywords: ["ETF backtesting", "backtest API", "historical ETF returns"],
+});
 
 export default function BacktestingPage() {
   return (

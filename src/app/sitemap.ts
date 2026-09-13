@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const staticRoutes = [
     "",
+    "/about",
     "/docs",
     "/sdk",
     "/pricing",
@@ -22,8 +23,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ].map((path) => ({
     url: `${base}${path}`,
     lastModified: now,
-    changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : 0.8,
+    changeFrequency: (path === "" || path === "/docs" || path === "/pricing" ? "weekly" : "monthly") as
+      | "weekly"
+      | "monthly",
+    priority: path === "" ? 1 : path === "/about" ? 0.75 : 0.8,
   }));
 
   const landings = getAllSeoLandingSlugs().map((slug) => ({

@@ -3,6 +3,7 @@ import "./globals.css";
 import GoogleOAuthProviderWrapper from "@/components/GoogleOAuthProvider";
 import AppChrome from "@/components/AppChrome";
 import { getSiteUrl } from "@/lib/site-url";
+import { OG_IMAGE } from "@/lib/page-metadata";
 import { THEME_STORAGE_KEY } from "@/lib/theme-constants";
 
 const siteUrl = getSiteUrl();
@@ -16,7 +17,18 @@ export const metadata: Metadata = {
     template: "%s | Data Captain",
   },
   description:
-    "Build with a US ETF API: historical prices, screener, heatmap, and backtesting. Free API key for developers — upgrade when you need higher limits.",
+    "Build with a US ETF API: historical prices, screener, heatmap, rankings, and backtesting. Free API key for developers — upgrade when you need higher limits.",
+  keywords: [
+    "ETF API",
+    "US ETF data API",
+    "historical ETF prices",
+    "ETF backtesting",
+    "market data API",
+    "Data Captain",
+  ],
+  authors: [{ name: "Data Captain", url: siteUrl }],
+  creator: "Data Captain",
+  publisher: "Data Captain",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -26,27 +38,26 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     shortcut: "/favicon.ico",
   },
+  alternates: { canonical: siteUrl },
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
     siteName: "Data Captain",
-    title: "US ETF Data API & Backtesting | Data Captain",
+    title: "US ETF Data API & Backtesting",
     description:
       "Historical ETF prices, screener, and backtesting API for developers. Start free.",
-    images: [
-      {
-        url: "/logo/logo.jpeg",
-        width: 1254,
-        height: 1254,
-        alt: "Data Captain — Navigate Smarter Investments",
-      },
-    ],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
-    title: "US ETF Data API — Free Tier | Data Captain",
+    title: "US ETF Data API — Free Tier",
     description: "Historical prices, ETF screener, and backtesting for developers.",
+    images: [OG_IMAGE.url],
+  },
+  robots: {
+    index: true,
+    follow: true,
   },
 };
 

@@ -1,22 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { MarketingShell } from "@/components/MarketingShell";
-import { getSiteUrl } from "@/lib/site-url";
+import { buildPageMetadata } from "@/lib/page-metadata";
 
-const siteUrl = getSiteUrl();
-
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "SDK Docs — npm & Python",
   description:
     "Official Data Captain SDKs: install datacaptain from npm or PyPI. TypeScript and Python examples for ETF list, screener, backtest, and portfolio.",
-  alternates: { canonical: `${siteUrl}/sdk` },
-  openGraph: {
-    title: "Data Captain SDK Docs",
-    description: "npm install datacaptain · pip install datacaptain — usage examples for US ETF APIs.",
-    url: `${siteUrl}/sdk`,
-    type: "website",
-  },
-};
+  path: "/sdk",
+  keywords: ["datacaptain npm", "datacaptain python", "ETF API SDK"],
+});
 
 function CodeBlock({ children, label }: { children: string; label?: string }) {
   return (

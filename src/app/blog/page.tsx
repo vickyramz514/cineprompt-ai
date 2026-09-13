@@ -5,7 +5,7 @@ import { BLOG_POSTS } from "@/lib/blog-posts";
 import { getSiteUrl } from "@/lib/site-url";
 
 export const metadata: Metadata = {
-  title: "Blog | Data Captain — ETF APIs, backtests & market data",
+  title: "Blog — ETF APIs, Backtests & Market Data Guides",
   description:
     "Guides for developers and analysts: best ETF APIs, QQQ historical returns, SPY vs QQQ comparisons, and fintech integration tips.",
   alternates: { canonical: `${getSiteUrl()}/blog` },
@@ -20,12 +20,13 @@ export const metadata: Metadata = {
 
 export default function BlogIndexPage() {
   return (
-    <MarketingShell active="home">
+    <MarketingShell active="blog">
       <div className="mx-auto max-w-3xl px-4 pb-20 sm:px-6 lg:px-8">
         <p className="text-xs font-medium uppercase tracking-widest text-indigo-300/80">Resources</p>
         <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Data Captain Blog</h1>
         <p className="mt-3 text-lg text-white/55">
-          SEO-friendly guides for developers, quants, and fintech builders using US ETF data APIs.
+          Practical guides on US ETF APIs, backtesting, and portfolio analytics — written for
+          developers, quants, and fintech builders.
         </p>
 
         <ul className="mt-12 space-y-6">

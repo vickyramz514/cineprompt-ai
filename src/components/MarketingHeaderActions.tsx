@@ -27,6 +27,7 @@ export type MarketingNavKey =
   | "backtesting"
   | "portfolio"
   | "pricing"
+  | "blog"
   | "docs";
 
 /** @deprecated use MarketingNavKey */
@@ -39,7 +40,7 @@ const NAV: { key: MarketingNavKey; label: string; href: string }[] = [
   { key: "backtesting", label: "Backtesting", href: "/backtesting" },
   { key: "portfolio", label: "Portfolio", href: "/portfolio" },
   { key: "pricing", label: "Pricing", href: "/pricing" },
-  { key: "docs", label: "Blog", href: "/blog" },
+  { key: "blog", label: "Blog", href: "/blog" },
 ];
 
 export function MarketingHeaderActions({
@@ -52,6 +53,11 @@ export function MarketingHeaderActions({
   isAuthenticated?: boolean;
   variant?: MarketingHeaderVariant;
 }) {
+  const isNavActive = (key: MarketingNavKey) => {
+    if (key === "apis") return active === "apis" || active === "docs";
+    return active === key;
+  };
+
   return (
     <nav className="flex flex-wrap items-center justify-end gap-1 sm:gap-1.5" aria-label="Main">
       <div className="mr-1 hidden items-center rounded-full border border-white/[0.08] bg-black/30 p-1 backdrop-blur-md md:flex sm:mr-2">
@@ -59,7 +65,7 @@ export function MarketingHeaderActions({
           <Link
             key={item.key}
             href={item.href}
-            className={active === item.key ? pillActive : pill}
+            className={isNavActive(item.key) ? pillActive : pill}
           >
             {item.label}
           </Link>

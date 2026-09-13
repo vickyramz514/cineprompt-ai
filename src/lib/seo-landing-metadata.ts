@@ -17,13 +17,20 @@ export function seoLandingMetadata(slug: string): Metadata {
       description: page.description,
       url,
       type: "website",
-      images: [{ url: "/logo/logo.jpeg", width: 1254, height: 1254, alt: page.title }],
+      images: [
+        {
+          url: "/opengraph-image",
+          width: 1200,
+          height: 630,
+          alt: page.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: page.title,
       description: page.description,
-      images: ["/logo/logo.jpeg"],
+      images: ["/opengraph-image"],
     },
   };
 }
