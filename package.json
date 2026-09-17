@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@react-oauth/google": "^0.13.4",
-    "@sentry/browser": "^9.47.1",
-    "@sentry/node": "^9.47.1",
     "axios": "^1.13.5",
     "datacaptain": "^0.1.0",
     "framer-motion": "^12.34.3",

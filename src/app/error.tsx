@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
-import { captureClientException } from "@/lib/sentry-client";
 
 export default function Error({
   error,
@@ -11,10 +9,6 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    captureClientException(error);
-  }, [error]);
-
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center text-white">
       <p className="text-xs font-medium uppercase tracking-widest text-rose-300/80">Error</p>

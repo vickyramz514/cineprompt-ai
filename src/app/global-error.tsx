@@ -1,8 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
-import { captureClientException } from "@/lib/sentry-client";
-
 export default function GlobalError({
   error,
   reset,
@@ -10,10 +7,6 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  useEffect(() => {
-    captureClientException(error);
-  }, [error]);
-
   return (
     <html lang="en">
       <body style={{ margin: 0, background: "#0a0a0f", color: "#fff", fontFamily: "system-ui, sans-serif" }}>
