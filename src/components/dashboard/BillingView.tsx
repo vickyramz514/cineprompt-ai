@@ -16,34 +16,10 @@ import * as walletService from "@/services/wallet.service";
 import { openRazorpaySubscriptionCheckout } from "@/lib/razorpayCheckout";
 import { SUPPORT_EMAIL, mailtoSupport } from "@/lib/site";
 import type { Plan } from "@/components/PricingCard";
+import { mapSubscriptionPlanToCard } from "@/lib/plan-display";
 
-function mapPlanToPricing(plan: {
-  id: string;
-  name: string;
-  slug: string;
-  priceCents: number;
-  credits: number;
-  currency: string;
-  features?: unknown;
-  adminOnly?: boolean;
-}): Plan {
-  const price = plan.priceCents < 0 ? -1 : Math.round(plan.priceCents / 100);
-  const credits = plan.credits < 0 ? 0 : plan.credits;
-  const features = Array.isArray(plan.features) ? [...(plan.features as string[])] : [];
-  if (plan.adminOnly) {
-    features.unshift("Admin-only plan");
-  }
-  return {
-    id: plan.id,
-    name: plan.name,
-    price,
-    credits,
-    features,
-    slug: plan.slug,
-    currency: plan.currency,
-    tagline: plan.adminOnly ? "Visible to admins only" : undefined,
-    cta: plan.adminOnly ? "Subscribe (admin)" : undefined,
-  };
+function mapPlanToPricing(plan: subscriptionService.SubscriptionPlan): Plan {
+  return mapSubscriptionPlanToCard(plan);
 }
 
 function formatType(type: string) {
@@ -183,6 +159,10 @@ export default function BillingView() {
   const handleSelectPlan = (planId: string) => {
     const plan = plans.find((p) => p.id === planId || p.slug === planId);
     if (!plan || plan.slug === "free") return;
+    if (plan.checkoutAvailable === false) {
+      window.location.href = mailtoSupport(`Enable billing for ${plan.slug}`);
+      return;
+    }
     setSelectedPlan(mapPlanToPricing(plan));
     setCheckoutError(null);
     setPaymentModalOpen(true);
@@ -429,7 +409,7 @@ export default function BillingView() {
                       >
                         <PricingCard
                           plan={plan}
-                          popular={plan.slug === "pro"}
+                          popular={plan.popular || plan.slug === "starter"}
                           isCurrent={
                             isActiveSub &&
                             subscription?.plan?.slug === plan.slug

@@ -15,7 +15,9 @@ import {
 } from "@/services/datacaptain/endpoints";
 import FreeTierUpgradeBanner from "@/components/dashboard/FreeTierUpgradeBanner";
 import CompactApiKeyCard from "@/components/dev-dashboard/CompactApiKeyCard";
+import GettingStartedChecklist from "@/components/dev-dashboard/GettingStartedChecklist";
 import HeroOverviewCards from "@/components/dev-dashboard/HeroOverviewCards";
+import { useAuthStore } from "@/store/useStore";
 import FeaturedMarket from "@/components/dev-dashboard/FeaturedMarket";
 import type { SnapshotCard } from "@/components/dev-dashboard/MarketSnapshot";
 import PopularEtfs, { type PopularEtfCard } from "@/components/dev-dashboard/PopularEtfs";
@@ -52,6 +54,8 @@ function moverPct(m: { change_percent?: number; changePercent?: number }) {
 
 export default function DashboardPage() {
   const { apiKey, saveKey } = useDataCaptainKey();
+  const userPlan = useAuthStore((s) => s.user?.plan);
+  const isFreePlan = !userPlan || userPlan === "free";
   const [usage, setUsage] = useState<DeveloperUsage | null>(null);
   const [marketStatus, setMarketStatus] = useState<MarketStatus | null>(null);
   const [stats, setStats] = useState<EtfListStats | null>(null);
@@ -310,6 +314,12 @@ export default function DashboardPage() {
       </motion.div>
 
       <CompactApiKeyCard apiKey={apiKey} onSaveKey={handleSaveKey} />
+
+      <GettingStartedChecklist
+        hasKey={Boolean(apiKey)}
+        hasMadeRequest={(usage?.requestsToday ?? 0) > 0 || (usage?.requestsThisMonth ?? 0) > 0}
+        isFreePlan={isFreePlan}
+      />
 
       <FreeTierUpgradeBanner />
 

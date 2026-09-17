@@ -6,6 +6,7 @@ import { useAuthStore, useCreditsStore } from "@/store/useStore";
 import * as authService from "@/services/auth.service";
 import type { User } from "@/services/auth.service";
 import { clearTokens, setLogoutCallback } from "@/lib/api";
+import { readRedirectFromSearch } from "@/lib/auth-redirect";
 
 export function useAuth() {
   const router = useRouter();
@@ -33,13 +34,21 @@ export function useAuth() {
 
   const setCredits = useCreditsStore((s) => s.setCredits);
 
+  const postAuthRedirect = useCallback(() => {
+    if (typeof window === "undefined") {
+      router.push("/dashboard");
+      return;
+    }
+    router.push(readRedirectFromSearch(window.location.search));
+  }, [router]);
+
   const fetchUser = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const user = await authService.getCurrentUser();
-      setUser(user);
-      if (user?.credits != null) setCredits(user.credits);
+      const nextUser = await authService.getCurrentUser();
+      setUser(nextUser);
+      if (nextUser?.credits != null) setCredits(nextUser.credits);
     } catch {
       setUser(null);
     } finally {
@@ -55,7 +64,7 @@ export function useAuth() {
         const auth = await authService.login({ email, password });
         setUser(auth.user);
         if (auth.user?.credits != null) setCredits(auth.user.credits);
-        router.push("/dashboard");
+        postAuthRedirect();
       } catch (err) {
         const msg = authService.getErrorMessage(err);
         setError(msg);
@@ -64,7 +73,7 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [setUser, setLoading, setError, setCredits, router]
+    [setUser, setLoading, setError, setCredits, postAuthRedirect]
   );
 
   const signup = useCallback(
@@ -75,7 +84,7 @@ export function useAuth() {
         const auth = await authService.signup({ name, email, password, referralCode });
         setUser(auth.user);
         if (auth.user?.credits != null) setCredits(auth.user.credits);
-        router.push("/dashboard");
+        postAuthRedirect();
       } catch (err) {
         const msg = authService.getErrorMessage(err);
         setError(msg);
@@ -84,16 +93,16 @@ export function useAuth() {
         setLoading(false);
       }
     },
-    [setUser, setLoading, setError, setCredits, router]
+    [setUser, setLoading, setError, setCredits, postAuthRedirect]
   );
 
   const loginWithGoogle = useCallback(
     (googleUser: User) => {
       setUser(googleUser);
       if (googleUser?.credits != null) setCredits(googleUser.credits);
-      router.push("/dashboard");
+      postAuthRedirect();
     },
-    [setUser, setCredits, router]
+    [setUser, setCredits, postAuthRedirect]
   );
 
   return {

@@ -14,6 +14,13 @@ export interface Plan {
   unlocksAtPaid?: string[];
   overage?: string;
   cta?: string;
+  /** Marketing badge (e.g. Launch price, Save ₹3,000/yr) */
+  offerBadge?: string;
+  /** Strikethrough list price in major units */
+  compareAtPrice?: number;
+  billingCycle?: "month" | "year";
+  checkoutAvailable?: boolean;
+  popular?: boolean;
 }
 
 interface PricingCardProps {
@@ -26,9 +33,11 @@ interface PricingCardProps {
 export default function PricingCard({ plan, popular, isCurrent, onSelect }: PricingCardProps) {
   const isEnterprise = plan.price === -1;
   const isFree = plan.price === 0;
+  const cycle = plan.billingCycle === "year" ? "year" : "month";
+  const showOffer = Boolean(plan.offerBadge && !isCurrent);
 
-  const formatMonthlyPrice = (amount: number) => {
-    const code = (plan.currency || "USD").toUpperCase();
+  const formatMoney = (amount: number) => {
+    const code = (plan.currency || "INR").toUpperCase();
     try {
       return new Intl.NumberFormat(undefined, {
         style: "currency",
@@ -55,9 +64,17 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
           Current plan
         </div>
       )}
-      {popular && !isCurrent && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-indigo-500 px-3 py-0.5 text-xs font-medium shadow-lg shadow-indigo-500/30">
-          Most popular
+      {!isCurrent && (showOffer || popular) && (
+        <div className="absolute -top-3 left-1/2 flex -translate-x-1/2 gap-1">
+          {showOffer ? (
+            <div className="rounded-full bg-amber-500 px-3 py-0.5 text-xs font-semibold text-black shadow-lg shadow-amber-500/20">
+              {plan.offerBadge}
+            </div>
+          ) : popular ? (
+            <div className="rounded-full bg-indigo-500 px-3 py-0.5 text-xs font-medium shadow-lg shadow-indigo-500/30">
+              Most popular
+            </div>
+          ) : null}
         </div>
       )}
       <h3 className="text-lg font-semibold">{plan.name}</h3>
@@ -69,10 +86,15 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
           <span className="text-2xl font-bold">Custom</span>
         ) : (
           <>
+            {plan.compareAtPrice != null && plan.compareAtPrice > plan.price ? (
+              <span className="mr-2 text-lg text-white/35 line-through">
+                {formatMoney(plan.compareAtPrice)}
+              </span>
+            ) : null}
             <span className="text-3xl font-bold">
-              {isFree ? "₹0" : formatMonthlyPrice(plan.price)}
+              {isFree ? "₹0" : formatMoney(plan.price)}
             </span>
-            {!isFree && <span className="text-white/50">/month</span>}
+            {!isFree && <span className="text-white/50">/{cycle}</span>}
           </>
         )}
       </div>
@@ -103,7 +125,7 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
       {isFree && plan.unlocksAtPaid && plan.unlocksAtPaid.length > 0 && (
         <div className="mt-4 rounded-xl border border-white/10 bg-black/30 p-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-white/40">
-            Unlocks at ₹1,500/mo
+            Unlocks on paid plans
           </p>
           <ul className="mt-2 space-y-1.5">
             {plan.unlocksAtPaid.map((item) => (
@@ -123,20 +145,24 @@ export default function PricingCard({ plan, popular, isCurrent, onSelect }: Pric
       <button
         type="button"
         onClick={() => onSelect(plan.slug || plan.id)}
-        disabled={isCurrent && !isEnterprise}
+        disabled={(isCurrent && !isEnterprise) || plan.checkoutAvailable === false}
         className={`mt-5 w-full rounded-xl py-2.5 text-sm font-medium transition-colors ${
           isCurrent && !isEnterprise
             ? "cursor-default border border-emerald-500/20 bg-emerald-500/10 text-emerald-300"
-            : popular
-              ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-500"
-              : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
+            : plan.checkoutAvailable === false
+              ? "cursor-not-allowed border border-white/10 bg-white/[0.03] text-white/40"
+              : popular
+                ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:bg-indigo-500"
+                : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
         }`}
       >
         {isCurrent && !isEnterprise
           ? "Current plan"
           : isEnterprise
             ? "Contact sales"
-            : plan.cta || (isFree ? "Get API Key" : "Subscribe")}
+            : plan.checkoutAvailable === false
+              ? "Coming soon — contact sales"
+              : plan.cta || (isFree ? "Get API Key" : "Subscribe")}
       </button>
     </div>
   );

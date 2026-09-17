@@ -3,12 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import {
-  FREE_TIER_SUMMARY,
-  PRICING_PLANS,
-  STARTER_UNLOCKS_SUMMARY,
-} from "@/lib/mock-data";
-import PricingCard from "@/components/PricingCard";
+import LivePricingGrid from "@/components/LivePricingGrid";
 import Footer from "@/components/Footer";
 import { SiteHeader, SITE_HEADER_OFFSET } from "@/components/SiteHeader";
 import {
@@ -24,7 +19,13 @@ import {
 import HeroMarketChartBackdrop from "@/components/landing/HeroMarketChartBackdrop";
 import ProductShowcaseSection from "@/components/landing/ProductShowcaseSection";
 import WhyPaySection from "@/components/landing/WhyPaySection";
+import SocialProofSection from "@/components/landing/SocialProofSection";
+import LiveApiDemoSection from "@/components/landing/LiveApiDemoSection";
 import { PlatformPillars } from "@/components/MarketingShell";
+import {
+  FREE_TIER_SUMMARY,
+  STARTER_UNLOCKS_SUMMARY,
+} from "@/lib/mock-data";
 
 const FEATURES: { title: string; desc: string; icon: FeatureIconKey }[] = [
   {
@@ -153,6 +154,8 @@ export default function LandingPage() {
 
       <ProductShowcaseSection />
 
+      <LiveApiDemoSection />
+
       <WhyPaySection />
 
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
@@ -231,6 +234,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <SocialProofSection />
+
       {/* Pricing */}
       <section className="border-t border-white/5 px-4 py-20 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-6xl">
@@ -239,30 +244,14 @@ export default function LandingPage() {
           </h2>
           <p className="mx-auto mt-2 max-w-2xl text-center text-white/60">
             Start free with daily limits. Upgrade for historical OHLCV, backtests, and higher throughput —
-            exact limits on every card.
+            prices load live from our billing API.
           </p>
-          <div className="mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {PRICING_PLANS.map((plan) => (
-              <PricingCard
-                key={plan.id}
-                plan={{
-                  id: plan.id,
-                  slug: plan.slug,
-                  name: plan.name,
-                  price: plan.price,
-                  currency: plan.currency,
-                  credits: plan.requestsPerDay,
-                  features: plan.features,
-                  tagline: plan.tagline,
-                  unlocksAtPaid: plan.unlocksAtPaid,
-                  overage: plan.overage,
-                  cta: plan.cta,
-                }}
-                popular={plan.id === "starter"}
-                onSelect={() => (window.location.href = "/pricing")}
-              />
-            ))}
-          </div>
+          <LivePricingGrid
+            className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            onSelect={() => {
+              window.location.href = "/pricing";
+            }}
+          />
         </div>
       </section>
 

@@ -17,6 +17,10 @@ export type SubscriptionPlan = {
   billingCycle?: string | null;
   features?: unknown;
   adminOnly?: boolean;
+  sortOrder?: number;
+  metadata?: unknown;
+  /** False when paid plan has no Razorpay plan linked yet */
+  checkoutAvailable?: boolean;
 };
 
 export type UserSubscription = {
