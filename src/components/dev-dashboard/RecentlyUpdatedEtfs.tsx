@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
 import { formatPct } from "@/lib/heatmap/colors";
 
 export type RecentEtfRow = {
@@ -26,9 +27,11 @@ function relativeTime(iso: string | null) {
 export default function RecentlyUpdatedEtfs({
   rows,
   loading,
+  hasKey = true,
 }: {
   rows: RecentEtfRow[];
   loading?: boolean;
+  hasKey?: boolean;
 }) {
   return (
     <section className="rounded-2xl border border-white/10 bg-[#0c0c14]/80 p-5 backdrop-blur-md">
@@ -91,8 +94,17 @@ export default function RecentlyUpdatedEtfs({
               })}
             {!loading && !rows.length && (
               <tr>
-                <td colSpan={5} className="py-6 text-center text-xs text-white/40">
-                  No recent updates yet.
+                <td colSpan={5} className="py-4">
+                  <DashboardEmptyState
+                    title={hasKey ? "No recent updates yet" : "No data without an API key"}
+                    description={
+                      hasKey
+                        ? "Fetch the ETF list from the explorer to populate this table."
+                        : "Create an API key to load the latest ETF rows."
+                    }
+                    primaryHref={hasKey ? "/dashboard/etf" : "/dashboard/api-keys"}
+                    primaryLabel={hasKey ? "Open ETF explorer" : "Get API key"}
+                  />
                 </td>
               </tr>
             )}

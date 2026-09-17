@@ -14,6 +14,7 @@ import {
   type MarketStatus,
 } from "@/services/datacaptain/endpoints";
 import FreeTierUpgradeBanner from "@/components/dashboard/FreeTierUpgradeBanner";
+import QuotaStatusBar from "@/components/dashboard/QuotaStatusBar";
 import CompactApiKeyCard from "@/components/dev-dashboard/CompactApiKeyCard";
 import GettingStartedChecklist from "@/components/dev-dashboard/GettingStartedChecklist";
 import HeroOverviewCards from "@/components/dev-dashboard/HeroOverviewCards";
@@ -315,6 +316,12 @@ export default function DashboardPage() {
 
       <CompactApiKeyCard apiKey={apiKey} onSaveKey={handleSaveKey} />
 
+      <QuotaStatusBar
+        usage={usage}
+        hasKey={Boolean(apiKey)}
+        loading={loading && Boolean(apiKey)}
+      />
+
       <GettingStartedChecklist
         hasKey={Boolean(apiKey)}
         hasMadeRequest={(usage?.requestsToday ?? 0) > 0 || (usage?.requestsThisMonth ?? 0) > 0}
@@ -336,18 +343,18 @@ export default function DashboardPage() {
 
       <FeaturedMarket apiKey={apiKey} snapshot={snapshot} snapshotLoading={marketLoading} />
 
-      <PopularEtfs items={popular} loading={marketLoading} />
+      <PopularEtfs items={popular} loading={marketLoading} hasKey={Boolean(apiKey)} />
 
-      <HeatmapPreview cells={heatmap} loading={marketLoading} />
+      <HeatmapPreview cells={heatmap} loading={marketLoading} hasKey={Boolean(apiKey)} />
 
       <FeatureDiscovery />
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <UsageChartPanel usage={usage} />
+        <UsageChartPanel usage={usage} hasKey={Boolean(apiKey)} />
         <EndpointAnalytics usage={usage} />
       </div>
 
-      <RecentlyUpdatedEtfs rows={recent} loading={loading} />
+      <RecentlyUpdatedEtfs rows={recent} loading={loading} hasKey={Boolean(apiKey)} />
 
       <PlatformTimeline />
 

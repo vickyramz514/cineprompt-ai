@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import type { DeveloperUsage } from "@/services/datacaptain/endpoints";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
 
 const Chart = dynamic(() => import("./UsageChartInner"), {
   ssr: false,
@@ -11,14 +12,29 @@ const Chart = dynamic(() => import("./UsageChartInner"), {
 
 type Range = "daily" | "weekly" | "monthly";
 
-export default function UsageChartPanel({ usage }: { usage: DeveloperUsage | null }) {
+export default function UsageChartPanel({
+  usage,
+  hasKey = true,
+}: {
+  usage: DeveloperUsage | null;
+  hasKey?: boolean;
+}) {
   const [range, setRange] = useState<Range>("daily");
 
   const data = useMemo(() => {
     if (!usage?.series) return [];
-    if (range === "weekly") return usage.series.weekly.map((d) => ({ label: d.label || d.date.slice(5), count: d.count }));
-    if (range === "monthly")
-      return usage.series.monthly.map((d) => ({ label: d.label || d.date.slice(0, 7), count: d.count }));
+    if (range === "weekly") {
+      return usage.series.weekly.map((d) => ({
+        label: d.label || d.date.slice(5),
+        count: d.count,
+      }));
+    }
+    if (range === "monthly") {
+      return usage.series.monthly.map((d) => ({
+        label: d.label || d.date.slice(0, 7),
+        count: d.count,
+      }));
+    }
     return usage.series.daily.map((d) => ({ label: d.date.slice(5), count: d.count }));
   }, [usage, range]);
 
@@ -44,7 +60,25 @@ export default function UsageChartPanel({ usage }: { usage: DeveloperUsage | nul
           ))}
         </div>
       </div>
-      <Chart data={data} />
+      {!hasKey || !usage || data.length === 0 ? (
+        <DashboardEmptyState
+          className="mt-4"
+          title={!hasKey ? "Usage appears after your first keyed request" : "No usage series yet"}
+          description={
+            !hasKey
+              ? "Add an API key and call any free endpoint to start the chart."
+              : "Make a few API calls (dashboard widgets or API explorer), then refresh."
+          }
+          primaryHref={!hasKey ? "/dashboard/api-keys" : "/dashboard/api-explorer"}
+          primaryLabel={!hasKey ? "Get API key" : "Make a request"}
+          secondaryHref="/dashboard/usage"
+          secondaryLabel="Usage page"
+        />
+      ) : (
+        <div className="mt-4">
+          <Chart data={data} />
+        </div>
+      )}
     </div>
   );
 }

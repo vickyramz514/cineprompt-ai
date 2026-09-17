@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import type { EtfHeatmapCell } from "@/services/datacaptain/endpoints";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
 import { returnToColor, formatPct } from "@/lib/heatmap/colors";
 
 export default function HeatmapPreview({
   cells,
   loading,
+  hasKey = true,
 }: {
   cells: EtfHeatmapCell[];
   loading?: boolean;
+  hasKey?: boolean;
 }) {
   const top = cells.slice(0, 15);
 
@@ -33,7 +36,7 @@ export default function HeatmapPreview({
             <div key={i} className="h-14 animate-pulse rounded-lg bg-white/5" />
           ))}
         </div>
-      ) : (
+      ) : top.length ? (
         <div className="mt-4 grid grid-cols-3 gap-1.5 sm:grid-cols-5">
           {top.map((c) => (
             <Link
@@ -46,8 +49,21 @@ export default function HeatmapPreview({
               <p className="text-[11px] font-semibold tabular-nums text-white/95">{formatPct(c.returnPct)}</p>
             </Link>
           ))}
-          {!top.length && <p className="col-span-full text-xs text-white/40">No heatmap data yet.</p>}
         </div>
+      ) : (
+        <DashboardEmptyState
+          className="mt-4"
+          title={hasKey ? "No heatmap data yet" : "API key required for heatmap"}
+          description={
+            hasKey
+              ? "Heatmap needs ETF returns from your key. Open the full heatmap or make a screener call first."
+              : "Add your API key, then the broad-market pulse will load here."
+          }
+          primaryHref={hasKey ? "/dashboard/etf/heatmap" : "/dashboard/api-keys"}
+          primaryLabel={hasKey ? "Open heatmap" : "Get API key"}
+          secondaryHref="/dashboard/api-explorer"
+          secondaryLabel="API explorer"
+        />
       )}
     </section>
   );

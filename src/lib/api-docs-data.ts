@@ -296,6 +296,33 @@ export const SECTION_LABELS: Record<string, string> = {
   developer: "Developer",
 };
 
+/** Shared error envelope + rate-limit headers for docs. */
+export const API_ERRORS_DOC = {
+  title: "Errors & rate limits",
+  envelope: `{
+  "success": false,
+  "error": {
+    "code": "RATE_LIMIT",
+    "message": "Daily rate limit exceeded. Upgrade your plan for more requests.",
+    "errorId": "a1b2c3d4e5f6",
+    "hint": "Check X-RateLimit-Remaining on responses, or GET /v1/developer/usage"
+  }
+}`,
+  commonCodes: [
+    { code: "UNAUTHORIZED", status: 401, meaning: "Missing/invalid JWT or API key" },
+    { code: "FORBIDDEN", status: 403, meaning: "Plan gate blocked this path (upgrade required)" },
+    { code: "NOT_FOUND", status: 404, meaning: "Unknown route or symbol" },
+    { code: "VALIDATION_ERROR", status: 400, meaning: "Bad query/body parameters" },
+    { code: "RATE_LIMIT", status: 429, meaning: "Daily API-key quota or IP limit exceeded" },
+    { code: "INTERNAL_ERROR", status: 500, meaning: "Unexpected server failure — include errorId in support tickets" },
+  ],
+  headers: [
+    { name: "X-RateLimit-Limit", desc: "Your plan's daily request cap" },
+    { name: "X-RateLimit-Remaining", desc: "Requests left today for this API key" },
+  ],
+  tip: "Official SDKs expose lastRateLimit / last_rate_limit from these headers after each call. Prefer GET /v1/developer/usage for dashboards.",
+} as const;
+
 export const WEBSOCKET_DOC = {
   path: "/ws",
   description: "Real-time ETF price streaming (when enabled). Subscribe to ETF symbols for periodic updates.",

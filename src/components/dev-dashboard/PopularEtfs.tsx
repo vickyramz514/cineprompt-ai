@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Sparkline from "@/components/charts/Sparkline";
+import DashboardEmptyState from "@/components/dashboard/DashboardEmptyState";
 import { formatPct } from "@/lib/heatmap/colors";
 
 export type PopularEtfCard = {
@@ -15,9 +16,11 @@ export type PopularEtfCard = {
 export default function PopularEtfs({
   items,
   loading,
+  hasKey = true,
 }: {
   items: PopularEtfCard[];
   loading?: boolean;
+  hasKey?: boolean;
 }) {
   return (
     <section>
@@ -30,50 +33,64 @@ export default function PopularEtfs({
           Explorer →
         </Link>
       </div>
-      <div className="flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {loading
-          ? Array.from({ length: 8 }).map((_, i) => (
-              <div key={i} className="h-28 w-40 shrink-0 animate-pulse rounded-2xl bg-white/5" />
-            ))
-          : items.map((item) => {
-              const up = (item.changePct ?? 0) >= 0;
-              return (
-                <Link
-                  key={item.symbol}
-                  href={`/dashboard/etf/${item.symbol}`}
-                  className="group w-40 shrink-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-transparent p-3 transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/10"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-indigo-500/15 font-mono text-[10px] font-bold text-indigo-200">
-                      {item.symbol.slice(0, 2)}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-mono text-sm font-semibold text-white group-hover:text-cyan-200">
-                        {item.symbol}
-                      </p>
-                      <p className="truncate text-[10px] text-white/40">{item.name || "ETF"}</p>
-                    </div>
+      {loading ? (
+        <div className="flex gap-3 overflow-x-auto pb-1">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-28 w-40 shrink-0 animate-pulse rounded-2xl bg-white/5" />
+          ))}
+        </div>
+      ) : items.length ? (
+        <div className="flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {items.map((item) => {
+            const up = (item.changePct ?? 0) >= 0;
+            return (
+              <Link
+                key={item.symbol}
+                href={`/dashboard/etf/${item.symbol}`}
+                className="group w-40 shrink-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.07] to-transparent p-3 transition hover:-translate-y-0.5 hover:border-indigo-500/40 hover:shadow-lg hover:shadow-indigo-500/10"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-indigo-500/15 font-mono text-[10px] font-bold text-indigo-200">
+                    {item.symbol.slice(0, 2)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-mono text-sm font-semibold text-white group-hover:text-cyan-200">
+                      {item.symbol}
+                    </p>
+                    <p className="truncate text-[10px] text-white/40">{item.name || "ETF"}</p>
                   </div>
-                  <p className="mt-3 text-lg font-semibold tabular-nums">
-                    {item.price != null ? `$${item.price.toFixed(2)}` : "—"}
-                  </p>
-                  <div className="mt-1 flex items-center justify-between gap-2">
-                    <span
-                      className={`text-xs font-semibold tabular-nums ${
-                        up ? "text-emerald-300" : "text-rose-300"
-                      }`}
-                    >
-                      {formatPct(item.changePct)}
-                    </span>
-                    <Sparkline data={item.sparkline} width={56} height={18} />
-                  </div>
-                </Link>
-              );
-            })}
-        {!loading && !items.length && (
-          <p className="text-xs text-white/40">No popular ETF quotes yet.</p>
-        )}
-      </div>
+                </div>
+                <p className="mt-3 text-lg font-semibold tabular-nums">
+                  {item.price != null ? `$${item.price.toFixed(2)}` : "—"}
+                </p>
+                <div className="mt-1 flex items-center justify-between gap-2">
+                  <span
+                    className={`text-xs font-semibold tabular-nums ${
+                      up ? "text-emerald-300" : "text-rose-300"
+                    }`}
+                  >
+                    {formatPct(item.changePct)}
+                  </span>
+                  <Sparkline data={item.sparkline} width={56} height={18} />
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      ) : (
+        <DashboardEmptyState
+          title={hasKey ? "No popular quotes yet" : "Connect an API key to load markets"}
+          description={
+            hasKey
+              ? "Open the ETF explorer or API explorer to make your first request — then refresh this page."
+              : "Create or paste your sdata_ key, then popular benchmarks will appear here."
+          }
+          primaryHref={hasKey ? "/dashboard/api-explorer" : "/dashboard/api-keys"}
+          primaryLabel={hasKey ? "Try API explorer" : "Get API key"}
+          secondaryHref="/docs"
+          secondaryLabel="Read docs"
+        />
+      )}
     </section>
   );
 }

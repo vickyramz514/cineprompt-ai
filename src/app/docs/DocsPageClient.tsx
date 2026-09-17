@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import { SiteHeader } from "@/components/SiteHeader";
-import { API_BASE_URL, API_DOC_SECTIONS, SECTION_LABELS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
+import { API_BASE_URL, API_DOC_SECTIONS, API_ERRORS_DOC, SECTION_LABELS, WEBSOCKET_DOC, type ApiEndpoint } from "@/lib/api-docs-data";
 
 function EndpointCard({ ep, baseUrl }: { ep: ApiEndpoint; baseUrl: string }) {
   const pathForUrl = ep.path.replace(/:symbol/g, "SPY").replace(/:\w+/g, "VALUE");
@@ -163,6 +163,35 @@ rankings = dc.etf_screener(return_min=10, period="1y")`}
             <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/30 p-4 text-sm">
               <code className="text-emerald-400">x-api-key: YOUR_API_KEY</code>
             </pre>
+          </section>
+
+          <section id="errors" className="scroll-mt-28 rounded-2xl border border-white/5 bg-white/[0.02] p-6">
+            <h2 className="text-lg font-semibold">{API_ERRORS_DOC.title}</h2>
+            <p className="mt-2 text-sm text-white/60">
+              Failed responses use a consistent JSON envelope. Include{" "}
+              <code className="text-white/80">errorId</code> when contacting support.
+            </p>
+            <pre className="mt-4 overflow-x-auto rounded-xl border border-white/10 bg-black/40 p-4 text-xs text-emerald-300/90">
+              <code>{API_ERRORS_DOC.envelope}</code>
+            </pre>
+            <ul className="mt-4 space-y-2 text-sm text-white/65">
+              {API_ERRORS_DOC.commonCodes.map((c) => (
+                <li key={c.code}>
+                  <code className="text-indigo-300">{c.code}</code>
+                  <span className="text-white/35"> · HTTP {c.status}</span>
+                  <span className="text-white/50"> — {c.meaning}</span>
+                </li>
+              ))}
+            </ul>
+            <h3 className="mt-6 text-sm font-semibold text-white/80">Rate-limit headers</h3>
+            <ul className="mt-2 space-y-1 text-sm text-white/60">
+              {API_ERRORS_DOC.headers.map((h) => (
+                <li key={h.name}>
+                  <code className="text-amber-200/90">{h.name}</code> — {h.desc}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-xs text-white/45">{API_ERRORS_DOC.tip}</p>
           </section>
 
           {Object.entries(API_DOC_SECTIONS).map(([key, endpoints]) => (
