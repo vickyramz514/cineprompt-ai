@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as adminService from "@/services/admin.service";
 import Loader from "@/components/Loader";
 
@@ -14,7 +14,7 @@ export default function AdminSupportPage() {
   const [newMessage, setNewMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const fetchTickets = () => {
+  const fetchTickets = useCallback(() => {
     setLoading(true);
     adminService
       .getSupportTickets({ status: status || undefined })
@@ -24,11 +24,11 @@ export default function AdminSupportPage() {
       })
       .catch((err) => setError(adminService.getErrorMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, [status]);
 
   useEffect(() => {
     fetchTickets();
-  }, [status]);
+  }, [fetchTickets]);
 
   const openTicket = (t: adminService.SupportTicket) => {
     adminService.getSupportTicketById(t.id).then(setSelectedTicket);

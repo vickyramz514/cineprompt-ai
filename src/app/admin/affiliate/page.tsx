@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as adminService from "@/services/admin.service";
 import Loader from "@/components/Loader";
 
@@ -9,18 +9,18 @@ export default function AdminAffiliatePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchAffiliates = () => {
+  const fetchAffiliates = useCallback(() => {
     setLoading(true);
     adminService
       .getAffiliates()
       .then(setAffiliates)
       .catch((err) => setError(adminService.getErrorMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     fetchAffiliates();
-  }, []);
+  }, [fetchAffiliates]);
 
   const handleApprovePayout = async (id: string) => {
     try {

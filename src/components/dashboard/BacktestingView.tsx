@@ -142,6 +142,7 @@ function SymbolField({
 
   useEffect(() => {
     if (!apiKey) return;
+    let cancelled = false;
     const q = value.trim();
     if (q.length < 2) {
       setRemote([]);
@@ -161,13 +162,18 @@ function SymbolField({
           search: q,
           hasPrice: "1",
         });
-        cacheRef.current.set(key, res.data);
-        setRemote(res.data);
+        if (!cancelled) {
+          cacheRef.current.set(key, res.data);
+          setRemote(res.data);
+        }
       } catch {
-        setRemote([]);
+        if (!cancelled) setRemote([]);
       }
     }, 180);
-    return () => clearTimeout(handle);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
   }, [apiKey, value]);
 
   const localMatches = useMemo(() => {

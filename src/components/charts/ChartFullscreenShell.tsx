@@ -70,7 +70,10 @@ export default function ChartFullscreenShell({
     setOpenSafe(!open);
   }, [open, setOpenSafe]);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // Mount tracking for client-side portal
+    setMounted(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open) return;
@@ -179,7 +182,10 @@ export function FullscreenChartModal({
   const [mounted, setMounted] = useState(false);
   const titleId = useId();
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    // Mount tracking for client-side portal
+    setMounted(true);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open) return;

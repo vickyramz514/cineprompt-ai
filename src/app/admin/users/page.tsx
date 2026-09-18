@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as adminService from "@/services/admin.service";
 import Loader from "@/components/Loader";
 
@@ -19,7 +19,7 @@ export default function AdminUsersPage() {
 
   const limit = 20;
 
-  const fetchUsers = () => {
+  const fetchUsers = useCallback(() => {
     setLoading(true);
     adminService
       .getUsers({ page, limit, search: search || undefined })
@@ -29,11 +29,11 @@ export default function AdminUsersPage() {
       })
       .catch((err) => setError(adminService.getErrorMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, [page, search]);
 
   useEffect(() => {
     fetchUsers();
-  }, [page, search]);
+  }, [fetchUsers]);
 
   const handleCredit = async () => {
     if (!creditModal || creditAmount === 0) return;

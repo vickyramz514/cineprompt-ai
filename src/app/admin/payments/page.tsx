@@ -18,26 +18,44 @@ export default function AdminPaymentsPage() {
   const limit = 20;
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
+    
     if (tab === "payments") {
       adminService
         .getPayments({ page, limit })
         .then((data) => {
-          setPayments((data.payments ?? []) as unknown as adminService.AdminPayment[]);
-          setTotal(data.total);
+          if (!cancelled) {
+            setPayments((data.payments ?? []) as unknown as adminService.AdminPayment[]);
+            setTotal(data.total);
+          }
         })
-        .catch((err) => setError(adminService.getErrorMessage(err)))
-        .finally(() => setLoading(false));
+        .catch((err) => {
+          if (!cancelled) setError(adminService.getErrorMessage(err));
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
     } else {
       adminService
         .getSubscriptions({ page, limit })
         .then((data) => {
-          setSubscriptions((data.subscriptions ?? []) as unknown as adminService.AdminSubscription[]);
-          setTotal(data.total);
+          if (!cancelled) {
+            setSubscriptions((data.subscriptions ?? []) as unknown as adminService.AdminSubscription[]);
+            setTotal(data.total);
+          }
         })
-        .catch((err) => setError(adminService.getErrorMessage(err)))
-        .finally(() => setLoading(false));
+        .catch((err) => {
+          if (!cancelled) setError(adminService.getErrorMessage(err));
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
     }
+    
+    return () => {
+      cancelled = true;
+    };
   }, [tab, page]);
 
   const totalPages = Math.ceil(total / limit);

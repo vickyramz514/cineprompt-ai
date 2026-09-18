@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * Regenerate DataCaptain favicons from public/logo/logo.jpeg
  * Usage: node scripts/generate-favicons.js

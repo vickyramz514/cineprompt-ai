@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import * as supportService from "@/services/support.service";
@@ -65,7 +65,7 @@ export default function SupportView() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("ALL");
   const [createSuccess, setCreateSuccess] = useState(false);
 
-  const fetchTickets = () => {
+  const fetchTickets = useCallback(() => {
     setLoading(true);
     setError(null);
     supportService
@@ -76,11 +76,11 @@ export default function SupportView() {
       })
       .catch((err) => setError(supportService.getErrorMessage(err)))
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, [fetchTickets]);
 
   const filteredTickets = useMemo(() => {
     if (statusFilter === "ALL") return tickets;

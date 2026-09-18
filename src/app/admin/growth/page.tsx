@@ -10,12 +10,24 @@ export default function AdminGrowthPage() {
   const [days, setDays] = useState(30);
 
   useEffect(() => {
+    let cancelled = false;
     setLoading(true);
+    
     adminService
       .getGrowthOverview(days)
-      .then(setData)
-      .catch(() => setData(null))
-      .finally(() => setLoading(false));
+      .then((result) => {
+        if (!cancelled) setData(result);
+      })
+      .catch(() => {
+        if (!cancelled) setData(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    
+    return () => {
+      cancelled = true;
+    };
   }, [days]);
 
   if (loading) {

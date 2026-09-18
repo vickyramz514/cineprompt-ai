@@ -8,8 +8,9 @@ export default function FavoriteEtfsStrip() {
   const [favs, setFavs] = useState<string[]>([]);
 
   useEffect(() => {
+    // Load favorites from localStorage on mount
     setFavs(loadFavorites());
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="rounded-2xl border border-white/10 bg-[#0c0c14]/80 p-5 backdrop-blur-md">
