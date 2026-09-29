@@ -86,26 +86,8 @@ export const PRICING_PLANS: PricingPlan[] = [
       "Priority support",
     ],
     limits: ["10,000 requests/day"],
-    overage: "Daily cap — upgrade to Scale for high volume",
-    cta: "Start Pro",
-  },
-  {
-    id: "ultra",
-    slug: "ultra",
-    name: "Scale",
-    price: 5000,
-    currency: "INR",
-    requestsPerDay: 100000,
-    tagline: "High-volume production",
-    features: [
-      "100,000 requests/day",
-      "Everything in Pro",
-      "High-volume production workloads",
-      "Dedicated onboarding",
-    ],
-    limits: ["100,000 requests/day"],
     overage: "Need more? Email sales for custom volume",
-    cta: "Start Scale",
+    cta: "Start Pro",
   },
 ];
 

@@ -247,7 +247,7 @@ export default function LandingPage() {
             prices load live from our billing API.
           </p>
           <LivePricingGrid
-            className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="mx-auto mt-10 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3"
             onSelect={() => {
               window.location.href = "/pricing";
             }}

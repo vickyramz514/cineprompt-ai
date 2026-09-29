@@ -19,7 +19,7 @@ export default function LivePricingGrid({
   onSelect,
   currentSlug,
   showOffersBanner = true,
-  className = "mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-4",
+  className = "mt-16 grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
 }: Props) {
   const { plans, isLoading, error } = useSubscriptionPlans();
   const cards = useMemo(() => plansForMarketing(plans), [plans]);

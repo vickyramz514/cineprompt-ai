@@ -399,7 +399,7 @@ export default function BillingView() {
                     <div className="h-10 w-10 animate-spin rounded-full border-2 border-indigo-500/30 border-t-indigo-400" />
                   </div>
                 ) : (
-                  <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="mt-6 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     {pricingPlans.map((plan, i) => (
                       <motion.div
                         key={plan.id}

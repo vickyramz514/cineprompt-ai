@@ -16,7 +16,7 @@ export default function PricingPage() {
       return;
     }
     if (idOrSlug === "enterprise") {
-      window.location.href = mailtoSales("Enterprise / Scale plan");
+      window.location.href = mailtoSales("Enterprise / custom volume");
       return;
     }
     if (!isAuthenticated) {
@@ -52,7 +52,7 @@ export default function PricingPage() {
               {SUPPORT_EMAIL}
             </a>
             <span className="hidden text-white/20 sm:inline">·</span>
-            <a href={mailtoSales("Enterprise / Scale plan")} className="text-indigo-400 hover:underline">
+            <a href={mailtoSales("Enterprise / custom volume")} className="text-indigo-400 hover:underline">
               {SALES_EMAIL}
             </a>
             <span className="hidden text-white/20 sm:inline">·</span>
@@ -62,7 +62,7 @@ export default function PricingPage() {
           </div>
 
           <LivePricingGrid
-            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3"
             onSelect={handleSelectPlan}
           />
         </div>

@@ -200,7 +200,7 @@ Starter (₹500/mo) unlocks:
 - Historical ETF data, backtesting, portfolio tools
 - Email support
 
-Pro: 10,000/day · Scale: 100,000/day
+Pro (₹1,000/mo): 10,000/day · Need more? Contact sales
 
 See /pricing and Dashboard → Billing (/dashboard/wallet). Payments currently run through Razorpay (INR).`,
     links: [
