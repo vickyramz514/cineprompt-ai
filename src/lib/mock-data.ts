@@ -56,7 +56,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "starter",
     slug: "starter",
     name: "Starter",
-    price: 1500,
+    price: 500,
     currency: "INR",
     requestsPerDay: 1000,
     tagline: "Ship production ETF tools",
@@ -75,7 +75,7 @@ export const PRICING_PLANS: PricingPlan[] = [
     id: "pro",
     slug: "pro",
     name: "Pro",
-    price: 2500,
+    price: 1000,
     currency: "INR",
     requestsPerDay: 10000,
     tagline: "Growing apps & heavier research",
@@ -113,8 +113,8 @@ export const PRICING_PLANS: PricingPlan[] = [
 export const FREE_TIER_SUMMARY =
   "Free: 50 requests/day · ETF list, screener, rankings, heatmap & batch prices · no historical / backtests · no card required";
 
-/** What ₹1,500 Starter unlocks */
+/** What ₹500 Starter unlocks */
 export const STARTER_UNLOCKS_SUMMARY =
-  "Starter (₹1,500/mo): 1,000 requests/day · historical OHLCV · backtesting · portfolio tools";
+  "Starter (₹500/mo): 1,000 requests/day · historical OHLCV · backtesting · portfolio tools";
 
 export { SIDEBAR_NAV, SIDEBAR_SECTIONS } from "./sidebar-nav";

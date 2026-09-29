@@ -38,7 +38,7 @@ export default function WhyPaySection() {
           className="text-center"
         >
           <p className="text-sm font-medium uppercase tracking-widest text-indigo-400/90">
-            Why pay ₹1,500/month?
+            Why pay ₹500/month?
           </p>
           <h2 className="mt-3 text-2xl font-bold sm:text-3xl lg:text-4xl">
             Free ETF websites are for reading.
@@ -75,7 +75,7 @@ export default function WhyPaySection() {
             </ul>
           </div>
           <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-br from-indigo-500/10 to-transparent p-6 ring-1 ring-indigo-500/20">
-            <h3 className="font-semibold text-indigo-200">Starter — ₹1,500/mo</h3>
+            <h3 className="font-semibold text-indigo-200">Starter — ₹500/mo</h3>
             <ul className="mt-4 space-y-3">
               {DATACAPTAIN_STARTER.map((item) => (
                 <li key={item} className="flex gap-2 text-sm text-white/80">

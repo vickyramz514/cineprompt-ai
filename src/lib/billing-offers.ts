@@ -13,8 +13,8 @@ export type PlanOffer = {
 export const BILLING_OFFERS_BY_SLUG: Record<string, PlanOffer> = {
   starter: {
     offerBadge: "Launch price",
-    compareAtCents: 200_000,
-    offerNote: "Introductory monthly rate — unlock history & backtests",
+    compareAtCents: null,
+    offerNote: "Unlock history & backtests",
     popular: true,
   },
   "starter-annual": {
@@ -27,7 +27,7 @@ export const BILLING_OFFERS_BY_SLUG: Record<string, PlanOffer> = {
 
 export const BILLING_OFFERS_BANNER = {
   title: "Launch offer on Starter",
-  body: "Monthly Starter at an introductory price, or save ₹3,000/year with Starter Annual once linked in billing.",
+  body: "Starter is ₹500/month — historical ETF data, backtesting, and portfolio tools.",
   ctaLabel: "See plans",
   ctaHref: "/pricing",
 } as const;

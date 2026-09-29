@@ -38,7 +38,7 @@ export default function FreeTierUpgradeBanner() {
             href="/dashboard/wallet"
             className="rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500"
           >
-            Upgrade — from ₹1,500/mo
+            Upgrade — from ₹500/mo
           </Link>
           <Link
             href="/pricing"

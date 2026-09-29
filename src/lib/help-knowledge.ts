@@ -195,7 +195,7 @@ Paid feature — upgrade from Billing or Pricing.`,
 - No historical OHLCV, backtesting, or portfolio APIs
 - No credit card required
 
-Starter (₹1,500/mo) unlocks:
+Starter (₹500/mo) unlocks:
 - 1,000 requests/day
 - Historical ETF data, backtesting, portfolio tools
 - Email support
