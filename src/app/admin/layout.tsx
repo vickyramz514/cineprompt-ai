@@ -11,6 +11,7 @@ const SIDEBAR_NAV = [
   { href: "/admin/users", label: "Users", icon: "👥" },
   { href: "/admin/payments", label: "Payments", icon: "💳" },
   { href: "/admin/support", label: "Support", icon: "💬" },
+  { href: "/admin/emails", label: "Emails", icon: "✉️" },
   { href: "/admin/affiliate", label: "Affiliates", icon: "🤝" },
   { href: "/admin/growth", label: "Growth", icon: "📈" },
   { href: "/admin/investor", label: "Investor", icon: "💰" },
