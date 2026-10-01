@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@next/swc-darwin-arm64": "^16.1.6",
     "@react-oauth/google": "^0.13.4",
     "axios": "^1.13.5",
     "datacaptain": "^0.1.0",
