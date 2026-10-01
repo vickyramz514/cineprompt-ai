@@ -13,7 +13,7 @@ export function getPublicApiBaseUrl(): string {
   if (explicit) return trimTrailingSlash(explicit);
 
   const origin =
-    process.env.NEXT_PUBLIC_DATACAPTAIN_URL || "http://localhost:4000";
+    process.env.NEXT_PUBLIC_DATACAPTAIN_URL || "https://api-aws.datacaptain.in";
   return `${trimTrailingSlash(origin)}/v1`;
 }
 
@@ -24,5 +24,5 @@ export function getPublicApiOrigin(): string {
   }
   const base = process.env.NEXT_PUBLIC_API_BASE_URL;
   if (base) return trimTrailingSlash(base.replace(/\/(v1|api)\/?$/, ""));
-  return "http://localhost:4000";
+  return "https://api-aws.datacaptain.in";
 }
